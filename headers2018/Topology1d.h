@@ -9,6 +9,7 @@
 #define Topology1d_h
 
 #include "IntRule1d.h"
+#include "DataTypes.h"
 
 class Topology1d
 {

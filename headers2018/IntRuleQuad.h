@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include "DataTypes.h"
+#include "IntRule.h"
 
 class IntRuleQuad : public IntRule
 {

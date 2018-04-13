@@ -9,6 +9,7 @@
 #define TopologyTriangle_h
 
 #include "IntRuleTriangle.h"
+#include "DataTypes.h"
 
 class TopologyTriangle
 {

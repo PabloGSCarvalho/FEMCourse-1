@@ -46,7 +46,7 @@ public:
     
     virtual int NPoints() const;
     
-    virtual void Point(int p, TVec<double> &co, double &weight) const;
+    virtual void Point(int p, VecDouble &co, double &weight) const;
     
     void Print(std::ostream &out) const;
     

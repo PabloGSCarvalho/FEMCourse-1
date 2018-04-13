@@ -9,6 +9,7 @@
 #define TopologyTetrahedron_h
 
 #include "IntRuleTetrahedron.h"
+#include "DataTypes.h"
 
 class TopologyTetrahedron
 {

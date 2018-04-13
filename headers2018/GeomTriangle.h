@@ -8,6 +8,7 @@
 #ifndef GeomTriangle_h
 #define GeomTriangle_h
 
+#include "DataTypes.h"
 #include "TopologyTriangle.h"
 
 class GeomTriangle : public TopologyTriangle

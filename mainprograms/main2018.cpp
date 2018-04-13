@@ -20,6 +20,7 @@ using std::cin;
 int main ()
 {
     VecDouble vec1;
+    
   
     return 0;
 }

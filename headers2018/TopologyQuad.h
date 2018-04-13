@@ -9,6 +9,7 @@
 #define TopologyQuad_h
 
 #include "IntRuleQuad.h"
+#include "DataTypes.h"
 
 class TopologyQuad
 {
