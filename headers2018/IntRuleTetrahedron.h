@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include "TVec.h"
 #include "TMatrix.h"
+#include "IntRule.h"
 
 class IntRuleTetrahedron : public IntRule
 {
@@ -25,6 +26,10 @@ public:
   
   virtual void SetOrder(int order);
     
+private:
+  
+    int ComputingSymmetricCubatureRule(int order);
+    void TransformBarycentricCoordInCartesianCoord(long double baryvec[],long double weightvec[]);
 };
 
 

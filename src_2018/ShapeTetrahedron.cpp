@@ -19,7 +19,13 @@
     
     /// returns the total number of shape functions
     int ShapeTetrahedron::NShapeFunctions(VecInt &orders){
+        int nsides = orders.size();
+        int val=0;
         
+        for (int iside=0; iside<nsides; iside++) {
+            val+=NShapeFunctions(iside, orders);
+        }
+        return val;
     }
     
 

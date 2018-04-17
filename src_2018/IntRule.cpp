@@ -18,7 +18,7 @@
     }
 
     IntRule::IntRule(int order){
-        
+        SetOrder(order);
     }
     
     IntRule::~IntRule(){

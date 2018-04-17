@@ -29,7 +29,6 @@ public:
     //Default Constructor of integration rule
     IntRule();
     
-    
     IntRule(int order);
     
     ~IntRule();

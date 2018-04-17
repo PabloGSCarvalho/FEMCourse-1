@@ -141,7 +141,17 @@
             fPoints(9,0)=0.14887433898163122; fWeights[9]=0.29552422471475287;
             
         }
-        
+
+        if (order>19) {
+            VecDouble x(npoints);
+            VecDouble w(npoints);
+            gauleg(-1, 1, x, w);
+            fWeights=w;
+            for (int j=0; j<x.size(); j++) {
+                fPoints(j,0)=x[j];
+            }
+        }
+     
     }
     
     void IntRule1d::SetOrder(int order){
@@ -152,13 +162,13 @@
         fOrder=order;
     }
         
-    void IntRule1d::gauleg(const double x1, const double x2, TVecNum<double> &x, TVecNum<double> &w){
+    void IntRule1d::gauleg(const double x1, const double x2, VecDouble &x, VecDouble &w){
        
         const double EPS=1.0e-14;
         int m,j,i;
         double z1,z,xm,xl,pp,p3,p2,p1;
         
-        int n=x.Size();
+        int n=x.size();
         m=(n+1)/2;
         xm=0.5*(x2+x1);
         xl=0.5*(x2-x1);

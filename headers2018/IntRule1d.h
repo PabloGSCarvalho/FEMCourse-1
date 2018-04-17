@@ -24,7 +24,7 @@ public:
     
     virtual void SetOrder(int order);
         
-    void gauleg(const double x1, const double x2, TVecNum<double> &x, TVecNum<double> &w);
+    void gauleg(const double x1, const double x2, VecDouble &x, VecDouble &w);
     
 };
 
