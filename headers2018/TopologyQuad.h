@@ -23,7 +23,7 @@ public:
     // Number of corner nodes associated with quadrilateral elements elements
     const static int nCorners = 4;
     
-protected:
+//protected:
     
     // Number of nodes associated with a side
     static int NSideNodes(int side);

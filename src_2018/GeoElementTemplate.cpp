@@ -16,9 +16,7 @@
     /// constructor
     template<class TGeom>
     GeoElementTemplate<TGeom>::GeoElementTemplate(const VecInt &nodeindices, int materialid, GeoMesh *gmesh) : GeoElement(materialid,gmesh){
-        
-        DebugStop();
-        //Não consigo inicializar o nodeindices
+        Geom.SetNodes(nodeindices);
     }
 
 
@@ -36,6 +34,8 @@
     /// return the enumerated element type
     template<class TGeom>
     ElementType GeoElementTemplate<TGeom>::Type(){
+        return TGeom::Type();
+        // Os tipos da topologia estão protegidos
     }
 
     template<class TGeom>
