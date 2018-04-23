@@ -1,5 +1,5 @@
 //
-//  IntRule.h
+//  IntRule.cpp
 //  FemSC
 //
 //  Created by Philippe Devloo on 7/30/15.
@@ -26,11 +26,16 @@
     }
     
     void IntRule::operator=(const IntRule &copy){
-        
+        fOrder = copy.fOrder;
+        fPoints = copy.fPoints;
+        fWeights = copy.fWeights;
+        return *this;
     }
     
     IntRule::IntRule(const IntRule &copy){
-        
+        fOrder = copy.fOrder;
+        fPoints = copy.fPoints;
+        fWeights = copy.fWeights;
     }
 
     int IntRule::NPoints() const{

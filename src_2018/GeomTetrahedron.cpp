@@ -1,5 +1,5 @@
 //
-//  GeomTetrahedron.h
+//  GeomTetrahedron.cpp
 //  FemSC
 //
 //  Created by Philippe Devloo on 03/04/18.
@@ -20,12 +20,21 @@
     
     /// copy constructor
     GeomTetrahedron::GeomTetrahedron(const GeomTetrahedron &copy){
+        fNodeIndices=copy.fNodeIndices;
         
+        for (int i=0; i<nSides; i++) {
+            fNeighbours[i]=copy.fNeighbours[i];
+        }
     }
     
     /// operator=
     GeomTetrahedron &GeomTetrahedron::operator=(const GeomTetrahedron &copy){
+        fNodeIndices=copy.fNodeIndices;
         
+        for (int i=0; i<nSides; i++) {
+            fNeighbours[i]=copy.fNeighbours[i];
+        }
+        return *this;
     }
     
     /// Computes the shape functions associated with the geometric map
@@ -59,7 +68,7 @@
         int space = NodeCo.Rows();
         for(int i = 0; i < space; i++) {
             x[i] = 0.0;
-            for(int j = 0; j < NNodes; j++) {
+            for(int j = 0; j < 4; j++) {
                 x[i] += phi[j]*NodeCo(i,j);
             }
         }
@@ -96,7 +105,12 @@
         }
         
     }
-    
+
+    /// return the number of nodes of the template
+    int GeomTetrahedron::NumNodes(){
+        return nCorners;
+    }
+
     /// Set the node indices of the element
     void GeomTetrahedron::SetNodes(const VecInt &nodes){
         fNodeIndices=nodes;
@@ -112,4 +126,12 @@
         return fNodeIndices[node];
     }
 
+    /// Return the neighbour along side
+    GeoElementSide GeomTetrahedron::Neighbour(int side){
+        return fNeighbours[side];
+    }
 
+    /// Initialize the neighbour data structure
+    void GeomTetrahedron::SetNeighbour(int side, GeoElementSide &neighbour){
+        fNeighbours[side]=neighbour;
+    }

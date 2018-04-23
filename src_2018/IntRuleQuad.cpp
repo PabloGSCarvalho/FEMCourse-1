@@ -1,5 +1,5 @@
 //
-//  IntRuleQuad.h
+//  IntRuleQuad.cpp
 //  FemSC
 //
 //  Created by Philippe Devloo on 7/30/15.
@@ -34,7 +34,7 @@
         for (int i=0; i<Int1Dx.NPoints(); i++) {
             
             Int1Dx.Point(i, co, weight);
-            TVecNum<double> coX(1);
+            VecDouble coX(1);
             double weightX;
             coX[0]=co[0];
             weightX=weight;
@@ -85,8 +85,8 @@
         IntRule1d IntGauss1Dx(fOrder);
         IntRule1d IntGauss1Dy(fOrder);
         double nPoints = x.size();
-        TVecNum<double> weightx(x.size()), coX(nPoints);
-        TVecNum<double> weighty(x.size()), coY(nPoints);
+        VecDouble weightx(x.size()), coX(nPoints);
+        VecDouble weighty(x.size()), coY(nPoints);
         
         IntGauss1Dx.gauleg(x1, x2, coX, weightx);
         IntGauss1Dy.gauleg(x1, x2, coY, weighty);

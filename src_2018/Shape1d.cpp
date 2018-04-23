@@ -1,5 +1,5 @@
 //
-//  Shape1d.h
+//  Shape1d.cpp
 //  FemSC
 //
 //  Created by Philippe Devloo on 03/04/18.

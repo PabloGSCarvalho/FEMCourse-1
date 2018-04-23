@@ -1,5 +1,5 @@
 //
-//  IntRuleTriangle.h
+//  IntRuleTriangle.cpp
 //  FemSC
 //
 //  Created by Philippe Devloo on 7/30/15.

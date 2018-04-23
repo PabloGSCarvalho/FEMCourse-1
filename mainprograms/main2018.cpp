@@ -12,6 +12,9 @@
 #include "TopologyQuad.h"
 #include "TopologyTetrahedron.h"
 #include "DataTypes.h"
+#include "VTKGeoMesh.h"
+#include "ReadGmsh.h"
+
 
 using std::cout;
 using std::endl;
@@ -20,6 +23,13 @@ using std::cin;
 int main ()
 {
     VecDouble vec1;
+    
+    ReadGmsh read;
+    
+    GeoMesh geomesh;
+    
+    read.Read(geomesh, "GeometryBenchSimple.msh");
+    VTKGeoMesh::PrintGMeshVTK(&geomesh, "MalhaTeste.vtk");
     
   
     return 0;

@@ -1,5 +1,5 @@
 //
-//  GeomTriangle.h
+//  GeomTriangle.cpp
 //  FemSC
 //
 //  Created by Philippe Devloo on 03/04/18.
@@ -7,7 +7,7 @@
 
 #include "GeomTriangle.h"
 
-    const int NNodes = 3;
+   // const int NNodes = 3;
     
     /// Constructor
     GeomTriangle::GeomTriangle(){
@@ -21,12 +21,22 @@
     
     /// copy constructor
     GeomTriangle::GeomTriangle(const GeomTriangle &copy){
+        fNodeIndices=copy.fNodeIndices;
         
+        for (int i=0; i<nSides; i++) {
+            fNeighbours[i]=copy.fNeighbours[i];
+        }
     }
     
     /// operator=
     GeomTriangle &GeomTriangle::operator=(const GeomTriangle &copy){
         
+        fNodeIndices=copy.fNodeIndices;
+        
+        for (int i=0; i<nSides; i++) {
+            fNeighbours[i]=copy.fNeighbours[i];
+        }
+        return *this;
     }
     
     /// Computes the shape functions associated with the geometric map
@@ -89,7 +99,12 @@
         }
         
     }
-    
+
+    /// return the number of nodes of the template
+    int GeomTriangle::NumNodes(){
+        return nCorners;
+    }
+
     /// Set the node indices of the element
     void GeomTriangle::SetNodes(const VecInt &nodes){
         fNodeIndices=nodes;
@@ -105,3 +120,15 @@
         return fNodeIndices[node];
     }
 
+    /// Return the neighbour along side
+    GeoElementSide GeomTriangle::Neighbour(int side){
+        
+        return fNeighbours[side];
+        
+    }
+
+    /// Initialize the neighbour data structure
+    void GeomTriangle::SetNeighbour(int side, GeoElementSide &neighbour){
+        
+        fNeighbours[side]=neighbour;
+    }

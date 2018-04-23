@@ -11,19 +11,23 @@
 
 #include <stdio.h>
 #include "TVec.h"
-#include "TMatrix.h"
+#include "DataTypes.h"
 #include "IntRule.h"
+
 
 class IntRuleTriangle : public IntRule
 {
   
-public:
+    public:
   
-  IntRuleTriangle();
+    // Default Constructor of integration rule for triangle elements
+    IntRuleTriangle();
   
-  IntRuleTriangle(int order);
+    // Constructor of integration rule for triangle elements
+    IntRuleTriangle(int order);
   
-  virtual void SetOrder(int order);
+    // Method to set polynomial order of the integration rule for triangle elements
+    virtual void SetOrder(int order);
   
 };
 

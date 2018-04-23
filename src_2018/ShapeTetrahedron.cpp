@@ -1,5 +1,5 @@
 //
-//  ShapeTetrahedron.h
+//  ShapeTetrahedron.cpp
 //  FemSC
 //
 //  Created by Philippe Devloo on 03/04/18.

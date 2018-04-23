@@ -1,5 +1,5 @@
 //
-//  Geom1d.h
+//  Geom1d.cpp
 //  FemSC
 //
 //  Created by Philippe Devloo on 03/04/18.
@@ -19,13 +19,20 @@
 
     /// copy constructor
     Geom1d::Geom1d(const Geom1d &copy){
-        
+        fNodeIndices=copy.fNodeIndices;
+        for (int i=0; i<nSides; i++) {
+            fNeighbours[i]=copy.fNeighbours[i];
+        }
     }
 
     /// operator=
     Geom1d &Geom1d::operator=(const Geom1d &copy){
-        //Matrix::operator=(copy);
-        fNodeIndices = copy.fNodeIndices;
+        fNodeIndices=copy.fNodeIndices;
+        
+        for (int i=0; i<nSides; i++) {
+            fNeighbours[i]=copy.fNeighbours[i];
+        }
+        return *this;
     }
 
     /// Computes the shape functions associated with the geometric map
@@ -68,6 +75,11 @@
         }
     }
 
+    /// return the number of nodes of the template
+    int Geom1d::NumNodes(){
+        return nCorners;
+    }
+
     /// Set the node indices of the element
     void Geom1d::SetNodes(const VecInt &nodes){
         fNodeIndices=nodes;
@@ -81,4 +93,14 @@
     /// Return the index of a node
     int Geom1d::NodeIndex(int node){
         return fNodeIndices[node];
+    }
+
+    /// Return the neighbour along side
+    GeoElementSide Geom1d::Neighbour(int side){
+        return fNeighbours[side];
+    }
+
+    /// Initialize the neighbour data structure
+    void Geom1d::SetNeighbour(int side, GeoElementSide &neighbour){
+        fNeighbours[side]=neighbour;
     }

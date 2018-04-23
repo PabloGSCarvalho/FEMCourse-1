@@ -1,5 +1,5 @@
 //
-//  GeomQuad.h
+//  GeomQuad.cpp
 //  FemSC
 //
 //  Created by Philippe Devloo on 03/04/18.
@@ -18,12 +18,20 @@
     
     /// copy constructor
     GeomQuad::GeomQuad(const GeomQuad &copy){
-        
+        fNodeIndices=copy.fNodeIndices;
+        for (int i=0; i<nSides; i++) {
+            fNeighbours[i]=copy.fNeighbours[i];
+        }
     }
     
     /// operator=
     GeomQuad &GeomQuad::operator=(const GeomQuad &copy){
+        fNodeIndices=copy.fNodeIndices;
         
+        for (int i=0; i<nSides; i++) {
+            fNeighbours[i]=copy.fNeighbours[i];
+        }
+        return *this;
     }
     
     /// Computes the shape functions associated with the geometric map
@@ -101,7 +109,12 @@
         
         
     }
-    
+
+    /// return the number of nodes of the template
+    int GeomQuad::NumNodes(){
+        return nCorners;
+    }
+
     /// Set the node indices of the element
     void GeomQuad::SetNodes(const VecInt &nodes){
         fNodeIndices=nodes;
@@ -117,3 +130,12 @@
         return fNodeIndices[node];
     }
 
+    /// Return the neighbour along side
+    GeoElementSide GeomQuad::Neighbour(int side){
+        return fNeighbours[side];
+    }
+
+    /// Initialize the neighbour data structure
+    void GeomQuad::SetNeighbour(int side, GeoElementSide &neighbour){
+        fNeighbours[side]=neighbour;
+    }

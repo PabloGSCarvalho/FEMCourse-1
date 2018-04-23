@@ -168,7 +168,7 @@ void TIntRule1d::Point(int p, TVec<double> &co, double &weight)
     
 }
 
-void TIntRule1d::gauleg(const double x1, const double x2, TVecNum<double> &x, TVecNum<double> &w)
+void TIntRule1d::gauleg(const double x1, const double x2, VecDouble &x, VecDouble &w)
 {
     const double EPS=1.0e-14;
     int m,j,i;

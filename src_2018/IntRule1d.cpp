@@ -1,5 +1,5 @@
 //
-//  IntRule1d.h
+//  IntRule1d.cpp
 //  FemSC
 //
 //  Created by Philippe Devloo on 7/30/15.

@@ -9,47 +9,59 @@
 #define Geom1d_h
 
 #include "Topology1d.h"
+#include "GeoElementSide.h"
 
 class Geom1d : public Topology1d
 {
 public:
     
-    const int NNodes = 2;
     
-    /// Constructor
+    // Constructor
     Geom1d();
     
-    /// destructor
+    // Destructor
     ~Geom1d();
     
-    /// copy constructor
+    // Copy constructor
     Geom1d(const Geom1d &copy);
     
-    /// operator=
+    // Operator of copy
     Geom1d &operator=(const Geom1d &copy);
     
-    /// Computes the shape functions associated with the geometric map
+    // Computes the shape functions associated with the geometric map
     static void Shape(const VecDouble &xi, VecDouble &phi, Matrix &dphi);
     
-    /// Computes the value of x for a given point in parameter space as a function of corner coordinates
+    // Computes the value of x for a given point in parameter space as a function of corner coordinates
     static void X(const VecDouble &xi, Matrix &NodeCo, VecDouble &x);
     
-    /// Computes the value of x and gradx for a given point in parameter space
+    // Computes the value of x and gradx for a given point in parameter space
     static void GradX(const VecDouble &xi, Matrix &NodeCo, VecDouble &x, Matrix &gradx);
     
-    /// Set the node indices of the element
+    // Return the number of nodes of the template
+    static int NumNodes();
+    
+    // Set the node indices of the element
     void SetNodes(const VecInt &nodes);
     
-    /// Set the node indices of the element
+    // Set the node indices of the element
     void GetNodes(VecInt &nodes);
     
-    /// Return the index of a node
+    // Return the index of a node
     int NodeIndex(int node);
+    
+    // Return the neighbour along side
+    GeoElementSide Neighbour(int side);
+    
+    // Initialize the neighbour data structure
+    void SetNeighbour(int side, GeoElementSide &neighbour);
     
 protected:
     
-    /// indexes of the nodes of the geometry
+    // Indexes of the nodes of the geometry
 	VecInt fNodeIndices;
+    
+    // Vector of neighbours
+    GeoElementSide fNeighbours[nSides];
 };
 
 #endif /* Geom1d_h */
