@@ -35,7 +35,7 @@ double InnerVec(VecDouble &S , VecDouble &T);
 int main ()
 {
 
-    //TestIntegrate();
+    TestIntegrate();
     
     VecDouble vec1;
     ReadGmsh read;
