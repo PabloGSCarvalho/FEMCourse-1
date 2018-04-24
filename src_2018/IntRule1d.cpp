@@ -32,7 +32,7 @@
             npoints=(fOrder+2)/2;
         }
         
-        fPoints.Resize(npoints,1);
+        fPoints.Resize(npoints,2);
         fWeights.resize(npoints);
         
         //Armazena valores tabelados nas variáveis globais
@@ -156,7 +156,7 @@
     
     void IntRule1d::SetOrder(int order){
         if (order<0||order>19) {
-            DebugStop();
+           // DebugStop();
         }
         
         fOrder=order;

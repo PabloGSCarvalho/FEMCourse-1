@@ -23,8 +23,6 @@ public:
     // Number of corner nodes associated with triangle elements elements
     static const int nCorners = 3;
     
-//protected:
-    
     // Number of nodes associated with a side
     static int NSideNodes(int side);
     

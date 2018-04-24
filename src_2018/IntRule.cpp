@@ -25,7 +25,7 @@
         
     }
     
-    void IntRule::operator=(const IntRule &copy){
+    IntRule &IntRule::operator=(const IntRule &copy){
         fOrder = copy.fOrder;
         fPoints = copy.fPoints;
         fWeights = copy.fWeights;
@@ -52,8 +52,8 @@
         
         co.resize(2);
         
-        co[0]=fPoints.GetVal(0, 0);
-        co[1]=fPoints.GetVal(1, 0);
+        co[0]=fPoints.GetVal(p, 0);
+        co[1]=fPoints.GetVal(p, 1);
         weight=fWeights[p];
     }
 

@@ -23,8 +23,6 @@ public:
     // Number of corner nodes associated with tetrahedron elements elements
     const static int nCorners = 4;
     
-//protected:
-    
     // Number of nodes associated with a side
     static int NSideNodes(int side);
     

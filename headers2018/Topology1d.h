@@ -24,8 +24,6 @@ public:
     // Number of corner nodes associated with 1D elements
     const static int nCorners = 2;
     
-//protected:
-    
     // Number of nodes associated with a side
     static int NSideNodes(int side);
     

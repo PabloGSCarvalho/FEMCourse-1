@@ -39,7 +39,7 @@ public:
     ~IntRule();
     
     // Operator of copy
-    virtual void operator=(const IntRule &copy);
+    virtual IntRule &operator=(const IntRule &copy);
     
     // Copy constructor of integration rule
     IntRule(const IntRule &copy);
