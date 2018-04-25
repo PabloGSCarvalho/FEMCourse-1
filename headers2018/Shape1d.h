@@ -9,8 +9,9 @@
 #define Shape1d_h
 
 #include "DataTypes.h"
+#include "Topology1d.h"
 
-class Shape1d
+class Shape1d : public Topology1d
 {
 public:
     // Computes the shape functions in function of the coordinate in parameter space and orders of the shape functions (size of orders is number of sides of the element topology)

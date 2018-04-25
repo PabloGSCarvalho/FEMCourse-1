@@ -10,6 +10,7 @@
 
 #include "MathStatement.h"
 #include "DataTypes.h"
+#include  "IntPointData.h"
 
 class Poisson : public MathStatement
 {
@@ -27,7 +28,7 @@ public:
     
     Poisson &operator=(const Poisson &copy) const;
     
-    virtual Poisson *Clone();
+    virtual Poisson *Clone() const;
 
     virtual ~Poisson();
     
@@ -49,8 +50,7 @@ public:
     
     virtual void Contribute(IntPointData &integrationpointdata, Matrix &EK, Matrix &EF) const;
     
-    virtual void PostProcess(IntPointData &integrationpointdata, const std::string &variable,
-                             VecDouble &postprocvalue) const;
+    virtual void PostProcess(IntPointData &integrationpointdata, const std::string &variable, VecDouble &postprocvalue) const;
 
 };
 #endif /* Poisson_h */

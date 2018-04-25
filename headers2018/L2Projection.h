@@ -10,6 +10,7 @@
 
 #include "MathStatement.h"
 #include "DataTypes.h"
+#include  "IntPointData.h"
 
 class L2Projection : public MathStatement
 {
@@ -26,7 +27,7 @@ public:
     
     L2Projection &operator=(const L2Projection &copy) const;
     
-    virtual L2Projection *Clone();
+    virtual L2Projection *Clone() const;
     
     virtual ~L2Projection();
     
@@ -44,13 +45,11 @@ public:
         forceFunction = f;
     }
     
-    
     virtual int NState() const;
     
     virtual void Contribute(IntPointData &integrationpointdata, Matrix &EK, Matrix &EF) const;
     
-    virtual void PostProcess(IntPointData &integrationpointdata, const std::string &variable,
-                             VecDouble &postprocvalue) const;
+    virtual void PostProcess(IntPointData &integrationpointdata, const std::string &variable, VecDouble &postprocvalue) const;
 
 };
 #endif /* L2Projection_h */

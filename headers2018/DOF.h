@@ -7,6 +7,7 @@
 
 #ifndef DOF_h
 #define DOF_h
+#include "DataTypes.h"
 
 class DOF
 {

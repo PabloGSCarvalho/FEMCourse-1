@@ -9,8 +9,9 @@
 #define ShapeTriangle_h
 
 #include "DataTypes.h"
+#include "TopologyTriangle.h"
 
-class ShapeTriangle
+class ShapeTriangle : public TopologyTriangle
 {
 public:
     // Computes the shape functions in function of the coordinate in parameter space and orders of the shape functions (size of orders is number of sides of the element topology)

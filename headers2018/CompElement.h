@@ -9,6 +9,8 @@
 #define CompElement_h
 
 #include "DataTypes.h"
+#include "IntRule.h"
+#include "IntPointData.h"
 
 class CompMesh;
 class GeoElement;
@@ -30,9 +32,9 @@ public:
     
     CompElement();
     
-    CompElement(int64_t index, GeoElement *geo)
+    CompElement(int64_t index, GeoElement *geo);
     
-    CompElement(const CompElement &);
+    CompElement(const CompElement &copy);
     
     CompElement &operator=(const CompElement &);
     

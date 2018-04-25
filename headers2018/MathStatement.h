@@ -8,6 +8,9 @@
 #ifndef MathStatement_h
 #define MathStatement_h
 
+#include "DataTypes.h"
+#include "IntPointData.h"
+
 class MathStatement
 {
     int matid = 0;

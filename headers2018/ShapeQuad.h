@@ -9,8 +9,9 @@
 #define ShapeQuad_h
 
 #include "DataTypes.h"
+#include "TopologyQuad.h"
 
-class ShapeQuad
+class ShapeQuad : public TopologyQuad
 {
 public:
     // Computes the shape functions in function of the coordinate in parameter space and orders of the shape functions (size of orders is number of sides of the element topology)

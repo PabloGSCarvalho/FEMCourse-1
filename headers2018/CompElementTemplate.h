@@ -9,6 +9,15 @@
 #define CompElementTemplate_h
 
 #include "CompElement.h"
+#include "IntRule.h"
+#include "Topology1d.h"
+#include "TopologyQuad.h"
+#include "TopologyTriangle.h"
+#include "TopologyTetrahedron.h"
+#include "Shape1d.h"
+#include "ShapeQuad.h"
+#include "ShapeTetrahedron.h"
+#include "ShapeTriangle.h"
 #include "DOF.h"
 
 template<class Shape>
@@ -17,14 +26,13 @@ class CompElementTemplate : public CompElement
 
     std::vector<int64_t> dofindexes;
     
-    Shape::LocIntRule intrule;
-    
+    typename Shape::LocIntRule intrule;
     
 public:
     
     CompElementTemplate();
     
-    CompElementTemplate(int64_t index, GeoElement *geo)
+    CompElementTemplate(int64_t index, GeoElement *geo);
     
     CompElementTemplate(const CompElementTemplate &);
     
@@ -32,7 +40,7 @@ public:
     
     virtual ~CompElementTemplate();
     
-    virtual CompElementTemplate *Clone() const;
+    virtual CompElement *Clone() const;
     
     virtual void ShapeFunctions(const VecDouble &intpoint, VecDouble &phi, Matrix &dphi);
     

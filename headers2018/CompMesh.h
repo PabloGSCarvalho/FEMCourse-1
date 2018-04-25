@@ -13,7 +13,7 @@ class CompElement;
 class MathStatement;
 
 #include "DOF.h"
-
+#include "DataTypes.h"
 
 class CompMesh
 {
@@ -33,7 +33,7 @@ public:
     
     void SetNumberElement(int64_t nelem);
     
-    void SetNumberDOF(int 64_t ndof);
+    void SetNumberDOF(int64_t ndof);
     
     void SetNumberMath(int nmath);
     

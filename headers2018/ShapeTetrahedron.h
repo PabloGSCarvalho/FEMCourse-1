@@ -9,8 +9,9 @@
 #define ShapeTetrahedron_h
 
 #include "DataTypes.h"
+#include "TopologyTetrahedron.h"
 
-class ShapeTetrahedron
+class ShapeTetrahedron : public TopologyTetrahedron
 {
 public:
     // Computes the shape functions in function of the coordinate in parameter space and orders of the shape functions (size of orders is number of sides of the element topology)
