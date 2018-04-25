@@ -14,42 +14,57 @@
 
 class Poisson : public MathStatement
 {
+    // Permeability matrix
     Matrix permeability;
     
+    // Force funtion related to Poisson math statement
     std::function<void(const VecDouble &co, VecDouble &result)> forceFunction;
     
 public:
     
+    // Default constructor of Poisson
     Poisson();
     
+    // Constructor of Poisson
     Poisson(Matrix &perm);
     
+    // Copy constructor of Poisson
     Poisson(const Poisson &copy);
     
+    // Operator of copy
     Poisson &operator=(const Poisson &copy) const;
     
+    // Method for creating a copy of the element
     virtual Poisson *Clone() const;
 
+    // Destructor of Poisson
     virtual ~Poisson();
     
+    // Return the permeability matrix
     Matrix GetPermeability() const;
-    
+
+    // Set the permeability matrix
     void SetPermeability(const Matrix &perm);
     
+    // Return the force function related to Poisson math statement
     std::function<void(const VecDouble &co, VecDouble &result)> GetForceFunction() const
     {
         return forceFunction;
     }
     
+    // Set the force function related to Poisson math statement
     void SetForceFunction(const std::function<void(const VecDouble &co, VecDouble &result)> &f)
     {
         forceFunction = f;
     }
     
+    // Return the number of state variables
     virtual int NState() const;
     
+    // Method to implement integral over element's volume
     virtual void Contribute(IntPointData &integrationpointdata, Matrix &EK, Matrix &EF) const;
     
+    // Prepare and print post processing data
     virtual void PostProcess(IntPointData &integrationpointdata, const std::string &variable, VecDouble &postprocvalue) const;
 
 };

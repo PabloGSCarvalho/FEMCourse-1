@@ -11,30 +11,42 @@
 
 class DOF
 {
+    // First associated equation
     int64_t firstequation = -1;
     
+    // Number of shape functions associated with the DOF
     int nshape = 0;
     
+    // Number of state variables associated with each shape function
     int nstate = 0;
     
 public:
     
+    // Default constructor of DOF
     DOF();
     
+    // Copy constructor of DOF
     DOF(const DOF &copy);
     
+    // Operator of copy
     DOF &operator=(const DOF &copy);
     
+    // Destructor of DOF
     ~DOF();
     
+    // Return the first associated equation
     int64_t GetFirstEquation();
     
+    // Set the first associated equation
     void SetFirstEquation(int64_t first);
     
+    // Set the number of shape functions associated with the DOF and state variables associated with each shape function
     void SetNShapeState(int NShape, int NState);
     
+    // Return the number of shape functions associated with the DOF
     int GetNShape() const;
     
+    // Return the number of state variables associated with each shape function
     int GetNState() const;
     
     

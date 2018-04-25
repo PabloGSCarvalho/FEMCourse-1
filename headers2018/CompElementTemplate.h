@@ -24,34 +24,45 @@ template<class Shape>
 class CompElementTemplate : public CompElement
 {
 
+    // Vector with degrees of freedom indices
     std::vector<int64_t> dofindexes;
     
+    // Integration rule object
     typename Shape::LocIntRule intrule;
     
 public:
     
+    // Default constructor of CompElementTemplate
     CompElementTemplate();
     
+    // Constructor of CompElementTemplate
     CompElementTemplate(int64_t index, GeoElement *geo);
     
+    // Copy constructor of CompElementTemplate
     CompElementTemplate(const CompElementTemplate &);
     
+    // Operator of copy
     CompElementTemplate &operator=(const CompElementTemplate &);
     
+    // Destructor of CompElementTemplate
     virtual ~CompElementTemplate();
     
+    // Method for creating a copy of the element
     virtual CompElement *Clone() const;
     
+    // Compute shape functions set at point x
     virtual void ShapeFunctions(const VecDouble &intpoint, VecDouble &phi, Matrix &dphi);
     
+    // Return the number of shape functions
     virtual int NShapeFunctions();
 
+    // Return the number of degree of freedom
     virtual int NDOF();
     
-    /// returns the number of shape functions stored in the DOF data structure
+    // Return the number of shape functions stored in the DOF data structure
     virtual int NShapeFunctions(int doflocindex);
     
-    /// uses the Shape template class to compute the number of shape functions
+    // Use the Shape template class to compute the number of shape functions
     virtual int ComputeNShapeFunctions(int doflocindex);
     
 };
