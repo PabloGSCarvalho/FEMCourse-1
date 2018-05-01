@@ -125,12 +125,12 @@
     }
     
     /// returns the number of shape functions associated with a side
-    int ShapeTriangle::NShapeFunctions(int side, VecInt &orders){
+    int ShapeTriangle::NShapeFunctions(int side, int order){
         
         if (side<3) {
             return 1;
         }else{
-            return orders[side]-1;
+            return order-1;
         }
         
         
@@ -143,7 +143,7 @@
         int val=0;
         
         for (int iside=0; iside<nsides; iside++) {
-            val+=NShapeFunctions(iside, orders);
+            val+=NShapeFunctions(iside, orders[iside]);
         }
         return val;
         

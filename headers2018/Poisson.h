@@ -32,7 +32,7 @@ public:
     Poisson(const Poisson &copy);
     
     // Operator of copy
-    Poisson &operator=(const Poisson &copy) const;
+    Poisson &operator=(const Poisson &copy);
     
     // Method for creating a copy of the element
     virtual Poisson *Clone() const;
@@ -62,7 +62,7 @@ public:
     virtual int NState() const;
     
     // Method to implement integral over element's volume
-    virtual void Contribute(IntPointData &integrationpointdata, Matrix &EK, Matrix &EF) const;
+    virtual void Contribute(IntPointData &integrationpointdata, double weight , Matrix &EK, Matrix &EF) const;
     
     // Prepare and print post processing data
     virtual void PostProcess(IntPointData &integrationpointdata, const std::string &variable, VecDouble &postprocvalue) const;

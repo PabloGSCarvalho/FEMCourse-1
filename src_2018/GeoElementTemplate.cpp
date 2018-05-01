@@ -21,7 +21,7 @@
 
 
     template<class TGeom>
-    GeoElementTemplate<TGeom>::GeoElementTemplate(const GeoElementTemplate &copy){
+    GeoElementTemplate<TGeom>::GeoElementTemplate(const GeoElementTemplate &copy) : GeoElement(copy){
         Geom = copy.Geom;
     }
 

@@ -51,7 +51,7 @@ public:
     virtual CompElement *Clone() const;
     
     // Compute shape functions set at point x
-    virtual void ShapeFunctions(const VecDouble &intpoint, VecDouble &phi, Matrix &dphi);
+    virtual void ShapeFunctions(VecDouble &intpoint, VecDouble &phi, Matrix &dphi);
     
     // Return the number of shape functions
     virtual int NShapeFunctions();
@@ -63,7 +63,7 @@ public:
     virtual int NShapeFunctions(int doflocindex);
     
     // Use the Shape template class to compute the number of shape functions
-    virtual int ComputeNShapeFunctions(int doflocindex);
+    virtual int ComputeNShapeFunctions(int doflocindex, int order);
     
 };
 #endif /* CompElementTemplate_h */

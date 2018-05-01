@@ -28,7 +28,7 @@ public:
     MathStatement(const MathStatement &copy);
     
     // Operator of copy
-    MathStatement &operator=(const MathStatement &copy) const;
+    MathStatement &operator=(const MathStatement &copy);
     
     // Destructor of MathStatement
     virtual ~MathStatement();
@@ -40,7 +40,7 @@ public:
     virtual int NState() const = 0;
     
     // Method to implement integral over element's volume
-    virtual void Contribute(IntPointData &integrationpointdata, Matrix &EK, Matrix &EF) const = 0;
+    virtual void Contribute(IntPointData &integrationpointdata, double weight, Matrix &EK, Matrix &EF) const = 0;
     
     // Prepare and print post processing data
     virtual void PostProcess(IntPointData &integrationpointdata, const std::string &variable,

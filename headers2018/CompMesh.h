@@ -56,7 +56,7 @@ public:
     void SetMathStatement(int index, MathStatement *math);
     
     // Return the degree of freedom index
-    DOF &GetDOF(int64_t dofindex) const;
+    DOF &GetDOF(int64_t dofindex);
     
     // Return the computational element associated to an index
     CompElement *GetElement(int64_t elindex) const;

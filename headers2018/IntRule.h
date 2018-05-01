@@ -50,6 +50,12 @@ public:
         fOrder=order;
     }
     
+    // Method to get polynomial order of the integration rule
+    virtual int GetOrder()
+    {
+        return fOrder;
+    }
+    
     // Method to return the number of integration points
     virtual int NPoints() const;
     

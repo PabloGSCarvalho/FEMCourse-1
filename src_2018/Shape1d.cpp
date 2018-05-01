@@ -53,11 +53,11 @@
     }
     
     /// returns the number of shape functions associated with a side
-    int Shape1d::NShapeFunctions(int side, VecInt &orders){
+    int Shape1d::NShapeFunctions(int side, int order){
         if (side<2) {
             return 1;
         }else{
-            return orders[side]-1;
+            return order-1;
         }
     }
     
@@ -68,7 +68,7 @@
         int val=0;
         
         for (int iside=0; iside<nsides; iside++) {
-            val+=NShapeFunctions(iside, orders);
+            val+=NShapeFunctions(iside, orders[iside]);
         }
         return val;
     }

@@ -11,25 +11,28 @@
 #include "ShapeQuad.h"
 #include "ShapeTetrahedron.h"
 #include "ShapeTriangle.h"
+#include "CompMesh.h"
 
     template<class Shape>
-    CompElementTemplate<Shape>::CompElementTemplate(){
+    CompElementTemplate<Shape>::CompElementTemplate() : CompElement(){
         
     }
 
     template<class Shape>
-    CompElementTemplate<Shape>::CompElementTemplate(int64_t index, GeoElement *geo){
-        
+    CompElementTemplate<Shape>::CompElementTemplate(int64_t ind, GeoElement *geo) : CompElement(ind,geo){
     }
 
     template<class Shape>
-    CompElementTemplate<Shape>::CompElementTemplate(const CompElementTemplate &){
-        
+    CompElementTemplate<Shape>::CompElementTemplate(const CompElementTemplate &copy) : CompElement(copy){
+        dofindexes=copy.dofindexes;
+        intrule=copy.intrule;
     }
 
     template<class Shape>
-    CompElementTemplate<Shape> &CompElementTemplate<Shape>::operator=(const CompElementTemplate &){
-        
+    CompElementTemplate<Shape> &CompElementTemplate<Shape>::operator=(const CompElementTemplate &copy){
+        dofindexes=copy.dofindexes;
+        intrule=copy.intrule;
+        return *this;
     }
 
     template<class Shape>
@@ -38,35 +41,49 @@
     }
 
     template<class Shape>
-    CompElement *CompElementTemplate<Shape>::Clone() const{
-        
+    CompElement * CompElementTemplate<Shape>::Clone() const{
+        //CompElementTemplate<Shape>* result = new CompElementTemplate<Shape>(*this);
+        //return result;
     }
 
     template<class Shape>
-    void  CompElementTemplate<Shape>::ShapeFunctions(const VecDouble &intpoint, VecDouble &phi, Matrix &dphi){
-        
+    void  CompElementTemplate<Shape>::ShapeFunctions(VecDouble &intpoint, VecDouble &phi, Matrix &dphi){
+        VecInt orders(NDOF());
+        //Verificar isso aqui oioioioioi
+        for (int ic=0; ic<NDOF(); ic++) {
+            orders[ic]= intrule.GetOrder();
+        }
+        Shape::Shape(intpoint, orders, phi, dphi);
+
     }
 
     template<class Shape>
     int CompElementTemplate<Shape>::NShapeFunctions(){
-        
+        CompMesh cmesh = *this->GetCompMesh();
+        int ndof = NDOF();
+        int nshape = 0;
+        for (int ic=0; ic<ndof; ic++) {
+            nshape +=NShapeFunctions(ic);
+        }
+        return nshape;
     }
 
     template<class Shape>
     int CompElementTemplate<Shape>::NDOF(){
-        
+        return dofindexes.size();
     }
     
     /// returns the number of shape functions stored in the DOF data structure
     template<class Shape>
     int CompElementTemplate<Shape>::NShapeFunctions(int doflocindex){
-        
+        CompMesh cmesh = *this->GetCompMesh();
+        return cmesh.GetDOF(doflocindex).GetNShape();
     }
     
     /// uses the Shape template class to compute the number of shape functions
     template<class Shape>
-    int CompElementTemplate<Shape>::ComputeNShapeFunctions(int doflocindex){
-        
+    int CompElementTemplate<Shape>::ComputeNShapeFunctions(int doflocindex, int order){
+        return Shape::NShapeFunctions(doflocindex,order);
     }
 
 template class CompElementTemplate<Shape1d>;

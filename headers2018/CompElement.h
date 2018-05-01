@@ -40,7 +40,7 @@ public:
     CompElement();
     
     // Constructor of CompElement
-    CompElement(int64_t index, GeoElement *geo);
+    CompElement(int64_t ind, GeoElement *geo);
     
     // Copy constructor of CompElement
     CompElement(const CompElement &copy);
@@ -85,31 +85,31 @@ public:
     CompMesh *GetCompMesh() const;
     
     // Set a pointer to the element computational mesh
-    void SetCompMesh(CompMesh *mesh) const;
+    void SetCompMesh(CompMesh *mesh);
     
     // Initialize integration points data object
     void InitializeIntPointData(IntPointData &data) const;
     
     // Compute and fill integration points data object
-    void ComputeRequiredData(IntPointData &data) const;
+    void ComputeRequiredData(IntPointData &data, VecDouble &intpoint) const;
     
     // Compute the element stifness matrix and force vector
     virtual void CalcStiff(Matrix &ek, Matrix &ef) const;
     
     // Compute shape functions set at point x
-    virtual void ShapeFunctions(const VecDouble &intpoint, VecDouble &phi, Matrix &dphi) = 0;
+    virtual void ShapeFunctions(const VecDouble &intpoint, VecDouble &phi, Matrix &dphi) const = 0;
     
     // Return the number of shape functions
-    virtual int NShapeFunctions() = 0;
+    virtual int NShapeFunctions() const = 0;
     
     // Return the number of degree of freedom
-    virtual int NDOF() = 0;
+    virtual int NDOF() const = 0;
     
     // Return the number of shape functions stored in the DOF data structure
     virtual int NShapeFunctions(int doflocindex) = 0;
     
     // Use the Shape template class to compute the number of shape functions
-    virtual int ComputeNShapeFunctions(int doflocindex) = 0;
+    virtual int ComputeNShapeFunctions(int doflocindex, int order) = 0;
     
 };
 #endif /* CompElement_h */

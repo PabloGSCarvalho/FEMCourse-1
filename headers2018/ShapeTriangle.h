@@ -18,7 +18,7 @@ public:
     static void Shape(VecDouble &xi, VecInt &orders, VecDouble &phi, Matrix &dphi);
     
     // Returns the number of shape functions associated with a side
-    static int NShapeFunctions(int side, VecInt &orders);
+    static int NShapeFunctions(int side, int order);
     
     // Returns the total number of shape functions
     static int NShapeFunctions(VecInt &orders);
