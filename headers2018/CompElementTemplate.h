@@ -51,7 +51,7 @@ public:
     virtual CompElement *Clone() const;
     
     // Compute shape functions set at point x
-    virtual void ShapeFunctions(VecDouble &intpoint, VecDouble &phi, Matrix &dphi);
+    virtual void ShapeFunctions(const VecDouble &intpoint, VecDouble &phi, Matrix &dphi);
     
     // Return the number of shape functions
     virtual int NShapeFunctions();

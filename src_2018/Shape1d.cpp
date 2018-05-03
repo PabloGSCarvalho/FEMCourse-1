@@ -8,7 +8,7 @@
 #include "Shape1d.h"
 
     /// computes the shape functions in function of the coordinate in parameter space and orders of the shape functions (size of orders is number of sides of the element topology)
-    void Shape1d::Shape(VecDouble &xi, VecInt &orders, VecDouble &phi, Matrix &dphi){
+    void Shape1d::Shape(const VecDouble &xi, VecInt &orders, VecDouble &phi, Matrix &dphi){
         
         int nshape = NShapeFunctions(orders);
         int order = nshape - 1;

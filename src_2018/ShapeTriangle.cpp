@@ -8,7 +8,7 @@
 #include "ShapeTriangle.h"
 
     /// computes the shape functions in function of the coordinate in parameter space and orders of the shape functions (size of orders is number of sides of the element topology)
-    void ShapeTriangle::Shape(VecDouble &xi, VecInt &orders, VecDouble &phi, Matrix &dphi){
+    void ShapeTriangle::Shape(const VecDouble &xi, VecInt &orders, VecDouble &phi, Matrix &dphi){
         
         int nshape = NShapeFunctions(orders);
         //int nsides = orders.size();

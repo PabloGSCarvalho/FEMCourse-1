@@ -47,7 +47,7 @@
     }
 
     template<class Shape>
-    void  CompElementTemplate<Shape>::ShapeFunctions(VecDouble &intpoint, VecDouble &phi, Matrix &dphi){
+    void  CompElementTemplate<Shape>::ShapeFunctions(const VecDouble &intpoint, VecDouble &phi, Matrix &dphi){
         VecInt orders(NDOF());
         //Verificar isso aqui oioioioioi
         for (int ic=0; ic<NDOF(); ic++) {
