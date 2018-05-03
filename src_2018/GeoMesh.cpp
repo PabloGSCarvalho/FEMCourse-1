@@ -118,8 +118,16 @@
                     gel->Neighbour(is)=GeoElementSide(gel,is);
                     GeoElementSide gelside(gel,is);
                     std::vector<GeoElementSide> neighbours;
-                    
-                  //  gelside.ComputeNeighbours(neighbours);
+
+
+                    //Compute Neighbours >> É preciso verificar aqui!
+                    GeoElementSide neigh = gelside.Neighbour();
+                    if (gelside.Side()<ncor) {
+                        neighbours.push_back(neigh);
+                        neigh = neigh.Neighbour();
+                        return;
+                    }
+
                     int nneigh = neighbours.size();
                     
                     for(int in=0; in<nneigh; in++) {
