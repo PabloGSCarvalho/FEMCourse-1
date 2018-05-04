@@ -20,8 +20,11 @@ public:
     // Number of sides associated with tetrahedron elements elements
     const static int nSides = 15;
     
-    // Number of corner nodes associated with tetrahedron elements elements
+    // Number of corner nodes associated with tetrahedron elements
     const static int nCorners = 4;
+    
+    // Dimension of tetrahedron elements
+    const static int Dimension = 3;
     
     // Number of nodes associated with a side
     static int NSideNodes(int side);

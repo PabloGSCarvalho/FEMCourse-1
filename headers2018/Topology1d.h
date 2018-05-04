@@ -24,6 +24,9 @@ public:
     // Number of corner nodes associated with 1D elements
     const static int nCorners = 2;
     
+    // Dimension of 1D elements
+    const static int Dimension = 1;
+    
     // Number of nodes associated with a side
     static int NSideNodes(int side);
     

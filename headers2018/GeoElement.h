@@ -10,6 +10,7 @@
 
 #include "DataTypes.h"
 #include "GeoElementSide.h"
+#include "CompElement.h"
 class GeoMesh;
 
 class GeoElement
@@ -21,6 +22,9 @@ protected:
     
     // Material ID associated with the element
     int MaterialId;
+    
+    // Pointer to computational element
+    CompElement *Reference;
     
 public:
 
@@ -60,10 +64,25 @@ public:
     // Return the enumerated element type
     virtual ElementType Type() = 0;
 
+    //Set reference
+    virtual void SetReference(CompElement * elp){
+        Reference = elp;
+    }
+    
+    //Get reference
+    virtual CompElement *GetReference() const{
+        return Reference;
+    }
+    
     // Set geometric mesh
     void SetMesh(GeoMesh *gmesh)
     {
         GMesh = gmesh;
+    }
+    
+    // Get geometric mesh
+    GeoMesh* GetMesh(){
+        return GMesh;
     }
     
     // Return material ID
@@ -73,10 +92,10 @@ public:
     }
     
     // Compute x mapping from local parametric coordinates
-    virtual void X(const VecDouble &xi, VecDouble &x) = 0;
+    virtual void X(const VecDouble &xi,  VecDouble &x) = 0;
     
     // Compute gradient of x mapping from local parametric coordinates
-    virtual void GradX(const VecDouble &xi, Matrix &gradx) = 0;
+    virtual void GradX(const VecDouble &xi, VecDouble &x, Matrix &gradx) = 0;
     
     // Function to print results
     virtual void Print(std::ostream &out);

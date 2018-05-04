@@ -5,6 +5,7 @@
 //  Created by Philippe Devloo on 16/04/18.
 //
 
+#include "GeoMesh.h"
 #include "GeoElement.h"
 #include "GeoElementTemplate.h"
 #include "GeomTriangle.h"
@@ -35,17 +36,29 @@
     template<class TGeom>
     ElementType GeoElementTemplate<TGeom>::Type(){
         return TGeom::Type();
-        // Os tipos da topologia estão protegidos
     }
 
     template<class TGeom>
     void GeoElementTemplate<TGeom>::X(const VecDouble &xi, VecDouble &x){
         
+        Matrix NodeCo(GMesh->NumNodes(),3,0.);
+        for (int in=0; in<GMesh->NumNodes(); in++) {
+            NodeCo(in,0)=GMesh->Node(in).Co()[0];
+            NodeCo(in,1)=GMesh->Node(in).Co()[1];
+            NodeCo(in,2)=GMesh->Node(in).Co()[2];
+        }
+        Geom.X(xi,NodeCo,x);
     }
 
     template<class TGeom>
-    void GeoElementTemplate<TGeom>::GradX(const VecDouble &xi, Matrix &gradx){
-        
+    void GeoElementTemplate<TGeom>::GradX(const VecDouble &xi, VecDouble &x, Matrix &gradx){
+        Matrix NodeCo(GMesh->NumNodes(),3,0.);
+        for (int in=0; in<GMesh->NumNodes(); in++) {
+            NodeCo(in,0)=GMesh->Node(in).Co()[0];
+            NodeCo(in,1)=GMesh->Node(in).Co()[1];
+            NodeCo(in,2)=GMesh->Node(in).Co()[2];
+        }
+        Geom.GradX(xi, NodeCo, x, gradx);
     }
 
     template<class TGeom>

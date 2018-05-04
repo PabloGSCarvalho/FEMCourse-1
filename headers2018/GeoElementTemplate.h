@@ -82,7 +82,7 @@ public:
     virtual void X(const VecDouble &xi, VecDouble &x);
     
     // Compute gradient of x mapping from local parametric coordinates
-    virtual void GradX(const VecDouble &xi, Matrix &gradx);
+    virtual void GradX(const VecDouble &xi, VecDouble &x, Matrix &gradx);
     
     // Function to print results
     virtual void Print(std::ostream &out);

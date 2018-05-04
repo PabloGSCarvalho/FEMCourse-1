@@ -22,6 +22,12 @@ class GeoMesh
     // Vector of element pointers
     std::vector<GeoElement *> Elements;
     
+    // Computational mesh associated
+    CompMesh *Reference;
+    
+    // Dimension of the geometric domain
+    int fDim;
+    
 public:
     
     // Default Constructor of GeoMesh
@@ -54,11 +60,26 @@ public:
     // Set computational element pointer
     void SetElement(int elindex, GeoElement *gel);
     
+    // Set Dimension
+    void SetDimension(int dim){fDim = dim;}
+    
+    // Get Dimension.
+    int Dimension(){return fDim;}
+
     // Return the elements associated with a index
     GeoElement *Element(int elindex);
     
     // Build the connectivity of the grid
     void BuildConnectivity();
+    
+    // Sets the reference of the geometric grid to ref
+    void SetReference(CompMesh *ref)
+    {
+        Reference = ref;
+    }
+    
+    // Returns the currently loaded computational grid
+    CompMesh *GetReference() const {return Reference;}
     
     // Function to print results
     void Print(std::ostream &out);

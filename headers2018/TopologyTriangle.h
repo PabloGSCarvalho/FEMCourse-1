@@ -20,8 +20,11 @@ public:
     // Number of sides associated with triangle elements elements
     static const int nSides = 7;
     
-    // Number of corner nodes associated with triangle elements elements
+    // Number of corner nodes associated with triangle elements
     static const int nCorners = 3;
+    
+    // Dimension of triangle elements
+    const static int Dimension = 2;
     
     // Number of nodes associated with a side
     static int NSideNodes(int side);

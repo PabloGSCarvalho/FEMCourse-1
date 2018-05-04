@@ -18,7 +18,6 @@
     CompElement::CompElement(int64_t ind, GeoElement *geo){
         index = ind;
         geoel = geo;
-        
     }
 
     CompElement::CompElement(const CompElement &copy){
@@ -84,7 +83,7 @@
     
     void CompElement::InitializeIntPointData(IntPointData &data) const{
         //MathStatement *material = GetStatement();
-        const int dim = 2.; //Dimension=2 oioioioi
+        int dim = this->Dimension();
         int nshape = this->NShapeFunctions();
         const int nstate = this->GetStatement()->NState();
         data.phi.resize(nshape,1);
@@ -118,7 +117,8 @@
         this->InitializeIntPointData(data);
         double weight =0.;
         int intrulepoints = intrule->NPoints();
-        VecDouble intpoint(2,0.); //Dimension = 2 oioioioi
+        int dim = Dimension();
+        VecDouble intpoint(dim,0.); //Dimension = 2 oioioioi
         for (int intd_id = 0; intd_id < intrulepoints; intd_id++) {
             intrule->Point(intd_id, intpoint, weight);
             this->ComputeRequiredData(data, intpoint);

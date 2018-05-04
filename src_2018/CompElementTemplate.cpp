@@ -7,11 +7,14 @@
 
 #include "CompElementTemplate.h"
 #include "CompElement.h"
+#include "GeoElementTemplate.h"
+#include "GeoElement.h"
 #include "Shape1d.h"
 #include "ShapeQuad.h"
 #include "ShapeTetrahedron.h"
 #include "ShapeTriangle.h"
 #include "CompMesh.h"
+#include "tpanic.h"
 
     template<class Shape>
     CompElementTemplate<Shape>::CompElementTemplate() : CompElement(){
@@ -20,6 +23,13 @@
 
     template<class Shape>
     CompElementTemplate<Shape>::CompElementTemplate(int64_t ind, GeoElement *geo) : CompElement(ind,geo){
+        CompMesh *cmesh = this->GetCompMesh();
+        int Nelem = cmesh->GetElementVec().size();
+        cmesh->GetElementVec().resize(Nelem+1);
+        Nelem+=1;
+        ind = Nelem-1;
+        cmesh->GetElementVec()[ind] = this;
+        this->SetIndex(ind);
     }
 
     template<class Shape>
@@ -51,7 +61,9 @@
         VecInt orders(NDOF());
         //Verificar isso aqui oioioioioi
         for (int ic=0; ic<NDOF(); ic++) {
-            orders[ic]= intrule.GetOrder();
+            //Ver aqui oioioioi
+            DebugStop();
+//            orders[ic]= Shape::NShapeFunctions(ic, order);
         }
         Shape::Shape(intpoint, orders, phi, dphi);
 

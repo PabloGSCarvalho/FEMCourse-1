@@ -65,5 +65,9 @@ public:
     // Use the Shape template class to compute the number of shape functions
     virtual int ComputeNShapeFunctions(int doflocindex, int order);
     
+    // Return space dimension
+    virtual int Dimension() const {
+        return Shape::Dimension;
+    }
 };
 #endif /* CompElementTemplate_h */
