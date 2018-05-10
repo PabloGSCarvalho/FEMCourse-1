@@ -15,7 +15,6 @@ class Geom1d : public Topology1d
 {
 public:
     
-    
     // Constructor
     Geom1d();
     

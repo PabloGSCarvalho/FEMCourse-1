@@ -26,13 +26,16 @@ protected:
     // Pointer to computational element
     CompElement *Reference;
     
+    // Index of the element in the element vector
+    int Index;
+    
 public:
 
     // Default Constructor of GeoElement
     GeoElement();
     
     // Constructor of GeoElement
-    GeoElement(int materialid, GeoMesh *mesh) : GMesh(mesh), MaterialId(materialid)
+    GeoElement(int materialid, GeoMesh *mesh, int index) : GMesh(mesh), MaterialId(materialid), Index(index)
     {
         
     }
@@ -89,6 +92,18 @@ public:
     int Material()
     {
         return MaterialId;
+    }
+    
+    // Set the element index
+    void SetIndex(int index)
+    {
+        Index = index;
+    }
+    
+    // Return the element index
+    int GetIndex()
+    {
+        return Index;
     }
     
     // Compute x mapping from local parametric coordinates

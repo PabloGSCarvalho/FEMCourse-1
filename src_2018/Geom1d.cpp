@@ -9,7 +9,9 @@
 
  /// Constructor
     Geom1d::Geom1d(){
-        
+        for (int i=0; i<nSides; i++) {
+            fNeighbours[i] = GeoElementSide();
+        }
 	}
 
     /// destructor

@@ -37,6 +37,13 @@ public:
     // Operator of copy 
     GeoElementSide &operator=(const GeoElementSide &copy);
     
+    int operator==(const GeoElementSide &other) const {
+        return fElement == other.fElement && fSide == other.fSide;
+    }
+    int operator!=(const GeoElementSide &other) const {
+        return fElement != other.fElement || fSide != other.fSide;
+    }
+    
     // Return the associated element
     GeoElement *Element() const
     {
@@ -50,7 +57,13 @@ public:
     }
 
     // Return neighbour element of a given side
-    GeoElementSide Neighbour();
+    GeoElementSide Neighbour() const;
+    
+    // Verifiy if an element is a neighbour
+    bool IsNeighbour(GeoElementSide *candidate);
+    
+    // Define elements neighbourhood
+    void IsertConnectivity(GeoElementSide &connectivity);
     
 };
 #endif /* GeoElementSide_h */

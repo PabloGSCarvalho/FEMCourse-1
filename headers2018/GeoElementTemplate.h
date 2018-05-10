@@ -9,6 +9,7 @@
 #define GeoElementTemplate_h
 
 #include "GeoElement.h"
+#include "GeoElementSide.h"
 
 template<class TGeom>
 class GeoElementTemplate : public GeoElement
@@ -22,7 +23,7 @@ protected:
 public:
     
     // Constructor of GeoElementTemplate
-    GeoElementTemplate(const VecInt &nodeindices, int materialid, GeoMesh *gmesh);
+    GeoElementTemplate(const VecInt &nodeindices, int materialid, GeoMesh *gmesh, int index);
     
     // Copy constructor of GeoElementTemplate
     GeoElementTemplate(const GeoElementTemplate &copy);
@@ -66,6 +67,7 @@ public:
     // Return the neighbour along side
     virtual GeoElementSide Neighbour(int side)
     {
+        //return GeoElementSide(Geom.Neighbour(side),this->GetMesh());
         return Geom.Neighbour(side);
     }
     

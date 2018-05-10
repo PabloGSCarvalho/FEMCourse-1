@@ -35,14 +35,18 @@ double InnerVec(VecDouble &S , VecDouble &T);
 int main ()
 {
 
-    TestIntegrate();
+    //TestIntegrate();
     
     VecDouble vec1;
     ReadGmsh read;
     GeoMesh geomesh;
 
     read.Read(geomesh, "GeometryBenchSimple.msh");
+    
     VTKGeoMesh::PrintGMeshVTK(&geomesh, "MalhaTeste.vtk");
+    geomesh.Print(std::cout);
+    
+
     
   
     return 0;
