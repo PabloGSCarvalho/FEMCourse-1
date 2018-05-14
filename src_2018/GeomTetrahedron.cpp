@@ -10,7 +10,8 @@
 
     /// Constructor
     GeomTetrahedron::GeomTetrahedron(){
-        
+        fNodeIndices.resize(nCorners);
+        for(int i=0; i<nCorners; i++) fNodeIndices[i]=-1;
     }
     
     /// destructor
@@ -132,6 +133,6 @@
     }
 
     /// Initialize the neighbour data structure
-    void GeomTetrahedron::SetNeighbour(int side, GeoElementSide &neighbour){
+    void GeomTetrahedron::SetNeighbour(int side, const GeoElementSide &neighbour){
         fNeighbours[side]=neighbour;
     }

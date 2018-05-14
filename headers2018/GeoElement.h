@@ -11,6 +11,8 @@
 #include "DataTypes.h"
 #include "GeoElementSide.h"
 #include "CompElement.h"
+#include "GeoMesh.h"
+
 class GeoMesh;
 
 class GeoElement
@@ -35,16 +37,15 @@ public:
     GeoElement();
     
     // Constructor of GeoElement
-    GeoElement(int materialid, GeoMesh *mesh, int index) : GMesh(mesh), MaterialId(materialid), Index(index)
-    {
-        
-    }
+    GeoElement(int materialid, GeoMesh *mesh, int index);
 
     // Copy constructor of GeoElement
     GeoElement(const GeoElement &copy);
 
     // Destructor of GeoElement
     virtual ~GeoElement();
+    
+    virtual GeoElement *Clone(GeoMesh *gmesh) const =0;
     
     // Return number of corner nodes
     virtual int NCornerNodes() = 0;
@@ -62,7 +63,7 @@ public:
     virtual GeoElementSide Neighbour(int side) = 0;
     
     // Set neighbour element of a given side
-    virtual void SetNeighbour(int side, GeoElementSide &neigh) = 0;
+    virtual void SetNeighbour(int side, const GeoElementSide &neigh) = 0;
     
     // Return the enumerated element type
     virtual ElementType Type() = 0;

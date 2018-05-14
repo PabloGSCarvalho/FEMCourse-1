@@ -18,6 +18,9 @@
     template<class TGeom>
     GeoElementTemplate<TGeom>::GeoElementTemplate(const VecInt &nodeindices, int materialid, GeoMesh *gmesh, int index) : GeoElement(materialid,gmesh,index){
         Geom.SetNodes(nodeindices);
+        for(int iside=0;iside<Geom.nSides;iside++){
+            Geom.SetNeighbour(iside,GeoElementSide(this,iside));
+        }
     }
 
 
@@ -64,7 +67,7 @@
     template<class TGeom>
     void GeoElementTemplate<TGeom>::Print(std::ostream &out){
         
-        out << "ElType " << Type() << " matid " << MaterialId << " nodes ";
+        out << "ElType " << Type() << " matid " << MaterialId << " index " << GetIndex() << " nodes ";
         int i;
         for(i=0; i<NNodes(); i++) out << NodeIndex(i) << ' ';
         out << std::endl;
@@ -73,17 +76,17 @@
             out << "Neighbours for side   " << i << " : ";
             GeoElementSide neighbour = Neighbour(i);
             GeoElementSide thisside(this,i);
-//            if(!(neighbour.Element()!=0&&neighbour.Side()>-1))
-//            {
-//                out << "No neighbour\n";
-//            }
-//            else {
-                while (neighbour != thisside ){
-                    out << thisside.Element()->GetIndex() << "/" << neighbour.Side() << ' ';
+            if(!(neighbour.Element()!=0&&neighbour.Side()>-1))
+            {
+                out << "No neighbour\n";
+            }
+            else {
+                while ((neighbour == thisside)==false ){
+                    out << neighbour.Element()->GetIndex() << "/" << neighbour.Side() << ' ';
                     neighbour = neighbour.Neighbour();
                 }
                 out << std::endl;
-           // }
+            }
             
         }
         

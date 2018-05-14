@@ -13,6 +13,12 @@
     GeoElement::GeoElement(){
         MaterialId=0;
         Index=0;
+        GMesh=0;
+    }
+
+    GeoElement::GeoElement(int materialid, GeoMesh *mesh, int index) : GMesh(mesh), MaterialId(materialid), Index(index)
+    {
+        
     }
 
     GeoElement::GeoElement(const GeoElement &copy){
@@ -30,7 +36,7 @@
 
     void GeoElement::Print(std::ostream &out){
         
-        out << "ElType " << Type() << " matid " << MaterialId << " nodes ";
+        out << "ElType " << Type() << " matid " << MaterialId << " index " << GetIndex() << " nodes ";
         int i;
         for(i=0; i<NNodes(); i++) out << NodeIndex(i) << ' ';
         out << std::endl;

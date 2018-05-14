@@ -9,9 +9,8 @@
 
  /// Constructor
     Geom1d::Geom1d(){
-        for (int i=0; i<nSides; i++) {
-            fNeighbours[i] = GeoElementSide();
-        }
+        fNodeIndices.resize(nCorners);
+        for(int i=0; i<nCorners; i++) fNodeIndices[i]=-1;
 	}
 
     /// destructor
@@ -30,7 +29,6 @@
     /// operator=
     Geom1d &Geom1d::operator=(const Geom1d &copy){
         fNodeIndices=copy.fNodeIndices;
-        
         for (int i=0; i<nSides; i++) {
             fNeighbours[i]=copy.fNeighbours[i];
         }
@@ -103,6 +101,6 @@
     }
 
     /// Initialize the neighbour data structure
-    void Geom1d::SetNeighbour(int side, GeoElementSide &neighbour){
+    void Geom1d::SetNeighbour(int side, const GeoElementSide &neighbour){
         fNeighbours[side]=neighbour;
     }

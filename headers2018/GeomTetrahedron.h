@@ -53,7 +53,7 @@ public:
     GeoElementSide Neighbour(int side);
     
     // Initialize the neighbour data structure
-    void SetNeighbour(int side, GeoElementSide &neighbour);
+    void SetNeighbour(int side, const GeoElementSide &neighbour);
     
 protected:
     

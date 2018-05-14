@@ -59,8 +59,11 @@ public:
     // Return neighbour element of a given side
     GeoElementSide Neighbour() const;
     
+    // Fill in the data structure for the neighbouring information
+    void SetNeighbour(const GeoElementSide &neighbour);
+    
     // Verifiy if an element is a neighbour
-    bool IsNeighbour(GeoElementSide *candidate);
+    bool IsNeighbour(const GeoElementSide &candidate);
     
     // Define elements neighbourhood
     void IsertConnectivity(GeoElementSide &connectivity);

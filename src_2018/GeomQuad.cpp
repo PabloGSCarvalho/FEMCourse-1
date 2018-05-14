@@ -9,7 +9,8 @@
 #include "GeomQuad.h"
 
     GeomQuad::GeomQuad(){
-        
+        fNodeIndices.resize(nCorners);
+        for(int i=0; i<nCorners; i++) fNodeIndices[i]=-1;
     }
 
     GeomQuad::~GeomQuad(){
@@ -136,6 +137,6 @@
     }
 
     /// Initialize the neighbour data structure
-    void GeomQuad::SetNeighbour(int side, GeoElementSide &neighbour){
+    void GeomQuad::SetNeighbour(int side, const GeoElementSide &neighbour){
         fNeighbours[side]=neighbour;
     }

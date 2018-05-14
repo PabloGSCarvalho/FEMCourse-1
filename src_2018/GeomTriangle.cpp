@@ -11,7 +11,8 @@
     
     /// Constructor
     GeomTriangle::GeomTriangle(){
-        
+       fNodeIndices.resize(nCorners);
+       for(int i=0; i<nCorners; i++) fNodeIndices[i]=-1;
     }
 
     /// destructor
@@ -128,7 +129,7 @@
     }
 
     /// Initialize the neighbour data structure
-    void GeomTriangle::SetNeighbour(int side, GeoElementSide &neighbour){
+    void GeomTriangle::SetNeighbour(int side, const GeoElementSide &neighbour){
         
         fNeighbours[side]=neighbour;
     }

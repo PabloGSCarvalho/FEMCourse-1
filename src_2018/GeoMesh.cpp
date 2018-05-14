@@ -12,6 +12,11 @@
 #include "tpanic.h"
 #include "GeoElementSide.h"
 
+    GeoMesh::GeoMesh() : Nodes(0) ,Elements(0){
+        fDim=-1;
+        Reference=0;
+    }
+
     GeoMesh::GeoMesh(const GeoMesh & cp){
         this->operator =(cp);
     }
@@ -32,7 +37,7 @@
         {
             if (cp.Elements[iel])
             {
-                this->Elements[iel] = cp.Elements[iel];
+                this->Elements[iel] = cp.Elements[iel]->Clone(this);
             }
             else
             {
@@ -72,48 +77,54 @@
     
     void GeoMesh::BuildConnectivity(){
     
-        VecInt vetor(NumNodes(),-1);
         VecInt sides(NumNodes(),-1);
+        std::vector<GeoElement *> vetor(NumNodes(),0);
         int nelem = NumElements();
         for(int iel=0; iel<nelem; iel++)
         {
-            GeoElement *el = Elements[iel];
+            GeoElement *el = Element(iel);
             if(!el) continue;
             int nnos = el->NCornerNodes();
             for(int no=0; no<nnos; no++) {
-                int nodindex = el->NodeIndex(no);
-                if(vetor[nodindex] == -1)
+                 int64_t nodindex = el->NodeIndex(no);
+                if(sides[nodindex] == -1)
                 {
-                    vetor[nodindex] = iel;
                     sides[nodindex] = no;
+                    vetor[nodindex] = el;
 //                    if(el->Neighbour(no).Side()==-1){
 //                        el->Neighbour(no)=GeoElementSide(el,no);
                 }
                 else
                 {
                     GeoElementSide one(el,no);
-                    GeoElementSide two(Element(vetor[nodindex]),sides[nodindex]);
-                    one.IsertConnectivity(two);
+                    GeoElementSide two(vetor[nodindex],sides[nodindex]);
+                    if(one.IsNeighbour(two)==false){
+                        one.IsertConnectivity(two);
+                    }
+                    
                 }
             }
         }
         
         for(int iel=0; iel<nelem; iel++)
         {
-            GeoElement *el = Elements[iel];
+            GeoElement *el = Element(iel);
             if(!el) continue;
             int ncor = el->NCornerNodes();
             int nsides = el->NSides();
             
             for(int is=ncor; is<nsides; is++)
             {
-                if(el->Neighbour(is).Side()==-1)
-                {
-                    el->Neighbour(is)=GeoElementSide(el,is);
+                
+//                if(el->Neighbour(is).Side()==-1)
+//                {
+                    //el->Neighbour(is)=GeoElementSide(el,is);
                     GeoElementSide gelside(el,is);
+                    //GeoElement *el = gelside.Element();
+                
                     GeoElementSide neigh = gelside.Neighbour();
-                    
-                    if(gelside.Element()!=0 && gelside.Side()!=0) continue;
+                
+                    if((gelside.Element()==0 && gelside.Side()==0)==false) continue;
                     
                     int nsidenodes = el->NNodes();
                     
@@ -155,7 +166,7 @@
 //                        neighbours[in].Element()->SetNeighbour(in, neighneigh);
                     
                     }
-            }
+            //}
         }
         
     }

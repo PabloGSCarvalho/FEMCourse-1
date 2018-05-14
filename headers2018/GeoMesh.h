@@ -32,10 +32,7 @@ class GeoMesh
 public:
     
     // Default Constructor of GeoMesh
-    GeoMesh()
-    {
-        
-    }
+    GeoMesh();
     
     // Constructor of GeoMesh
     GeoMesh(const GeoMesh &);

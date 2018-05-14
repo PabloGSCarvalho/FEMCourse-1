@@ -32,7 +32,7 @@ public:
     GeoElementTemplate &operator=(const GeoElementTemplate &copy);
     
     // Make a geometric mesh clone from GeoElement
-    GeoElement *Clone(GeoMesh *gmesh)
+    GeoElement *Clone(GeoMesh *gmesh) const
     {
         GeoElement *result = new GeoElementTemplate(*this);
         result->SetMesh(gmesh);
@@ -68,11 +68,12 @@ public:
     virtual GeoElementSide Neighbour(int side)
     {
         //return GeoElementSide(Geom.Neighbour(side),this->GetMesh());
+        //return GeoElementSide(Geom.Neighbour(side).Element(),side);
         return Geom.Neighbour(side);
     }
     
     // Initialize the neighbour data structure
-    virtual void SetNeighbour(int side, GeoElementSide &neigh)
+    virtual void SetNeighbour(int side, const GeoElementSide &neigh)
     {
         Geom.SetNeighbour(side,neigh);
     }
