@@ -105,6 +105,7 @@
             }
         }
         
+        
         for(int iel=0; iel<nelem; iel++)
         {
             GeoElement *el = Element(iel);
@@ -115,9 +116,6 @@
             for(int is=ncor; is<nsides; is++)
             {
                 
-//                if(el->Neighbour(is).Side()==-1)
-//                {
-                    //el->Neighbour(is)=GeoElementSide(el,is);
                     GeoElementSide gelside(el,is);
                     std::vector<GeoElementSide> neighbours;
                     gelside.ComputeNeighbours(neighbours);
@@ -136,7 +134,6 @@
   
                     
             }
-            //}
         }
         
     }

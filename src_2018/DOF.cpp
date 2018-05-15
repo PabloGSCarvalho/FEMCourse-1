@@ -37,9 +37,10 @@
         firstequation=first;
     }
     
-    void DOF::SetNShapeState(int NShape, int NState){
+    void DOF::SetNShapeStateOrder(int NShape, int NState, int Order){
         nshape=NShape;
         nstate=NState;
+        order = Order;
     }
     
     int DOF::GetNShape() const{

@@ -15,9 +15,10 @@
         
     }
 
-    CompElement::CompElement(int64_t ind, GeoElement *geo){
+    CompElement::CompElement(int64_t ind, CompMesh *cmesh, GeoElement *geo){
         index = ind;
         geoel = geo;
+        compmesh = cmesh;
     }
 
     CompElement::CompElement(const CompElement &copy){

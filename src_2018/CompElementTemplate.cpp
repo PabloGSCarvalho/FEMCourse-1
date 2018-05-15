@@ -22,8 +22,8 @@
     }
 
     template<class Shape>
-    CompElementTemplate<Shape>::CompElementTemplate(int64_t ind, GeoElement *geo) : CompElement(ind,geo){
-        CompMesh *cmesh = this->GetCompMesh();
+    CompElementTemplate<Shape>::CompElementTemplate(int64_t ind, CompMesh *cmesh,  GeoElement *geo) : CompElement(ind,cmesh,geo){
+        //CompMesh *cmesh = this->GetCompMesh();
         int Nelem = cmesh->GetElementVec().size();
         cmesh->GetElementVec().resize(Nelem+1);
         Nelem+=1;

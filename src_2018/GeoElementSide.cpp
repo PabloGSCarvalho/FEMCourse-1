@@ -66,7 +66,7 @@
     }
 
 
-    void GeoElementSide::ComputeNeighbours(std::vector<GeoElementSide> neighbour){
+    void GeoElementSide::ComputeNeighbours(std::vector<GeoElementSide> &neighbour){
         if(fSide < fElement->NCornerNodes())
         {
             AllNeighbours(neighbour);
@@ -76,7 +76,7 @@
         int nsidenodes = fElement->NSideNodes(fSide);
         std::vector<GeoElementSide> GeoElSideSet;
         std::vector<int> Set[27];
-        VecInt nodeindexes(nsidenodes);
+        VecInt nodeindexes(nsidenodes,0.);
         for (int in=0; in<nsidenodes; in++) {
             
             nodeindexes[in] = fElement->NodeIndex(fElement->SideNodeIndex(fSide, in));

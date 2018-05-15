@@ -73,9 +73,11 @@ int GeoElementTemplate<TGeom>::WhichSide(VecInt &SideNodeIds){
             int64_t isn1 = NodeIndex(SideNodeIndex(side, 0));
             int64_t isn2 = NodeIndex(SideNodeIndex(side, 1));//sao = para side<3
             if((isn1 == SideNodeIds[0] && isn2 == SideNodeIds[1]) ||
-               (isn2 == SideNodeIds[0] && isn1 == SideNodeIds[1]))    return side;
+               (isn2 == SideNodeIds[0] && isn1 == SideNodeIds[1])){
+                return side;
+            }
         } else if(NSideNodes(side)== 1 && cap ==1) {
-            if(SideNodeIndex(side,0) == SideNodeIds[0]) return side;
+            if(NodeIndex(SideNodeIndex(side,0)) == SideNodeIds[0]) return side;
             //completar
         } else if(NSideNodes(side) == 3 && cap==3) {
             int64_t sni[3],snx[3],k;
@@ -117,10 +119,9 @@ int GeoElementTemplate<TGeom>::WhichSide(VecInt &SideNodeIds){
                     break;
                 }
             }
-            //            if (is != nums) {
-            //                PZError << "TPZGeoEl::WhichSide must be extended\n";
-            //                DebugStop();
-            //            }
+                        if (is != nums) {
+                            DebugStop();
+                        }
         }
     }
     return -1;
