@@ -99,22 +99,24 @@
                 break;
             case 2:
             {
-                Intersect(Set[0], Set[1], result);
+                std::set_intersection(Set[0].begin(), Set[0].end(), Set[1].begin(), Set[1].end(), std::back_inserter(result));
             }
                 break;
             case 3:
             {
-                Intersect(Set[0], Set[1], Set[2], result);
+                std::vector<int> inter1;
+                std::set_intersection(Set[0].begin(), Set[0].end(), Set[1].begin(), Set[1].end(), std::back_inserter(inter1));
+                std::set_intersection(inter1.begin(), inter1.end(), Set[2].begin(), Set[2].end(), std::back_inserter(result));
             }
                 break;
             case 4:
             {
                 std::vector<int> inter1, inter2;
-                Intersect(Set[0],Set[2],inter1);
+                std::set_intersection(Set[0].begin(), Set[0].end(), Set[2].begin(), Set[2].end(), std::back_inserter(inter1));
                 if(inter1.size()==0) break;
-                Intersect(Set[1],Set[3],inter2);
+                std::set_intersection(Set[1].begin(), Set[1].end(), Set[3].begin(), Set[3].end(), std::back_inserter(inter2));
                 if(inter2.size()==0) break;
-                Intersect(inter1,inter2,result);
+                std::set_intersection(inter1.begin(), inter1.end(), inter2.begin(), inter2.end(), std::back_inserter(result));
             }
                 break;
             default:
@@ -123,7 +125,7 @@
                 inter1 = Set[0];
                 for(int in=0; in<nsidenodes-1; in++) {
                     inter2.resize(0);
-                    Intersect(inter1,Set[in+1],inter2);
+                    std::set_intersection(inter1.begin(), inter1.end(), Set[in+1].begin(), Set[in+1].end(), std::back_inserter(inter2));
                     if(inter2.size() == 0) break;
                     inter1 = inter2;
                 }
@@ -144,66 +146,4 @@
         
     }
 
-
-void GeoElementSide::Intersect(const std::vector<int> &one, const std::vector<int> &two, std::vector<int> &result)
-{
-    int firstc, secondc, nfirst, nsecond;
-    nfirst = one.size();
-    nsecond = two.size();
-    firstc = 0;
-    secondc = 0;
-    while(firstc < nfirst && secondc < nsecond) {
-        while(firstc < nfirst && one[firstc] < two[secondc])
-        {
-            firstc++;
-        }
-        if(firstc == nfirst) break;
-        while(secondc < nsecond && two[secondc] < one[firstc])
-        {
-            secondc++;
-        }
-        if(firstc < nfirst && secondc < nsecond && one[firstc] == two[secondc])
-        {
-            result.push_back(one[firstc]);
-            firstc++;
-            secondc++;
-        }
-    }
-    
-}
-/** @brief Gets commom elements into the one, two and three vectors */
-void GeoElementSide::Intersect(const std::vector<int> &one, const std::vector<int> &two, const std::vector<int> &three, std::vector<int> &result)
-{
-    int firstc, secondc, thirdc, nfirst, nsecond, nthird;
-    nfirst = one.size();
-    nsecond = two.size();
-    nthird = three.size();
-    firstc = 0;
-    secondc = 0;
-    thirdc = 0;
-    while(firstc < nfirst && secondc < nsecond && thirdc < nthird) {
-        while(firstc < nfirst && (one[firstc] < two[secondc] || one[firstc] < three[thirdc]))
-        {
-            firstc++;
-        }
-        if(firstc==nfirst)break;
-        while(secondc < nsecond && (two[secondc] < one[firstc] || two[secondc] < three[thirdc]))
-        {
-            secondc++;
-        }
-        if(secondc==nsecond) break;
-        while(thirdc < nthird && (three[thirdc] < one[firstc] || three[thirdc] < two[secondc]))
-        {
-            thirdc++;
-        }
-        if(firstc < nfirst && secondc < nsecond && thirdc < nthird && one[firstc] == two[secondc] && one[firstc] == three[thirdc])
-        {
-            result.push_back(one[firstc]);
-            firstc++;
-            secondc++;
-            thirdc++;
-        }
-    }
-    
-}
 
