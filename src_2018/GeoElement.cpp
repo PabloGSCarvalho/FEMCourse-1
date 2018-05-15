@@ -30,10 +30,9 @@
     GeoElement::~GeoElement(){
         
     }
+
     
     /// access methods
-    
-
     void GeoElement::Print(std::ostream &out){
         
         out << "ElType " << Type() << " matid " << MaterialId << " index " << GetIndex() << " nodes ";

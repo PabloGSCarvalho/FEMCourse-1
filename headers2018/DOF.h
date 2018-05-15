@@ -20,6 +20,9 @@ class DOF
     // Number of state variables associated with each shape function
     int nstate = 0;
     
+    // Polinomial order of the shape function associated with the connect
+    int order = 1;
+    
 public:
     
     // Default constructor of DOF
@@ -41,7 +44,7 @@ public:
     void SetFirstEquation(int64_t first);
     
     // Set the number of shape functions associated with the DOF and state variables associated with each shape function
-    void SetNShapeState(int NShape, int NState);
+    void SetNShapeStateOrder(int NShape, int NState, int Order);
     
     // Return the number of shape functions associated with the DOF
     int GetNShape() const;
@@ -49,6 +52,9 @@ public:
     // Return the number of state variables associated with each shape function
     int GetNState() const;
     
+    // Return maximum the order of the polinoms associated with DOF
+    int GetOrder() const;
     
+
 };
 #endif /* DOF_h */

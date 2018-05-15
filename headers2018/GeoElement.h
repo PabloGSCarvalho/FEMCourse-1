@@ -59,6 +59,15 @@ public:
     // Return the index of an element nodes
     virtual int NodeIndex(int node) = 0;
     
+    // Return number fo sides associated with a side
+    virtual int NSideNodes(int side) = 0;
+    
+    // Local node index of a node associated with a side
+    virtual int SideNodeIndex(int side, int node) = 0;
+    
+    /// Set the node indices of the element
+    virtual void GetNodes(VecInt &nodes) = 0;
+    
     // Return neighbour element of a given side
     virtual GeoElementSide Neighbour(int side) = 0;
     
@@ -106,6 +115,8 @@ public:
     {
         return Index;
     }
+    
+    virtual int WhichSide(VecInt &SideNodeIds) = 0;
     
     // Compute x mapping from local parametric coordinates
     virtual void X(const VecDouble &xi,  VecDouble &x) = 0;

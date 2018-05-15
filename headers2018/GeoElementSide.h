@@ -68,5 +68,18 @@ public:
     // Define elements neighbourhood
     void IsertConnectivity(GeoElementSide &connectivity);
     
+    // Vector with all Neighbours
+    void AllNeighbours(std::vector<GeoElementSide> &allneigh);
+    
+    // Compute all corner neighbours
+    void ComputeNeighbours(std::vector<GeoElementSide> neighbour);
+    
+    // Intersections
+    void Intersect(const std::vector<int> &one, const std::vector<int> &two, std::vector<int> &result);
+    
+    // Intersections
+    void Intersect(const std::vector<int> &one, const std::vector<int> &two, const std::vector<int> &three, std::vector<int> &result);
+    
+    
 };
 #endif /* GeoElementSide_h */

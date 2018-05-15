@@ -82,7 +82,12 @@ public:
     // Set the vector with math statement objects
     void SetMathVec(const std::vector<MathStatement *> &mathvec);
     
-
+    // Initialize the datastructure FirstEquation of the DOF objects
+    void Resequence();
+    
+    // Initialize the datastructure FirstEquation of the DOF objects in the order specified by the vector
+    void Resequence(VecInt &DOFindices);
+    
 };
 
 #endif /* CompMesh_h */

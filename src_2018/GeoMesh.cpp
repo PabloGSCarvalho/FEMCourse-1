@@ -86,7 +86,7 @@
             if(!el) continue;
             int nnos = el->NCornerNodes();
             for(int no=0; no<nnos; no++) {
-                 int64_t nodindex = el->NodeIndex(no);
+                int64_t nodindex = el->NodeIndex(no);
                 if(sides[nodindex] == -1)
                 {
                     sides[nodindex] = no;
@@ -101,7 +101,6 @@
                     if(one.IsNeighbour(two)==false){
                         one.IsertConnectivity(two);
                     }
-                    
                 }
             }
         }
@@ -120,52 +119,23 @@
 //                {
                     //el->Neighbour(is)=GeoElementSide(el,is);
                     GeoElementSide gelside(el,is);
-                    //GeoElement *el = gelside.Element();
+                    std::vector<GeoElementSide> neighbours;
+                    gelside.ComputeNeighbours(neighbours);
                 
-                    GeoElementSide neigh = gelside.Neighbour();
+                    int nneigh = neighbours.size();
                 
-                    if((gelside.Element()==0 && gelside.Side()==0)==false) continue;
-                    
-                    int nsidenodes = el->NNodes();
-                    
-                    std::vector<GeoElementSide> neighbourvec(nsidenodes);
-                    
-                    for(int sidenode=0; sidenode<nsidenodes; sidenode++)
+                    for(int in=0; in<nneigh; in++)
                     {
-                        GeoElementSide g(el,sidenode);
-                        g.IsertConnectivity(neighbourvec[sidenode]);
-                    }
-                    
-                    //Compute Neighbours >> É preciso verificar aqui!
-                    
-//                    if (gelside.Side()<ncor) {
-//                        neighbours.push_back(neigh);
-//                        neigh = neigh.Neighbour();
-//                        return;
-//
-//                    int nneigh = neighbours.size();
-//
-//                    for(int in=0; in<nneigh; in++) {
-//                        if(neighbours[in].Side() == -1)
+//                        if(neighbours[in].Element()->SideIsUndefined(neighbours[in].Side()))
 //                        {
-//                            std::cout << "TPZGeoMesh::BuildConnectivity : Inconsistent mesh detected analysing element/side:" ;
-//                            //std::cout << gelside ;
-//                            std::cout << std::endl;
-//                            continue;
+//                            neighbours[in].Element()->SetSideDefined(neighbours[in].Side());
 //                        }
-//
-//                        GeoElement *neighel =neighbours[in].Element();
-//                        if(neighel->Neighbour(in).Side() == -1)
-//                        {
-//                            el->Neighbour(in)=GeoElementSide(neighbours[in].Element(),in);
-//                        }
-//
-//                        GeoElementSide neighneigh, currentneigh;
-//                        neighneigh = gelside.Neighbour();
-//
-//                        neighbours[in].Element()->SetNeighbour(in, neighneigh);
-                    
+                        
+                        gelside.IsertConnectivity(neighbours[in]);
                     }
+  
+                    
+            }
             //}
         }
         

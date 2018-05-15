@@ -36,7 +36,7 @@ public:
     CompElementTemplate();
     
     // Constructor of CompElementTemplate
-    CompElementTemplate(int64_t index, GeoElement *geo);
+    CompElementTemplate(int64_t ind, CompMesh *cmesh, GeoElement *geo);
     
     // Copy constructor of CompElementTemplate
     CompElementTemplate(const CompElementTemplate &);

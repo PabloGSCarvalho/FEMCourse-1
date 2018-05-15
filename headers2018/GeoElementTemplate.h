@@ -57,6 +57,21 @@ public:
         return TGeom::nSides;
     }
     
+    // Return number fo sides associated with a side
+    virtual int NSideNodes(int side){
+        return Geom.NSideNodes(side);
+    }
+    
+    // Local node index of a node associated with a side
+    virtual int SideNodeIndex(int side, int node){
+        return Geom.SideNodeIndex(side,node);
+    }
+    
+    /// Return the node indices of the element
+    virtual void GetNodes(VecInt &nodes){
+        return Geom.GetNodes(nodes);
+    };
+
     // Return the index of an element node
     virtual int NodeIndex(int node)
     {
@@ -86,6 +101,8 @@ public:
     
     // Compute gradient of x mapping from local parametric coordinates
     virtual void GradX(const VecDouble &xi, VecDouble &x, Matrix &gradx);
+    
+    virtual int WhichSide(VecInt &SideNodeIds);
     
     // Function to print results
     virtual void Print(std::ostream &out);

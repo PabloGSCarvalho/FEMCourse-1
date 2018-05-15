@@ -40,7 +40,7 @@ public:
     CompElement();
     
     // Constructor of CompElement
-    CompElement(int64_t ind, GeoElement *geo);
+    CompElement(int64_t ind, CompMesh *cmesh, GeoElement *geo);
     
     // Copy constructor of CompElement
     CompElement(const CompElement &copy);
