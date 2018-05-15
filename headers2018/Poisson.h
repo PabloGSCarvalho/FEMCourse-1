@@ -22,6 +22,8 @@ class Poisson : public MathStatement
     
 public:
     
+    enum PostProcVar = {ENone, ESol, EDSol, EFlux};
+    
     // Default constructor of Poisson
     Poisson();
     
@@ -65,7 +67,7 @@ public:
     virtual void Contribute(IntPointData &integrationpointdata, double weight , Matrix &EK, Matrix &EF) const;
     
     // Prepare and print post processing data
-    virtual void PostProcess(IntPointData &integrationpointdata, const std::string &variable, VecDouble &postprocvalue) const;
+    virtual std::vector<double> PostProcess(const IntPointData &integrationpointdata, const PostProcVar var) const;
 
 };
 #endif /* Poisson_h */

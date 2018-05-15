@@ -26,6 +26,8 @@ public:
     
     Assemble &operator=(const Assemble &copy);
     
+    void SetMesh(CompMesh *cmesh);
+    
     /// Compute the total number of equations
     int64_t NEquations();
     
