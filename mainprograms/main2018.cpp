@@ -20,6 +20,9 @@
 #include "Geom1d.h"
 #include "GeomTetrahedron.h"
 #include "GeomTriangle.h"
+#include "GeoElement.h"
+#include "GeoElementTemplate.h"
+#include "Poisson.h"
 
 using std::cout;
 using std::endl;
@@ -32,6 +35,9 @@ VecDouble X(VecDouble &coordXi);
 void Jacobian(VecDouble &Coord, TMatrix &jacobian, double &detjac);
 double InnerVec(VecDouble &S , VecDouble &T);
 
+GeoMesh *CreateGMesh(int nx, int ny, double hx, double hy);
+CompMesh *CMesh(GeoMesh *gmesh, int pOrder);
+
 int main ()
 {
 
@@ -39,18 +45,76 @@ int main ()
     
     VecDouble vec1;
     ReadGmsh read;
-    GeoMesh geomesh;
-
-    read.Read(geomesh, "GeometryBenchSimple.msh");
+//    GeoMesh geomesh;
+//
+//    read.Read(geomesh, "GeometryBenchSimple.msh");
+//
+//    VTKGeoMesh::PrintGMeshVTK(&geomesh, "MalhaTeste.vtk");
+//    geomesh.Print(std::cout);
     
-    VTKGeoMesh::PrintGMeshVTK(&geomesh, "MalhaTeste.vtk");
-    geomesh.Print(std::cout);
+    GeoMesh *geotest = CreateGMesh(2, 2, 1, 1);
     
+    CompMesh *cmesh = CMesh(geotest, 1);
 
+    geotest->Print(std::cout);
     
   
     return 0;
 }
+
+CompMesh *CMesh(GeoMesh *gmesh, int pOrder){
+ 
+    Matrix perm(2,2,0.);
+    perm(0,0)=1.;
+    perm(1,1)=1.;
+    CompMesh * cmesh = new CompMesh();
+    Poisson *material = new Poisson(perm);
+    int index = 1;
+    cmesh->SetNumberMath(index);
+    cmesh->SetMathStatement(index, material);
+    
+    gmesh->
+    
+    return cmesh;
+}
+
+
+GeoMesh *CreateGMesh(int nx, int ny, double hx, double hy){
+    
+    GeoMesh *gmesh = new GeoMesh;
+    int matId = 1;
+    int id, index;
+    VecDouble coord(3,0.);
+    int nnodes=nx*ny;
+    gmesh->SetNumNodes(nnodes);
+    
+    for(int i = 0; i < ny; i++){
+        for(int j = 0; j < nx; j++){
+            id = i*nx + j;
+            coord[0] = (j)*hx/(nx - 1);
+            coord[1] = (i)*hy/(ny - 1);
+            gmesh->Node(id).SetCo(coord);
+        }
+    }
+    //(const VecInt &nodeindices, int materialid, GeoMesh *gmesh, int index)
+    VecInt nodeind(nnodes);
+    for(int iq = 0; iq < (ny - 1); iq++){
+        for(int jq = 0; jq < (nx - 1); jq++){
+            index = iq*(nx - 1)+ jq;
+            nodeind[0] = iq*ny + jq;
+            nodeind[1] = nodeind[0]+1;
+            nodeind[2] = nodeind[1]+(nx);
+            nodeind[3] = nodeind[0]+(nx);
+            GeoElement *gel = new GeoElementTemplate<GeomQuad>(nodeind,matId,gmesh,index);
+            gmesh->SetNumElements(index+1);
+            gmesh->SetElement(index, gel);
+        }
+    }
+    
+    return gmesh;
+}
+
+
 
 void TestIntegrate()
 {

@@ -34,7 +34,7 @@ public:
     virtual ~MathStatement();
     
     // Method for creating a copy of the element
-    virtual MathStatement *Clone() = 0;
+    virtual MathStatement *Clone() const = 0;
     
     // Return the number of state variables
     virtual int NState() const = 0;
