@@ -81,3 +81,12 @@
         mathstatements=mathvec;
     }
 
+    std::vector<double> &CompMesh::Solution(){
+        return solution;
+    }
+
+    void CompMesh::LoadSolution(std::vector<double> &Sol){
+        solution=Sol;
+    }
+
+

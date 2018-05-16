@@ -80,7 +80,7 @@
         
     }
     
-    void L2Projection::PostProcess(IntPointData &integrationpointdata, const std::string &variable, VecDouble &postprocvalue) const{
+    std::vector<double> L2Projection::PostProcess(const IntPointData &integrationpointdata, const PostProcVar var) const{
         DebugStop();
     }
 

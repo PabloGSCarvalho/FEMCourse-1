@@ -91,7 +91,7 @@ public:
     // Initialize the datastructure FirstEquation of the DOF objects in the order specified by the vector
     void Resequence(VecInt &DOFindices);
     
-    std::vector<double> &Solution() const;
+    std::vector<double> &Solution();
     
     void LoadSolution(std::vector<double> &Sol);
     
