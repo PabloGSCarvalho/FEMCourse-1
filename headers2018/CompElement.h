@@ -58,7 +58,7 @@ public:
     MathStatement *GetStatement() const;
     
     // Set the material object associated with the element
-    void SetStatement(MathStatement *statement);
+    void SetStatement( MathStatement *statement);
     
     // Return integration rule established
     IntRule *GetIntRule() const;
@@ -102,11 +102,17 @@ public:
     // Return the number of shape functions
     virtual int NShapeFunctions() const = 0;
     
+    // Set number of DOF
+    virtual void SetNDOF(int64_t ndof) = 0;
+    
+    // Se DOF index in vector position i
+    virtual void SetDOFIndex(int i, int64_t dofindex) = 0;
+    
     // Return the number of degree of freedom
     virtual int NDOF() const = 0;
     
     // Return the number of shape functions stored in the DOF data structure
-    virtual int NShapeFunctions(int doflocindex) = 0;
+    virtual int NShapeFunctions(int doflocindex) const = 0;
     
     // Use the Shape template class to compute the number of shape functions
     virtual int ComputeNShapeFunctions(int doflocindex, int order) = 0;

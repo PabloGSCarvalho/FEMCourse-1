@@ -21,7 +21,6 @@
   
     IntRuleTetrahedron::IntRuleTetrahedron(int order){
         SetOrder(order);
-        ComputingSymmetricCubatureRule(fOrder,fPoints,fWeights);
     }
 
     void IntRuleTetrahedron::SetOrder(int order){
@@ -31,7 +30,7 @@
         }
         
         fOrder=order;
-        
+        ComputingSymmetricCubatureRule(fOrder,fPoints,fWeights);
     }
     
 #ifdef Length

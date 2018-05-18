@@ -11,6 +11,11 @@
 #include "DataTypes.h"
 #include "GeoElementSide.h"
 #include "CompElement.h"
+#include "CompElementTemplate.h"
+#include "Shape1d.h"
+#include "ShapeQuad.h"
+#include "ShapeTriangle.h"
+#include "ShapeTetrahedron.h"
 #include "GeoMesh.h"
 
 class GeoMesh;
@@ -104,6 +109,9 @@ public:
         return MaterialId;
     }
     
+    // Create a computational element
+    CompElement *CreateCompEl(CompMesh *mesh, int64_t index);
+    
     // Set the element index
     void SetIndex(int index)
     {
@@ -126,5 +134,7 @@ public:
     
     // Function to print results
     virtual void Print(std::ostream &out);
+    
+
 };
 #endif /* GeoElement_h */

@@ -23,6 +23,7 @@
 #include "GeoElement.h"
 #include "GeoElementTemplate.h"
 #include "Poisson.h"
+#include "Assemble.h"
 
 using std::cout;
 using std::endl;
@@ -41,7 +42,7 @@ CompMesh *CMesh(GeoMesh *gmesh, int pOrder);
 int main ()
 {
 
-    //TestIntegrate();
+    TestIntegrate();
     
     VecDouble vec1;
     ReadGmsh read;
@@ -53,12 +54,18 @@ int main ()
 //    geomesh.Print(std::cout);
     
     GeoMesh *geotest = CreateGMesh(2, 2, 1, 1);
-    
-    CompMesh *cmesh = CMesh(geotest, 1);
 
     geotest->Print(std::cout);
     
-  
+    CompMesh *cmesh = CMesh(geotest, 1);
+    
+    Assemble as(cmesh);
+    
+    Matrix globmat, rhs;
+    
+    as.Compute(globmat, rhs);
+    
+
     return 0;
 }
 
@@ -67,13 +74,14 @@ CompMesh *CMesh(GeoMesh *gmesh, int pOrder){
     Matrix perm(2,2,0.);
     perm(0,0)=1.;
     perm(1,1)=1.;
-    CompMesh * cmesh = new CompMesh();
+    CompMesh * cmesh = new CompMesh(gmesh);
     Poisson *material = new Poisson(perm);
-    int index = 1;
-    cmesh->SetNumberMath(index);
+    int index = 0;
+    cmesh->SetNumberMath(index+1);
     cmesh->SetMathStatement(index, material);
+    cmesh->SetDefaultOrder(pOrder);
     
-    gmesh->
+    cmesh->AutoBuild();
     
     return cmesh;
 }

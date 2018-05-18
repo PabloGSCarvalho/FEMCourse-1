@@ -20,6 +20,16 @@
         
         SetOrder(order);
         
+    }
+  
+    void IntRuleQuad::SetOrder(int order){
+       
+        if (order<0) {
+            DebugStop();
+        }
+        
+        fOrder=order;
+        
         IntRule1d Int1Dx(fOrder);
         IntRule1d Int1Dy(fOrder);
         
@@ -52,7 +62,7 @@
             }
             
         }
-    
+        
         if (order>19) {
             VecDouble x(Int1Dx.NPoints());
             VecDouble w(Int1Dx.NPoints());
@@ -65,19 +75,9 @@
                     fPoints(j+i*Int1Dy.NPoints(),1)=x[nPoints+j+i*Int1Dy.NPoints()];
                 }
             }
-
+            
         }
         
-        
-    }
-  
-    void IntRuleQuad::SetOrder(int order){
-       
-        if (order<0) {
-            DebugStop();
-        }
-        
-        fOrder=order;
     }
    
     void IntRuleQuad::gaulegQuad(const double x1, const double x2, VecDouble &x, VecDouble &w){

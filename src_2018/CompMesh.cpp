@@ -6,11 +6,19 @@
 //
 
 #include "CompMesh.h"
+#include "GeoElement.h"
+#include "CompElement.h"
+#include "MathStatement.h"
+#include "DOF.h"
 
-    CompMesh::CompMesh(){
+    CompMesh::CompMesh():geomesh(0),compelements(0),dofs(0),mathstatements(0){
         
     }
-    
+
+    CompMesh::CompMesh(GeoMesh *gmesh) : geomesh(gmesh){
+        
+    }
+
     CompMesh::CompMesh(const CompMesh &copy){
         compelements = copy.compelements;
         dofs = copy.dofs;
@@ -20,7 +28,15 @@
     CompMesh::~CompMesh(){
         
     }
-    
+
+    GeoMesh *CompMesh::GetGeoMesh() const{
+        return geomesh;
+    }
+
+    void CompMesh::SetGeoMesh(GeoMesh *gmesh){
+        geomesh=gmesh;
+    }
+
     void CompMesh::SetNumberElement(int64_t nelem){
         compelements.resize(nelem);
     }
@@ -79,6 +95,52 @@
     
     void CompMesh::SetMathVec(const std::vector<MathStatement *> &mathvec){
         mathstatements=mathvec;
+    }
+
+    void CompMesh::AutoBuild(){
+        int nel = GetGeoMesh()->NumElements();
+        for (int iel = 0; iel< nel; iel++) {
+            GeoElement *gel = GetGeoMesh()->Element(iel);
+            CompElement *cel = gel->CreateCompEl(this, iel);
+            SetNumberElement(iel+1);
+            SetElement(iel, cel);
+            MathStatement *material = GetMath(iel);
+            cel->SetStatement(material);
+            
+            int nsides = gel->NSides();
+            int nstate = material->NState();
+            VecInt orders(nsides);
+            DOF dof;
+            int nshape = 0;
+            for (int iord = 0; iord<nsides; iord++) {
+                orders[iord]=DefaultOrder;
+                this->SetNumberDOF(iord+1);
+                cel->SetNDOF(iord+1);
+                cel->SetDOFIndex(iord, iord);
+                SetDOF(iord, dof);
+                nshape = cel->ComputeNShapeFunctions(iord,orders[iord]);
+                this->GetDOF(iord).SetNShapeStateOrder(nshape, nstate,orders[iord]);
+            }
+        }
+    }
+
+// Initialize the datastructure FirstEquation of the DOF objects
+    void CompMesh::Resequence(){
+        
+//        int nel = GetGeoMesh()->NumElements();
+//        for (int iel = 0; iel< nel; iel++) {
+//            GeoElement *gel = GetGeoMesh()->Element(iel);
+//            CompElement *cel = gel->CreateCompEl(this, iel);
+//            
+//            cel->D
+//            
+//        }
+        
+    }
+
+    // Initialize the datastructure FirstEquation of the DOF objects in the order specified by the vector
+    void CompMesh::Resequence(VecInt &DOFindices){
+        
     }
 
     std::vector<double> &CompMesh::Solution(){

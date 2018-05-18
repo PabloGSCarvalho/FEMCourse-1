@@ -17,6 +17,6 @@ class PostProcess
     
     virtual void Write(std::string filename);
     
-    void Transform();
+    
 };
 #endif /* PostProcess_h */

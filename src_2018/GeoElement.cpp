@@ -8,6 +8,7 @@
 #include "DataTypes.h"
 #include "GeoElementSide.h"
 #include "GeoElement.h"
+#include "tpanic.h"
 
 
     GeoElement::GeoElement(){
@@ -31,6 +32,36 @@
         
     }
 
+    CompElement *GeoElement::CreateCompEl(CompMesh *mesh, int64_t index){
+        
+        GeoElement *gel = mesh->GetGeoMesh()->Element(index);
+
+        switch (gel->Type()) {
+            case EOned:
+                return new CompElementTemplate<Shape1d>(index,mesh,gel);
+                break;
+            case EQuadrilateral:
+                return new CompElementTemplate<ShapeQuad>(index,mesh,gel);
+                break;
+            case ETriangle:
+                return new CompElementTemplate<ShapeTriangle>(index,mesh,gel);
+                break;
+            case EPiramide:
+                DebugStop();
+                break;
+            case EPrisma:
+                DebugStop();
+                break;
+            case ETetraedro:
+                return new CompElementTemplate<ShapeTetrahedron>(index,mesh,gel);
+                break;
+            default:
+                DebugStop();
+                break;
+        }
+        return 0;
+        
+    }
     
     /// access methods
     void GeoElement::Print(std::ostream &out){

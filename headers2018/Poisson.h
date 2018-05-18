@@ -22,7 +22,7 @@ class Poisson : public MathStatement
     
 public:
     
-    enum PostProcVar {ENone, ESol, EDSol, EFlux};
+    enum PostProcVar {ENone, ESol, EDSol, EFlux, EForce};
     
     // Default constructor of Poisson
     Poisson();

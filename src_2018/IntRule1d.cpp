@@ -19,7 +19,15 @@
     IntRule1d::IntRule1d(int order){
         
         SetOrder(order);
+        
+    }
     
+    void IntRule1d::SetOrder(int order){
+        if (order<0||order>19) {
+           // DebugStop();
+        }
+        fOrder=order;
+        
         //Calcula o número de pontos no vetor
         int npoints=0,resto=0;
         resto=fOrder%2;
@@ -141,7 +149,7 @@
             fPoints(9,0)=0.14887433898163122; fWeights[9]=0.29552422471475287;
             
         }
-
+        
         if (order>19) {
             VecDouble x(npoints);
             VecDouble w(npoints);
@@ -151,15 +159,6 @@
                 fPoints(j,0)=x[j];
             }
         }
-     
-    }
-    
-    void IntRule1d::SetOrder(int order){
-        if (order<0||order>19) {
-           // DebugStop();
-        }
-        
-        fOrder=order;
     }
         
     void IntRule1d::gauleg(const double x1, const double x2, VecDouble &x, VecDouble &w){

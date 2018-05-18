@@ -106,6 +106,9 @@ public:
     
     // Function to print results
     virtual void Print(std::ostream &out);
+    
+//    // Create an integration rule of given order
+//    virtual IntRule *CreateIntegrationRule(int order);
 };
 
 #endif /* GeoElementTemplate_h */

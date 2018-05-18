@@ -20,6 +20,17 @@
         
         SetOrder(order);
         
+    }
+
+    void IntRuleTriangle::SetOrder(int order){
+        
+        if (order<0||order>19) {
+            DebugStop();
+        }
+        
+        fOrder=order;
+        
+        
         if (fOrder == 0) {
             
             fPoints.Resize(1, 2);
@@ -744,16 +755,6 @@
             fPoints(72 ,0)= 0.065494628082937698; fPoints(72,1)= 0.92434425262078401;fWeights[72]= 0.001899964427650957;
         }
         
-        
-    }
-
-    void IntRuleTriangle::SetOrder(int order){
-        
-        if (order<0||order>19) {
-            DebugStop();
-        }
-        
-        fOrder=order;
         
     }
 

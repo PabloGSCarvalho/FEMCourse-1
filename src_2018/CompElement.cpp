@@ -6,6 +6,7 @@
 //
 
 #include "CompElement.h"
+#include "GeoElement.h"
 #include "CompElementTemplate.h"
 #include "DataTypes.h"
 #include "MathStatement.h"
@@ -65,7 +66,7 @@
     void CompElement::SetIndex(int64_t ind){
         index = ind;
     }
-    
+
     GeoElement *CompElement::GetGeoElement() const{
         return geoel;
     }
@@ -86,7 +87,7 @@
         //MathStatement *material = GetStatement();
         int dim = this->Dimension();
         int nshape = this->NShapeFunctions();
-        const int nstate = this->GetStatement()->NState();
+        int nstate = this->GetStatement()->NState();
         data.phi.resize(nshape,1);
         data.dphidksi.Resize(dim,nshape);
         data.dphidx.Resize(dim,nshape);
@@ -101,8 +102,7 @@
         GeoElement *gel = this->GetGeoElement();
         
         //gel->X(intpoint,data.x);
-        
-        
+
         this->ShapeFunctions(intpoint, data.phi, data.dphidksi);
         
     }
@@ -117,7 +117,7 @@
         IntPointData data;
         this->InitializeIntPointData(data);
         double weight =0.;
-        int intrulepoints = intrule->NPoints();
+        int intrulepoints = GetIntRule()->NPoints();
         int dim = Dimension();
         VecDouble intpoint(dim,0.); //Dimension = 2 oioioioi
         for (int intd_id = 0; intd_id < intrulepoints; intd_id++) {
