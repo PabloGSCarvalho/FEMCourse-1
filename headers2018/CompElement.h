@@ -93,6 +93,9 @@ public:
     // Compute and fill integration points data object
     void ComputeRequiredData(IntPointData &data, VecDouble &intpoint) const;
     
+    // Convert a shapefunction derivative in xi-eta to a function derivative in axes
+    void Convert2Axes(const Matrix &dphi, const Matrix &jacinv, Matrix &dphidx) const;
+    
     // Compute the element stifness matrix and force vector
     virtual void CalcStiff(Matrix &ek, Matrix &ef) const;
     

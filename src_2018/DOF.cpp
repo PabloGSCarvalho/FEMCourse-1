@@ -50,5 +50,8 @@
     int DOF::GetNState() const{
         return nstate;
     }
-    
+
+    int DOF::GetOrder() const{
+        return order;
+    }
 

@@ -42,7 +42,7 @@ CompMesh *CMesh(GeoMesh *gmesh, int pOrder);
 int main ()
 {
 
-    TestIntegrate();
+    //TestIntegrate();
     
     VecDouble vec1;
     ReadGmsh read;
@@ -65,6 +65,7 @@ int main ()
     
     as.Compute(globmat, rhs);
     
+    globmat.Print();
 
     return 0;
 }

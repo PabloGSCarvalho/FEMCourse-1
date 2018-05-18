@@ -92,7 +92,8 @@
         data.dphidksi.Resize(dim,nshape);
         data.dphidx.Resize(dim,nshape);
         data.axes.Resize(dim,3);
-        data.x.resize(3);
+        data.x.resize(dim);
+        data.ksi.resize(dim);
         data.solution.resize(nstate);
         data.dsoldksi.Resize(dim,nstate);
         data.dsoldx.Resize(dim,nstate);
@@ -100,13 +101,57 @@
     
     void CompElement::ComputeRequiredData(IntPointData &data, VecDouble &intpoint) const{
         GeoElement *gel = this->GetGeoElement();
-        
-        //gel->X(intpoint,data.x);
-
+        Matrix gradx,Jac,JacInv;
+        gel->GradX(data.ksi, data.x, gradx);
+        gel->Jacobian(gradx, Jac, data.axes, data.detjac, JacInv);
         this->ShapeFunctions(intpoint, data.phi, data.dphidksi);
+        this->Convert2Axes(data.dphidksi, JacInv, data.dphidx);
         
     }
-    
+
+    void CompElement::Convert2Axes(const Matrix &dphi, const Matrix &jacinv, Matrix &dphidx) const{
+        int nshape = dphi.Cols();
+        int dim = dphi.Rows();
+        dphidx.Resize(dim,nshape);
+        int ieq;
+        switch(dim){
+            case 0:
+            {
+                
+            }
+                break;
+            case 1:
+            {
+                dphidx = dphi;
+                dphidx = dphidx*jacinv.GetVal(0,0);
+            }
+                break;
+            case 2:
+            {
+                for(ieq = 0; ieq < nshape; ieq++) {
+                    dphidx(0,ieq) = jacinv.GetVal(0,0)*dphi.GetVal(0,ieq) + jacinv.GetVal(1,0)*dphi.GetVal(1,ieq);
+                    dphidx(1,ieq) = jacinv.GetVal(0,1)*dphi.GetVal(0,ieq) + jacinv.GetVal(1,1)*dphi.GetVal(1,ieq);
+                }
+            }
+                break;
+            case 3:
+            {
+                for(ieq = 0; ieq < nshape; ieq++) {
+                    dphidx(0,ieq) = jacinv.GetVal(0,0)*dphi.GetVal(0,ieq) + jacinv.GetVal(1,0)*dphi.GetVal(1,ieq) + jacinv.GetVal(2,0)*dphi.GetVal(2,ieq);
+                    dphidx(1,ieq) = jacinv.GetVal(0,1)*dphi.GetVal(0,ieq) + jacinv.GetVal(1,1)*dphi.GetVal(1,ieq) + jacinv.GetVal(2,1)*dphi.GetVal(2,ieq);
+                    dphidx(2,ieq) = jacinv.GetVal(0,2)*dphi.GetVal(0,ieq) + jacinv.GetVal(1,2)*dphi.GetVal(1,ieq) + jacinv.GetVal(2,2)*dphi.GetVal(2,ieq);
+                }
+            }
+                break;
+            default:
+            {
+                std::cout << "Error at " << __PRETTY_FUNCTION__ << " please implement the " << dim << "d Jacobian and inverse\n" <<std::endl;
+            }
+        }
+        
+    }
+
+
     void CompElement::CalcStiff(Matrix &ek, Matrix &ef) const{
         MathStatement *material = GetStatement();
         if(!material){

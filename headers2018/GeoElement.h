@@ -132,6 +132,9 @@ public:
     // Compute gradient of x mapping from local parametric coordinates
     virtual void GradX(const VecDouble &xi, VecDouble &x, Matrix &gradx) = 0;
     
+    // Compute a QR facotrization of the gradient of the mapping function, Q = Jacobian and R = axes
+    virtual void Jacobian(const Matrix &gradx, Matrix &jac,Matrix &axes, double &detjac, Matrix &jacinv) = 0;
+    
     // Function to print results
     virtual void Print(std::ostream &out);
     

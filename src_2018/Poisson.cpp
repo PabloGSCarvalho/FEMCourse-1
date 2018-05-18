@@ -56,8 +56,8 @@
         Matrix &axes =data.axes;
         
         int nphi= phi.size();
-        VecDouble f(nphi,0.);
-        forceFunction(x,f);
+   //     VecDouble f(1,0.); incluir set force function no main
+   //     forceFunction(x,f);
         Matrix perm = GetPermeability();
         Matrix Kdphi(2,2,0.);
         
@@ -69,8 +69,8 @@
             }
         }
         
-        for (int in = 0; in<nphi; in++) {
-            EF(in,0)+= -weight*f[in]*phi[in];
+        for (int in = 0; in<2; in++) {
+            EF(in,0)+= -weight*phi[in]*0; //Nada oioioioi
             for(int jn = 0; jn<nphi; jn++){
                 for (int kd=0; kd<2; kd++) { //dimensão=2
                     EK(in,jn) += weight*(Kdphi(kd,in)*dphi(kd,jn));

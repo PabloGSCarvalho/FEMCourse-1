@@ -61,16 +61,14 @@
     
     /// Computes the value of x for a given point in parameter space as a function of corner coordinates
     void GeomQuad::X(const VecDouble &xi, Matrix &NodeCo, VecDouble &x){
-        
         VecDouble phi(4,0.);
-        Matrix dphi(2,4,0.);
+        Matrix dphi(Dimension,4,0.);
         Shape(xi,phi,dphi);
         int space = NodeCo.Rows();
-        
         for(int i = 0; i < space; i++) {
             x[i] = 0.0;
             for(int j = 0; j < 4; j++) {
-                x[i] += phi[j]*NodeCo(i,j);
+                x[i] += phi[j]*NodeCo.GetVal(i,j);
             }
         }
         

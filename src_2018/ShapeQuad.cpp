@@ -12,7 +12,7 @@
     /// computes the shape functions in function of the coordinate in parameter space and orders of the shape functions (size of orders is number of sides of the element topology)
     void ShapeQuad::Shape(const VecDouble &xi, VecInt &orders, VecDouble &phi, Matrix &dphi){
         
-        int nshape = NShapeFunctions(orders);
+        int nshape = Shape1d::NShapeFunctions(orders);
         //int nsides = orders.size();
 
         VecDouble coxi(1);
@@ -25,13 +25,14 @@
         TMatrix dphixi(1,nshape),dphieta(1,nshape);
         
         Matrix Indices(1,1,0.);
+        int nshapeQuad = nshape*nshape;
         
-        if (nshape==4) {
+        if (nshapeQuad==4) {
             phi.resize(4);
             dphi.Resize(2, 4);
             Indices.Resize(2,2);
             Indices(0,0)=0,Indices(0,1)=3,Indices(1,0)=1,Indices(1,1)=2;
-        }else if(nshape==9){
+        }else if(nshapeQuad==9){
             phi.resize(9);
             dphi.Resize(2, 9);
             Indices.Resize(3,3);

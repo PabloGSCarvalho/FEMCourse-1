@@ -98,11 +98,10 @@
     template<class Shape>
     void  CompElementTemplate<Shape>::ShapeFunctions(const VecDouble &intpoint, VecDouble &phi, Matrix &dphi) const{
         VecInt orders(NDOF());
-        //Verificar isso aqui oioioioioi
-        for (int ic=0; ic<NDOF(); ic++) {
-            //Ver aqui oioioioi
-            DebugStop();
-//            orders[ic]= Shape::NShapeFunctions(ic, order);
+        int ndof = NDOF();
+        CompMesh *cmesh =this->GetCompMesh();
+        for (int ic=0; ic<ndof; ic++) {
+            orders[ic]=cmesh->GetDOF(ic).GetOrder();
         }
         Shape::Shape(intpoint, orders, phi, dphi);
 
