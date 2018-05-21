@@ -55,7 +55,7 @@
     /// Computes the value of x and gradx for a given point in parameter space
     void Geom1d::GradX(const VecDouble &xi, Matrix &NodeCo, VecDouble &x, Matrix &gradx){
        
-        int nrow = NodeCo.Rows();
+        int nrow = Dimension;
         int ncol = NodeCo.Cols();
         
         gradx.Resize(nrow,1);

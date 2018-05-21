@@ -102,10 +102,17 @@
     void CompElement::ComputeRequiredData(IntPointData &data, VecDouble &intpoint) const{
         GeoElement *gel = this->GetGeoElement();
         Matrix gradx,Jac,JacInv;
-        gel->GradX(data.ksi, data.x, gradx);
+        
+        gel->X(intpoint, data.x);
+        gel->GradX(intpoint, data.x, gradx);
+        
         gel->Jacobian(gradx, Jac, data.axes, data.detjac, JacInv);
         this->ShapeFunctions(intpoint, data.phi, data.dphidksi);
+        
         this->Convert2Axes(data.dphidksi, JacInv, data.dphidx);
+        
+        
+        
         
     }
 
@@ -164,10 +171,14 @@
         double weight =0.;
         int intrulepoints = GetIntRule()->NPoints();
         int dim = Dimension();
-        VecDouble intpoint(dim,0.); //Dimension = 2 oioioioi
+        VecDouble intpoint(dim,0.);
+        
+        ek.Resize(dim*NShapeFunctions(), dim*NShapeFunctions());
+        ef.Resize(dim*NShapeFunctions(), dim);
         for (int intd_id = 0; intd_id < intrulepoints; intd_id++) {
-            intrule->Point(intd_id, intpoint, weight);
-            this->ComputeRequiredData(data, intpoint);
+            intrule->Point(intd_id, data.ksi, data.weight);
+            this->ComputeRequiredData(data, data.ksi);
+            weight=data.weight;
             weight *=fabs(data.detjac);
             material->Contribute(data, weight, ek, ef);
         }

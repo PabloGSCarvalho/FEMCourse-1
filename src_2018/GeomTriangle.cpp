@@ -71,7 +71,7 @@
     /// Computes the value of x and gradx for a given point in parameter space
     void GeomTriangle::GradX(const VecDouble &xi, Matrix &NodeCo, VecDouble &x, Matrix &gradx){
         
-        int space = NodeCo.Rows();
+        int space = Dimension;
         int ncol = NodeCo.Cols();
         
         gradx.Resize(space,2);

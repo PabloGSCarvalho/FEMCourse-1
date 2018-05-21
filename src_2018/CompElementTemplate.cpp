@@ -34,7 +34,7 @@
         cmesh->SetElement(ind, this);
         this->SetIndex(ind);
         int order = cmesh->GetDefaultOrder();
-        intrule.SetOrder(order);
+        intrule.SetOrder(order*Dimension());
         SetIntRule(&intrule);
     }
 

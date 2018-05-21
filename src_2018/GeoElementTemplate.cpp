@@ -47,9 +47,10 @@
         
         Matrix NodeCo(3,GMesh->NumNodes(),0.);
         for (int in=0; in<GMesh->NumNodes(); in++) {
-            NodeCo(0,in)=GMesh->Node(in).Co()[0];
-            NodeCo(1,in)=GMesh->Node(in).Co()[1];
-            NodeCo(2,in)=GMesh->Node(in).Co()[2];
+            int nodid = NodeIndex(in);
+            NodeCo(0,in)=GMesh->Node(nodid).Co()[0];
+            NodeCo(1,in)=GMesh->Node(nodid).Co()[1];
+            NodeCo(2,in)=GMesh->Node(nodid).Co()[2];
         }
         Geom.X(xi,NodeCo,x);
     }
@@ -58,9 +59,10 @@
     void GeoElementTemplate<TGeom>::GradX(const VecDouble &xi, VecDouble &x, Matrix &gradx){
         Matrix NodeCo(3,GMesh->NumNodes(),0.);
         for (int in=0; in<GMesh->NumNodes(); in++) {
-            NodeCo(0,in)=GMesh->Node(in).Co()[0];
-            NodeCo(1,in)=GMesh->Node(in).Co()[1];
-            NodeCo(2,in)=GMesh->Node(in).Co()[2];
+            int nodid = NodeIndex(in);
+            NodeCo(0,in)=GMesh->Node(nodid).Co()[0];
+            NodeCo(1,in)=GMesh->Node(nodid).Co()[1];
+            NodeCo(2,in)=GMesh->Node(nodid).Co()[2];
         }
         Geom.GradX(xi, NodeCo, x, gradx);
     }

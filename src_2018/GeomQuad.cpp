@@ -78,7 +78,7 @@
     /// Computes the value of x and gradx for a given point in parameter space
     void GeomQuad::GradX(const VecDouble &xi, Matrix &NodeCo, VecDouble &x, Matrix &gradx){
         
-        int space = NodeCo.Rows();
+        int space = Dimension;
         int ncol = NodeCo.Cols();
         
         gradx.Resize(space,2);
@@ -94,8 +94,12 @@
 #endif
         VecDouble phi(4,0.);
         Matrix dphi(2,4,0.);
-        X(xi,NodeCo,x);
+        //X(xi,NodeCo,x);
         Shape(xi,phi,dphi);
+        
+       
+        
+        
         for(int i = 0; i < 4; i++)
         {
             for(int j = 0; j < space; j++)
@@ -104,8 +108,6 @@
                 gradx(j,1) += NodeCo(j,i)*dphi(1,i);
             }
         }
-        
-        
         
     }
 

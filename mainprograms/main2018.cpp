@@ -75,12 +75,14 @@ CompMesh *CMesh(GeoMesh *gmesh, int pOrder){
     Matrix perm(2,2,0.);
     perm(0,0)=1.;
     perm(1,1)=1.;
+
     CompMesh * cmesh = new CompMesh(gmesh);
     Poisson *material = new Poisson(perm);
     int index = 0;
     cmesh->SetNumberMath(index+1);
     cmesh->SetMathStatement(index, material);
     cmesh->SetDefaultOrder(pOrder);
+    
     
     cmesh->AutoBuild();
     
