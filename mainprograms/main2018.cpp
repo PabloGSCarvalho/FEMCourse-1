@@ -44,16 +44,16 @@ int main ()
 
     //TestIntegrate();
     
-    VecDouble vec1;
-    ReadGmsh read;
+//    VecDouble vec1;
+//    ReadGmsh read;
 //    GeoMesh geomesh;
 //
 //    read.Read(geomesh, "GeometryBenchSimple.msh");
 //
-//    VTKGeoMesh::PrintGMeshVTK(&geomesh, "MalhaTeste.vtk");
+//    //VTKGeoMesh::PrintGMeshVTK(&geomesh, "MalhaTeste.vtk");
 //    geomesh.Print(std::cout);
     
-    GeoMesh *geotest = CreateGMesh(2, 2, 1, 1);
+    GeoMesh *geotest = CreateGMesh(2, 2, 1., 1.);
 
     geotest->Print(std::cout);
     
@@ -65,7 +65,7 @@ int main ()
     
     as.Compute(globmat, rhs);
     
-    globmat.Print();
+    //globmat.Print();
 
     return 0;
 }

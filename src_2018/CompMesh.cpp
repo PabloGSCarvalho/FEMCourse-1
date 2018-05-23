@@ -6,6 +6,7 @@
 //
 
 #include "CompMesh.h"
+#include "GeoMesh.h"
 #include "GeoElement.h"
 #include "CompElement.h"
 #include "MathStatement.h"
@@ -99,28 +100,27 @@
 
     void CompMesh::AutoBuild(){
         int nel = GetGeoMesh()->NumElements();
+        SetNumberElement(nel);
         for (int iel = 0; iel< nel; iel++) {
             GeoElement *gel = GetGeoMesh()->Element(iel);
             CompElement *cel = gel->CreateCompEl(this, iel);
-            SetNumberElement(iel+1);
             SetElement(iel, cel);
-            MathStatement *material = GetMath(iel);
-            cel->SetStatement(material);
             
-            int nsides = gel->NSides();
-            int nstate = material->NState();
-            VecInt orders(nsides);
-            DOF dof;
-            int nshape = 0;
-            for (int iord = 0; iord<nsides; iord++) {
-                orders[iord]=DefaultOrder;
-                this->SetNumberDOF(iord+1);
-                cel->SetNDOF(iord+1);
-                cel->SetDOFIndex(iord, iord);
-                SetDOF(iord, dof);
-                nshape = cel->ComputeNShapeFunctions(iord,orders[iord]);
-                this->GetDOF(iord).SetNShapeStateOrder(nshape, nstate,orders[iord]);
-            }
+            
+//            int nsides = gel->NSides();
+//            int nstate = material->NState();
+//            VecInt orders(nsides);
+//            DOF dof;
+//            int nshape = 0;
+//            for (int iord = 0; iord<nsides; iord++) {
+//                orders[iord]=DefaultOrder;
+//                this->SetNumberDOF(iord+1);
+//                cel->SetNDOF(iord+1);
+//                cel->SetDOFIndex(iord, iord);
+//                SetDOF(iord, dof);
+//                nshape = cel->ComputeNShapeFunctions(iord,orders[iord]);
+//                this->GetDOF(iord).SetNShapeStateOrder(nshape, nstate,orders[iord]);
+//            }
         }
     }
 

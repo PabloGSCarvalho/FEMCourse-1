@@ -54,9 +54,7 @@
         Matrix &dphi=data.dphidx;
         VecDouble &x = data.x;
         Matrix &axes =data.axes;
-        
-        axes.Print();
-        dphi.Print();
+ 
         
         int nphi= phi.size();
    //     VecDouble f(1,0.); incluir set force function no main
@@ -65,7 +63,7 @@
         Matrix Kdphi(2,2,0.);
         
         
-        //dphi.Print();
+        
         
 //        for (int ik=0; ik<4; ik++) {
 //            for (int jk=0; jk<4; jk++) {
@@ -91,18 +89,22 @@
                 //    Derivative for Uy
                 du[1] = dphi(0,jn)*axes(0,1)+dphi(1,jn)*axes(1,1);
                 
+                EK(2*in,2*jn) += weight*(du[0]*dv[0]*perm(0,0)+du[0]*dv[1]*perm(1,0));
+                EK(2*in,2*jn+1) += weight*(du[0]*dv[0]*perm(0,1)+du[0]*dv[1]*perm(1,1));
+                EK(2*in+1,2*jn) += weight*(du[1]*dv[0]*perm(0,0)+du[1]*dv[1]*perm(1,0));
+                EK(2*in+1,2*jn+1) += weight*(du[1]*dv[0]*perm(0,1)+du[1]*dv[1]*perm(1,1));
                 
-                    EK(2*in,2*jn) += weight*(du[0]*dv[0]);
-                    EK(2*in,2*jn+1) += weight*(du[0]*dv[1]);
-                    EK(2*in+1,2*jn) += weight*(du[1]*dv[0]);
-                    EK(2*in+1,2*jn+1) += weight*(du[1]*dv[1]);
+                
+//                EK(2*in,2*jn) += weight*(du[0]*dv[0]);
+//                EK(2*in,2*jn+1) += weight*(du[0]*dv[1]);
+//                EK(2*in+1,2*jn) += weight*(du[1]*dv[0]);
+//                EK(2*in+1,2*jn+1) += weight*(du[1]*dv[1]);
                 
             }
         }
         
-        std::cout<<"----------------"<<std::endl;
-        EK.Print();
-        std::cout<<"----------------"<<std::endl;
+        //EK.Print();
+        
     }
     
     std::vector<double> Poisson::PostProcess(const IntPointData &integrationpointdata, const PostProcVar var) const{

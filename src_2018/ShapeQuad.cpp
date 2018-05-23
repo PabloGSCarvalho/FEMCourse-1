@@ -15,10 +15,10 @@
         int nshape = Shape1d::NShapeFunctions(orders);
         //int nsides = orders.size();
 
-        VecDouble coxi(1);
+        VecDouble coxi(1,0.);
         coxi[0]=xi[0];
         
-        VecDouble coeta(1);
+        VecDouble coeta(1,0.);
         coeta[0]=xi[1];
         
         VecDouble phixi(nshape), phieta(nshape);
@@ -57,7 +57,7 @@
                 }
             }
       
-        
+
         
     }
     

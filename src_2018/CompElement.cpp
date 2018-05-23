@@ -92,7 +92,7 @@
         data.dphidksi.Resize(dim,nshape);
         data.dphidx.Resize(dim,nshape);
         data.axes.Resize(dim,3);
-        data.x.resize(dim);
+        data.x.resize(3);
         data.ksi.resize(dim);
         data.solution.resize(nstate);
         data.dsoldksi.Resize(dim,nstate);
@@ -100,10 +100,15 @@
     }
     
     void CompElement::ComputeRequiredData(IntPointData &data, VecDouble &intpoint) const{
+        
+//        std::cout<<intpoint[0]<<std::endl;
+//        std::cout<<intpoint[1]<<std::endl;
+        
         GeoElement *gel = this->GetGeoElement();
         Matrix gradx,Jac,JacInv;
         
         gel->X(intpoint, data.x);
+        
         gel->GradX(intpoint, data.x, gradx);
         
         gel->Jacobian(gradx, Jac, data.axes, data.detjac, JacInv);
@@ -111,7 +116,8 @@
         
         this->Convert2Axes(data.dphidksi, JacInv, data.dphidx);
         
-        
+      
+
         
         
     }
@@ -185,4 +191,6 @@
         
     }
     
-
+    void CompElement::Solution(const VecDouble &intpoint, VecDouble &sol, TMatrix &dsol) const{
+        
+    }

@@ -9,6 +9,14 @@
 #include "GeoElementSide.h"
 #include "GeoElement.h"
 #include "tpanic.h"
+#include "CompMesh.h"
+#include "GeoMesh.h"
+#include "CompElement.h"
+#include "CompElementTemplate.h"
+#include "Shape1d.h"
+#include "ShapeQuad.h"
+#include "ShapeTriangle.h"
+#include "ShapeTetrahedron.h"
 
 
     GeoElement::GeoElement(){

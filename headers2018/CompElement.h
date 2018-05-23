@@ -102,14 +102,21 @@ public:
     // Compute shape functions set at point x
     virtual void ShapeFunctions(const VecDouble &intpoint, VecDouble &phi, Matrix &dphi) const = 0;
     
+    // Compute the solution and its gradient at a parametric point
+    // for dsol the row indicates the direction, the column indicates the state variable
+    virtual void Solution(const VecDouble &intpoint, VecDouble &sol, TMatrix &dsol) const;
+    
     // Return the number of shape functions
     virtual int NShapeFunctions() const = 0;
     
     // Set number of DOF
     virtual void SetNDOF(int64_t ndof) = 0;
     
-    // Se DOF index in vector position i
+    // Set DOF index in vector position i
     virtual void SetDOFIndex(int i, int64_t dofindex) = 0;
+    
+    // Get DOF index in vector position i
+    virtual int64_t GetDOFIndex(int i) = 0;
     
     // Return the number of degree of freedom
     virtual int NDOF() const = 0;

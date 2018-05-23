@@ -6,6 +6,8 @@
 //
 
 #include "Analysis.h"
+#include "Assemble.h"
+#include "CompMesh.h"
 
     Analysis::Analysis(): cmesh(0), Solution(), GlobalSystem(), RightHandSide(){
         

@@ -8,10 +8,10 @@
 #ifndef Analysis_h
 #define Analysis_h
 
-#include "CompMesh.h"
 #include "DataTypes.h"
-#include "PostProcess.h"
-#include "Assemble.h"
+class CompMesh;
+class PostProcess;
+#include <string>
 
 class Analysis
 {

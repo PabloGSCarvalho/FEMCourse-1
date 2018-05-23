@@ -32,10 +32,42 @@
         Nelem+=1;
         ind = Nelem-1;
         cmesh->SetElement(ind, this);
+        geo->SetReference(this);
         this->SetIndex(ind);
         int order = cmesh->GetDefaultOrder();
-        intrule.SetOrder(order*Dimension());
+        intrule.SetOrder(order*2);
         SetIntRule(&intrule);
+        MathStatement *mat = GetStatement();
+        int nsides = Shape::nSides;
+        SetNDOF(nsides);
+        for (int is=0; is<nsides; is++) {
+            GeoElementSide gelside(GetGeoElement(),is);
+            GeoElementSide neighbour = gelside.Neighbour();
+            while(neighbour != gelside)
+            {
+                if (neighbour.Element()->GetReference()) {
+                    break;
+                }
+                neighbour = neighbour.Neighbour();
+            }
+            if(neighbour == gelside)
+            {
+                CompElement *cel = neighbour.Element()->GetReference();
+                dofindexes[is] = cel->GetDOFIndex(neighbour.Side());
+            }
+            else
+            {
+                int order = cmesh->GetDefaultOrder();
+                int nshape = Shape::NShapeFunctions(is,order);
+                int nstate = mat->NState();
+                int64_t ndof = cmesh->GetNumberDOF();
+                cmesh->SetNumberDOF(ndof+1);
+                DOF dof;
+                dof.SetNShapeStateOrder(nshape,nstate,order);
+                cmesh->SetDOF(ndof, dof);
+                dofindexes[is] = ndof;
+            }
+        }
     }
 
     template<class Shape>
@@ -65,6 +97,12 @@
     void CompElementTemplate<Shape>::SetDOFIndex(int i, int64_t dofindex){
         dofindexes[i]=dofindex;
     }
+
+    template<class Shape>
+    int64_t CompElementTemplate<Shape>::GetDOFIndex(int i){
+        return dofindexes[i];
+    }
+
 
 //    template<class Shape>
 //    void CompElementTemplate<Shape>::SetOrder(int64_t ord){
@@ -105,6 +143,10 @@
         }
         Shape::Shape(intpoint, orders, phi, dphi);
 
+    }
+    template<class Shape>
+    void CompElementTemplate<Shape>::GetMultiplyingCoeficients(VecDouble &coefs){
+        
     }
 
     template<class Shape>

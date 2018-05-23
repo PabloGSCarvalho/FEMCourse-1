@@ -38,7 +38,8 @@
     /// Computes the shape functions associated with the geometric map
     void GeomQuad::Shape(const VecDouble &xi, VecDouble &phi, Matrix &dphi){
         
-        double qsi = xi[0], eta = xi[1];
+        double qsi = xi[0];
+        double eta = xi[1];
         
         phi[0] = 0.25*(1.-qsi)*(1.-eta);
         phi[1] = 0.25*(1.+qsi)*(1.-eta);
@@ -64,14 +65,15 @@
         VecDouble phi(4,0.);
         Matrix dphi(Dimension,4,0.);
         Shape(xi,phi,dphi);
+
         int space = NodeCo.Rows();
-        for(int i = 0; i < space; i++) {
-            x[i] = 0.0;
-            for(int j = 0; j < 4; j++) {
-                x[i] += phi[j]*NodeCo.GetVal(i,j);
+        for(int ixy = 0; ixy < space; ixy++) {
+            x[ixy] = 0.0;
+            for(int jxy = 0; jxy < 4; jxy++) {
+                x[ixy] += phi[jxy]*NodeCo.GetVal(ixy,jxy);
             }
         }
-        
+      
     }
 
     

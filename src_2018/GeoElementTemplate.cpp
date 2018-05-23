@@ -44,7 +44,6 @@
     template<class TGeom>
     void GeoElementTemplate<TGeom>::X(const VecDouble &xi, VecDouble &x){
         
-        
         Matrix NodeCo(3,GMesh->NumNodes(),0.);
         for (int in=0; in<GMesh->NumNodes(); in++) {
             int nodid = NodeIndex(in);
@@ -53,6 +52,7 @@
             NodeCo(2,in)=GMesh->Node(nodid).Co()[2];
         }
         Geom.X(xi,NodeCo,x);
+        
     }
 
     template<class TGeom>

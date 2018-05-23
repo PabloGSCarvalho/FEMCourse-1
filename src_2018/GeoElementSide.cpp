@@ -6,6 +6,8 @@
 //
 
 #include "GeoElementSide.h"
+#include "GeoMesh.h"
+
     
     GeoElementSide::GeoElementSide(){
         this->fSide = 0;

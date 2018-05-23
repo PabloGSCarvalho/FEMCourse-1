@@ -6,6 +6,8 @@
 //
 
 #include "Assemble.h"
+#include "CompMesh.h"
+#include "CompElement.h"
 #include "GeoElement.h"
 #include "GeoElementTemplate.h"
 
@@ -57,24 +59,28 @@
             GeoElement *gel = cel->GetGeoElement();
             VecInt nodesVec;
             gel->GetNodes(nodesVec);
-            int nnodes = nodesVec.size();
+            std::vector<DOF> dofvec = cmesh->GetDOFVec();
             
-            TMatrix EK(nnodes,nnodes),EF(nnodes,1);
+
+            int neq = NEquations();
+            TMatrix EK(neq,neq),EF(neq,1);
 
             //vericar isso aqui oioioio
-            globmat.Resize(nnodes, nnodes);
-            rhs.Resize(nnodes, 1);
+            globmat.Resize(neq, neq);
+            rhs.Resize(neq, 1);
             
             EF.Zero();
             EK.Zero();
             
             cel->CalcStiff(EK, EF);
 
-            //EK.Print();
+            EK.Print();
+
+
             
-            for (int i=0; i<nnodes; i++) {
+            for (int i=0; i<neq; i++) {
                 rhs(nodesVec[i],0)+=EF(i,0);
-                for (int j=0; j<nnodes; j++) {
+                for (int j=0; j<neq; j++) {
                     globmat(nodesVec[i],nodesVec[j])+=EK(i,j);
                 }
             }

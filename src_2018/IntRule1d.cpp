@@ -47,19 +47,19 @@
         
         if (fOrder==0||fOrder==1) {
             
-            fPoints(0,0)=0; fWeights[0]=2;
+            fPoints(0,0)=0.; fWeights[0]=2.;
         }
         
         if (fOrder==2||fOrder==3) {
             
-            fPoints(0,0)=-0.57735026918962573; fWeights[0]=1;
-            fPoints(1,0)=0.57735026918962573; fWeights[1]=1;
+            fPoints(0,0)=-0.57735026918962573; fWeights[0]=1.;
+            fPoints(1,0)=0.57735026918962573; fWeights[1]=1.;
         }
         
         if (fOrder==4||fOrder==5) {
             fPoints(0,0)=-0.7745966692414834; fWeights[0]=0.55555555555555558;
             fPoints(1,0)=0.7745966692414834; fWeights[1]=0.55555555555555558;
-            fPoints(2,0)=0; fWeights[2]=0.88888888888888884;
+            fPoints(2,0)=0.; fWeights[2]=0.88888888888888884;
             
         }
         

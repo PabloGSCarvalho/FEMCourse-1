@@ -9,8 +9,9 @@
 #define Assemble_h
 
 #include "DataTypes.h"
-#include "CompMesh.h"
 #include "PostProcess.h"
+
+class CompMesh;
 
 // class geared towards the assembly of the global system of equations
 class Assemble
