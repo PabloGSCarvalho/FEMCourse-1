@@ -53,8 +53,8 @@ int main ()
 //    //VTKGeoMesh::PrintGMeshVTK(&geomesh, "MalhaTeste.vtk");
 //    geomesh.Print(std::cout);
     
-    GeoMesh *geotest = CreateGMesh(2, 2, 1., 1.);
-
+    GeoMesh *geotest = CreateGMesh(3, 2, 1., 1.);
+    
     geotest->Print(std::cout);
     
     CompMesh *cmesh = CMesh(geotest, 1);
@@ -65,7 +65,7 @@ int main ()
     
     as.Compute(globmat, rhs);
     
-    //globmat.Print();
+    globmat.Print();
 
     return 0;
 }
@@ -78,12 +78,15 @@ CompMesh *CMesh(GeoMesh *gmesh, int pOrder){
 
     CompMesh * cmesh = new CompMesh(gmesh);
     Poisson *material = new Poisson(perm);
-    int index = 0;
-    cmesh->SetNumberMath(index+1);
-    cmesh->SetMathStatement(index, material);
+    
+    int nel= gmesh->NumElements();
+    
+    for (int iel = 0; iel<nel; iel++) {
+        cmesh->SetNumberMath(iel+1);
+        cmesh->SetMathStatement(iel, material);
+    }
+    
     cmesh->SetDefaultOrder(pOrder);
-    
-    
     cmesh->AutoBuild();
     
     return cmesh;
@@ -121,6 +124,9 @@ GeoMesh *CreateGMesh(int nx, int ny, double hx, double hy){
             gmesh->SetElement(index, gel);
         }
     }
+    
+    //Generate neighborhod information
+    gmesh->BuildConnectivity();
     
     return gmesh;
 }

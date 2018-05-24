@@ -91,8 +91,6 @@
                 {
                     sides[nodindex] = no;
                     vetor[nodindex] = el;
-//                    if(el->Neighbour(no).Side()==-1){
-//                        el->Neighbour(no)=GeoElementSide(el,no);
                 }
                 else
                 {
@@ -124,11 +122,7 @@
                 
                     for(int in=0; in<nneigh; in++)
                     {
-//                        if(neighbours[in].Element()->SideIsUndefined(neighbours[in].Side()))
-//                        {
-//                            neighbours[in].Element()->SetSideDefined(neighbours[in].Side());
-//                        }
-                        
+
                         gelside.IsertConnectivity(neighbours[in]);
                     }
   

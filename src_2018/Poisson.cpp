@@ -45,7 +45,7 @@
     }
     
     int Poisson::NState() const{
-        return 1;
+        return 2;
     }
     
     void Poisson::Contribute(IntPointData &data, double weight, Matrix &EK, Matrix &EF) const{

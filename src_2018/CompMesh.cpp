@@ -122,19 +122,21 @@
 //                this->GetDOF(iord).SetNShapeStateOrder(nshape, nstate,orders[iord]);
 //            }
         }
+        
+        this->Resequence();
     }
 
 // Initialize the datastructure FirstEquation of the DOF objects
     void CompMesh::Resequence(){
         
-//        int nel = GetGeoMesh()->NumElements();
-//        for (int iel = 0; iel< nel; iel++) {
-//            GeoElement *gel = GetGeoMesh()->Element(iel);
-//            CompElement *cel = gel->CreateCompEl(this, iel);
-//            
-//            cel->D
-//            
-//        }
+        int64_t ncon = GetNumberDOF();
+        int64_t firstEq = 0;
+        
+        for (int idof=0; idof<ncon; idof++) {
+            this->GetDOF(idof).SetFirstEquation(firstEq);
+            int dofsize = this->GetDOF(idof).GetNShape()*this->GetDOF(idof).GetNState();
+            firstEq += dofsize;
+        }
         
     }
 

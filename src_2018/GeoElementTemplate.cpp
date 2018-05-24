@@ -44,9 +44,9 @@
     template<class TGeom>
     void GeoElementTemplate<TGeom>::X(const VecDouble &xi, VecDouble &x){
         
-        Matrix NodeCo(3,GMesh->NumNodes(),0.);
-        for (int in=0; in<GMesh->NumNodes(); in++) {
-            int nodid = NodeIndex(in);
+        Matrix NodeCo(3,NNodes(),0.);
+        for (int in=0; in<NNodes(); in++) {
+            int nodid = this->NodeIndex(in);
             NodeCo(0,in)=GMesh->Node(nodid).Co()[0];
             NodeCo(1,in)=GMesh->Node(nodid).Co()[1];
             NodeCo(2,in)=GMesh->Node(nodid).Co()[2];
@@ -57,8 +57,8 @@
 
     template<class TGeom>
     void GeoElementTemplate<TGeom>::GradX(const VecDouble &xi, VecDouble &x, Matrix &gradx){
-        Matrix NodeCo(3,GMesh->NumNodes(),0.);
-        for (int in=0; in<GMesh->NumNodes(); in++) {
+        Matrix NodeCo(3,NNodes(),0.);
+        for (int in=0; in<NNodes(); in++) {
             int nodid = NodeIndex(in);
             NodeCo(0,in)=GMesh->Node(nodid).Co()[0];
             NodeCo(1,in)=GMesh->Node(nodid).Co()[1];

@@ -34,7 +34,15 @@
     
     /// Compute the total number of equations
     int64_t Assemble::NEquations(){
-        return cmesh->GetDOFVec().size();
+        int64_t neq = 0;
+        int64_t ncon = cmesh->GetNumberDOF();
+        
+        for (int idof=0; idof<ncon; idof++) {
+            DOF dof = cmesh->GetDOF(idof);
+            int dofsize = dof.GetNShape()*dof.GetNState();
+            neq += dofsize;
+        }
+        return neq;
     }
     
     /// Optimize the bandwidth of the global system of equations
@@ -45,7 +53,9 @@
     /// Compute the global stiffness matrix and right hand side
     void Assemble::Compute(Matrix &globmat, Matrix &rhs){
         
+        int neq = NEquations();
         int nel= cmesh->GetElementVec().size();
+
 //        int neq = NEquations();
 //
 //        globmat.Resize(neq, neq);
@@ -57,13 +67,8 @@
             
             CompElement *cel=cmesh->GetElement(el);
             GeoElement *gel = cel->GetGeoElement();
-            VecInt nodesVec;
-            gel->GetNodes(nodesVec);
-            std::vector<DOF> dofvec = cmesh->GetDOFVec();
-            
 
-            int neq = NEquations();
-            TMatrix EK(neq,neq),EF(neq,1);
+            TMatrix EK,EF;
 
             //vericar isso aqui oioioio
             globmat.Resize(neq, neq);
@@ -73,19 +78,32 @@
             EK.Zero();
             
             cel->CalcStiff(EK, EF);
-
-            EK.Print();
-
-
             
-            for (int i=0; i<neq; i++) {
-                rhs(nodesVec[i],0)+=EF(i,0);
-                for (int j=0; j<neq; j++) {
-                    globmat(nodesVec[i],nodesVec[j])+=EK(i,j);
+            //EK.Print();
+            
+            VecInt iGlob(neq,0);
+            
+            int ndofel = cel->NDOF();
+            int indexdof = 0;
+            for (int idof =0; idof<ndofel; idof++) {
+                int idcon = cel->GetDOFIndex(idof);
+                DOF dof = cmesh->GetDOF(idcon);
+                int nshape = dof.GetNShape();
+                int nstat = dof.GetNState();
+                for(int i=0; i<nshape*nstat; i++) {
+                    iGlob[indexdof] = dof.GetFirstEquation()+i;
+                    indexdof++;
                 }
             }
             
-            //stiff.Print();
+            for (int i=0; i<EK.Rows(); i++) {
+                rhs(iGlob[i],0)+=EF(i,0);
+                for (int j=0; j<EK.Rows(); j++) {
+                    globmat(iGlob[i],iGlob[j])+=EK(i,j);
+                }
+            }
+
+
         }
         
         

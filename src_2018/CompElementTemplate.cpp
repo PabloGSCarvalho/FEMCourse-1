@@ -28,16 +28,17 @@
     template<class Shape>
     CompElementTemplate<Shape>::CompElementTemplate(int64_t ind, CompMesh *cmesh,  GeoElement *geo) : CompElement(ind,cmesh,geo){
         int Nelem = cmesh->GetElementVec().size();
-        cmesh->SetNumberElement(Nelem+1);
-        Nelem+=1;
-        ind = Nelem-1;
+        cmesh->SetNumberElement(Nelem);
+        //Nelem+=1;
+        //ind = Nelem-1;
         cmesh->SetElement(ind, this);
         geo->SetReference(this);
         this->SetIndex(ind);
         int order = cmesh->GetDefaultOrder();
         intrule.SetOrder(order*2);
         SetIntRule(&intrule);
-        MathStatement *mat = GetStatement();
+        MathStatement *mat = cmesh->GetMath(ind);
+        this->SetStatement(mat);
         int nsides = Shape::nSides;
         SetNDOF(nsides);
         for (int is=0; is<nsides; is++) {
@@ -50,7 +51,7 @@
                 }
                 neighbour = neighbour.Neighbour();
             }
-            if(neighbour == gelside)
+            if(neighbour != gelside)
             {
                 CompElement *cel = neighbour.Element()->GetReference();
                 dofindexes[is] = cel->GetDOFIndex(neighbour.Side());
