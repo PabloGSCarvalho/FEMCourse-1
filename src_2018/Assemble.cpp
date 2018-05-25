@@ -55,18 +55,10 @@
         
         int neq = NEquations();
         int nel= cmesh->GetElementVec().size();
-
-//        int neq = NEquations();
-//
-//        globmat.Resize(neq, neq);
-//        rhs.Resize(neq, 1);
-//        globmat.Zero();
-//        rhs.Zero();
         
         for (int el=0; el<nel; el++) {
             
             CompElement *cel=cmesh->GetElement(el);
-            GeoElement *gel = cel->GetGeoElement();
 
             TMatrix EK,EF;
 
@@ -103,9 +95,7 @@
                 }
             }
 
-
         }
-        
         
     }
     

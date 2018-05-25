@@ -21,6 +21,8 @@ class MathStatement
     
 public:
     
+    static double gBigNumber;
+    
     // Constructor of MathStatement
     MathStatement();
     

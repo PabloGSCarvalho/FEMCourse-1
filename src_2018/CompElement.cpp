@@ -7,6 +7,7 @@
 
 #include "CompElement.h"
 #include "GeoElement.h"
+#include "CompMesh.h"
 #include "CompElementTemplate.h"
 #include "DataTypes.h"
 #include "MathStatement.h"
@@ -109,17 +110,14 @@
         
         gel->X(intpoint, data.x);
         
-        gel->GradX(intpoint, data.x, gradx);
+        gel->GradX(intpoint, data.x, data.gradx);
         
-        gel->Jacobian(gradx, Jac, data.axes, data.detjac, JacInv);
+        gel->Jacobian(data.gradx, Jac, data.axes, data.detjac, JacInv);
         this->ShapeFunctions(intpoint, data.phi, data.dphidksi);
         
         this->Convert2Axes(data.dphidksi, JacInv, data.dphidx);
         
-      
-
-        
-        
+     
     }
 
     void CompElement::Convert2Axes(const Matrix &dphi, const Matrix &jacinv, Matrix &dphidx) const{
@@ -191,6 +189,16 @@
         
     }
     
-    void CompElement::Solution(const VecDouble &intpoint, VecDouble &sol, TMatrix &dsol) const{
+    void CompElement::Solution(VecDouble &intpoint, VecDouble &sol, TMatrix &dsol) const{
+
+        IntPointData data;
+        this->InitializeIntPointData(data);
+        GetMultiplyingCoeficients(data.coefs);
         
+        ComputeRequiredData(data,intpoint);
+        data.ComputeSolution();
+        sol.resize(2);
+        dsol.Resize(data.dsoldx.Rows(),data.dsoldx.Cols());
+        sol=data.solution;
+        dsol=data.dsoldx;
     }

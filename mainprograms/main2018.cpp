@@ -23,7 +23,9 @@
 #include "GeoElement.h"
 #include "GeoElementTemplate.h"
 #include "Poisson.h"
+#include "L2Projection.h"
 #include "Assemble.h"
+#include "Analysis.h"
 
 using std::cout;
 using std::endl;
@@ -39,6 +41,10 @@ double InnerVec(VecDouble &S , VecDouble &T);
 GeoMesh *CreateGMesh(int nx, int ny, double hx, double hy);
 CompMesh *CMesh(GeoMesh *gmesh, int pOrder);
 
+void F_source(const VecDouble &x, VecDouble &f);
+
+const double Pi=M_PI;
+
 int main ()
 {
 
@@ -53,37 +59,84 @@ int main ()
 //    //VTKGeoMesh::PrintGMeshVTK(&geomesh, "MalhaTeste.vtk");
 //    geomesh.Print(std::cout);
     
-    GeoMesh *geotest = CreateGMesh(3, 2, 1., 1.);
+    GeoMesh *geotest = CreateGMesh(3, 3, 1., 1.);
     
     geotest->Print(std::cout);
     
+    VTKGeoMesh::PrintGMeshVTK(geotest, "MalhaTeste.vtk");
+    
     CompMesh *cmesh = CMesh(geotest, 1);
     
-    Assemble as(cmesh);
-    
-    Matrix globmat, rhs;
-    
-    as.Compute(globmat, rhs);
-    
-    globmat.Print();
+//    Assemble as(cmesh);
+//
+//    Matrix globmat, rhs;
+//
+//    as.Compute(globmat, rhs);
+//
+//    globmat.Print();
 
+    Analysis an(cmesh);
+    an.RunSimulation();
+    
+    VecDouble Sol = cmesh->Solution();
+    for (int i =0; i<Sol.size(); i++) {
+        std::cout<<Sol[i]<<std::endl;
+    }
+    
+    
+    
+    
+    VTKGeoMesh::PrintCMeshVTK(cmesh,2, "Solution.vtk");
+    
     return 0;
 }
+
+void F_source(const VecDouble &x, VecDouble &f){
+    
+    f.resize(2);
+    
+    double xv = x[0];
+    double yv = x[1];
+    //    STATE zv = x[2];
+    
+    double f_x = + 8.0*Pi*Pi*cos(2.0*Pi*yv)*sin(2.0*Pi*xv);
+    double f_y = - 8.0*Pi*Pi*cos(2.0*Pi*xv)*sin(2.0*Pi*yv);
+    
+    f[0] = f_x; // x direction
+    f[1] = f_y; // y direction
+
+}
+
+
 
 CompMesh *CMesh(GeoMesh *gmesh, int pOrder){
  
     Matrix perm(2,2,0.);
     perm(0,0)=1.;
     perm(1,1)=1.;
+    
+    Matrix proj(2,2,0.);
+    proj(0,0)=1.;
+    proj(1,1)=1.;
 
     CompMesh * cmesh = new CompMesh(gmesh);
-    Poisson *material = new Poisson(perm);
+
     
     int nel= gmesh->NumElements();
-    
     for (int iel = 0; iel<nel; iel++) {
-        cmesh->SetNumberMath(iel+1);
-        cmesh->SetMathStatement(iel, material);
+    // Materiais internos (Poisson)
+        if(gmesh->Element(iel)->Type()==EQuadrilateral){
+            cmesh->SetNumberMath(iel+1);
+            Poisson *material = new Poisson(perm);
+            material->SetForceFunction(F_source);
+            cmesh->SetMathStatement(iel, material);
+        }
+    // Condições de contorno (L2Projection)
+        if(gmesh->Element(iel)->Type()==EOned){
+            cmesh->SetNumberMath(iel+1);
+            L2Projection *bcmat = new L2Projection(proj);
+            cmesh->SetMathStatement(iel, bcmat);
+        }
     }
     
     cmesh->SetDefaultOrder(pOrder);
@@ -97,6 +150,11 @@ GeoMesh *CreateGMesh(int nx, int ny, double hx, double hy){
     
     GeoMesh *gmesh = new GeoMesh;
     int matId = 1;
+    int bc0 = -1; //define id para um material(cond contorno esq)
+    int bc1 = -2; //define id para um material(cond contorno dir)
+    int bc2 = -3; //define id para um material(cond contorno inf)
+    int bc3 = -4; //define id para um material(cond contorno sup)
+    
     int id, index;
     VecDouble coord(3,0.);
     int nnodes=nx*ny;
@@ -112,6 +170,8 @@ GeoMesh *CreateGMesh(int nx, int ny, double hx, double hy){
     }
     //(const VecInt &nodeindices, int materialid, GeoMesh *gmesh, int index)
     VecInt nodeind(nnodes);
+    VecInt nodeindBC(2,0.);
+    
     for(int iq = 0; iq < (ny - 1); iq++){
         for(int jq = 0; jq < (nx - 1); jq++){
             index = iq*(nx - 1)+ jq;
@@ -122,6 +182,51 @@ GeoMesh *CreateGMesh(int nx, int ny, double hx, double hy){
             GeoElement *gel = new GeoElementTemplate<GeomQuad>(nodeind,matId,gmesh,index);
             gmesh->SetNumElements(index+1);
             gmesh->SetElement(index, gel);
+        }
+    }
+    
+    for(int iq = 0; iq < (ny - 1); iq++){
+        for(int jq = 0; jq < (nx - 1); jq++){
+            nodeind[0] = iq*ny + jq;
+            nodeind[1] = nodeind[0]+1;
+            nodeind[2] = nodeind[1]+(nx);
+            nodeind[3] = nodeind[0]+(nx);
+            //Condição esquerda:
+            if(jq==0){
+                index ++;
+                nodeindBC[0]=nodeind[0];
+                nodeindBC[1]=nodeind[3];
+                GeoElement *gelbc0 = new GeoElementTemplate<Geom1d>(nodeindBC,bc0,gmesh,index);
+                gmesh->SetNumElements(index+1);
+                gmesh->SetElement(index, gelbc0);
+            }
+            //Condição direita:
+            if(jq==nx-2){
+                index ++;
+                nodeindBC[0]=nodeind[1];
+                nodeindBC[1]=nodeind[2];
+                GeoElement *gelbc1 = new GeoElementTemplate<Geom1d>(nodeindBC,bc1,gmesh,index);
+                gmesh->SetNumElements(index+1);
+                gmesh->SetElement(index, gelbc1);
+            }
+            //Condição esquerda:
+            if(iq==0){
+                index ++;
+                nodeindBC[0]=nodeind[0];
+                nodeindBC[1]=nodeind[1];
+                GeoElement *gelbc2 = new GeoElementTemplate<Geom1d>(nodeindBC,bc2,gmesh,index);
+                gmesh->SetNumElements(index+1);
+                gmesh->SetElement(index, gelbc2);
+            }
+            //Condição esquerda:
+            if(iq==ny-2){
+                index ++;
+                nodeindBC[0]=nodeind[2];
+                nodeindBC[1]=nodeind[3];
+                GeoElement *gelbc3 = new GeoElementTemplate<Geom1d>(nodeindBC,bc3,gmesh,index);
+                gmesh->SetNumElements(index+1);
+                gmesh->SetElement(index, gelbc3);
+            }
         }
     }
     

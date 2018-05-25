@@ -58,12 +58,10 @@
         
         int nphi= phi.size();
    //     VecDouble f(1,0.); incluir set force function no main
-   //     forceFunction(x,f);
+        
         Matrix perm = GetPermeability();
         Matrix Kdphi(2,2,0.);
-        
-        
-        
+ 
         
 //        for (int ik=0; ik<4; ik++) {
 //            for (int jk=0; jk<4; jk++) {
@@ -80,7 +78,11 @@
             //    Derivative for Vy
             dv[1] = dphi(0,in)*axes(0,1)+dphi(1,in)*axes(1,1);
             
-            EF(in,0)+= -weight*phi[in]*0; //Nada oioioioi
+            VecDouble f(2,0.);
+            forceFunction(x,f);
+            
+            EF(2*in,0)+= -weight*phi[in]*f[0]; //Nada oioioioi
+            EF(2*in+1,0)+= -weight*phi[in]*f[1]; //Nada oioioioi
             for(int jn = 0; jn<nphi; jn++){
                 
                 VecDouble du(2);
@@ -94,11 +96,7 @@
                 EK(2*in+1,2*jn) += weight*(du[1]*dv[0]*perm(0,0)+du[1]*dv[1]*perm(1,0));
                 EK(2*in+1,2*jn+1) += weight*(du[1]*dv[0]*perm(0,1)+du[1]*dv[1]*perm(1,1));
                 
-                
-//                EK(2*in,2*jn) += weight*(du[0]*dv[0]);
-//                EK(2*in,2*jn+1) += weight*(du[0]*dv[1]);
-//                EK(2*in+1,2*jn) += weight*(du[1]*dv[0]);
-//                EK(2*in+1,2*jn+1) += weight*(du[1]*dv[1]);
+
                 
             }
         }

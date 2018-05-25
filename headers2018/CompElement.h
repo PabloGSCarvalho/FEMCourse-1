@@ -104,7 +104,10 @@ public:
     
     // Compute the solution and its gradient at a parametric point
     // for dsol the row indicates the direction, the column indicates the state variable
-    virtual void Solution(const VecDouble &intpoint, VecDouble &sol, TMatrix &dsol) const;
+    virtual void Solution(VecDouble &intpoint, VecDouble &sol, TMatrix &dsol) const;
+    
+    // Get Multiplying Coeficients
+    virtual void GetMultiplyingCoeficients(VecDouble &coefs) const = 0;
     
     // Return the number of shape functions
     virtual int NShapeFunctions() const = 0;

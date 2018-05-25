@@ -104,30 +104,6 @@
         return dofindexes[i];
     }
 
-
-//    template<class Shape>
-//    void CompElementTemplate<Shape>::SetOrder(int64_t ord){
-//
-//        MathStatement *mat = GetStatement();
-//        int nstate = mat->NState();
-//        int nsides = GetGeoElement()->NSides();
-//
-//        CompMesh cmesh = *this->GetCompMesh();
-//        VecInt orders(nsides);
-//        dofindexes.resize(nsides);
-//
-//        DOF dof;
-//        int nshape=0;
-//        for (int iord =0; iord<nsides; iord++) {
-//            orders[iord]=ord;
-//            nshape += Shape::NShapeFunctions(iord, orders[iord]);
-//            cmesh.SetNumberDOF(iord+1);
-//            cmesh.SetDOF(iord, dof);
-//            dofindexes[iord]=iord;
-//            cmesh.GetDOF(iord).SetNShapeStateOrder(nshape, nstate,orders[iord]);
-//        }
-//    }
-
     template<class Shape>
     CompElement * CompElementTemplate<Shape>::Clone() const{
         //CompElementTemplate<Shape>* result = new CompElementTemplate<Shape>(*this);
@@ -146,7 +122,30 @@
 
     }
     template<class Shape>
-    void CompElementTemplate<Shape>::GetMultiplyingCoeficients(VecDouble &coefs){
+    void CompElementTemplate<Shape>::GetMultiplyingCoeficients(VecDouble &coefs) const{
+        
+        CompMesh *cmesh = this->GetCompMesh();
+        int neq = cmesh->Solution().size();
+        VecInt iGlob;
+        coefs.resize(0);
+        
+        int ndofel = NDOF();
+        int indexdof = 0;
+        for (int idof =0; idof<ndofel; idof++) {
+            int idcon = dofindexes[idof];
+            DOF dof = cmesh->GetDOF(idcon);
+            int nshape = dof.GetNShape();
+            int nstat = dof.GetNState();
+            for(int i=0; i<nshape*nstat; i++) {
+                iGlob.resize(indexdof+1);
+                coefs.resize(indexdof+1);
+                iGlob[indexdof] = dof.GetFirstEquation()+i;
+                coefs[indexdof] = cmesh->Solution()[iGlob[indexdof]];
+                indexdof++;
+            }
+        }
+        
+        
         
     }
 
@@ -181,6 +180,7 @@
         dofindexes[doflocindex]=doflocindex;
         return Shape::NShapeFunctions(doflocindex,order);
     }
+
 
 template class CompElementTemplate<Shape1d>;
 template class CompElementTemplate<ShapeQuad>;

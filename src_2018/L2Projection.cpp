@@ -49,14 +49,14 @@
     
     void L2Projection::Contribute(IntPointData &data, double weight, Matrix &EK, Matrix &EF) const{
         
-        VecDouble &phi=data.phi;
-        Matrix &dphi=data.dphidx;
+        VecDouble &phi = data.phi;
+        Matrix &dphi = data.dphidx;
         VecDouble &x = data.x;
-        Matrix &axes =data.axes;
+        Matrix &axes = data.axes;
         
         int nphi= phi.size();
         VecDouble f(nphi,0.);
-        forceFunction(x,f);
+    //    forceFunction(x,f);
         
         Matrix proj = GetProjectionMatrix();
         VecDouble ProjVec(2,0.);
@@ -69,14 +69,11 @@
         }
         
         for (int in = 0; in<nphi; in++) {
-            EF(in,0)+= -weight*f[in]*phi[in];
+            EF(in,0)+= -weight*f[in]*phi[in]*0.;
             for(int jn = 0; jn<nphi; jn++){
-                    EK(in,jn) += weight*ProjVec[in]*phi[jn];
+                    EK(in,jn) += weight*ProjVec[in]*phi[jn]*gBigNumber;
             }
         }
-        
-        
-        
         
     }
     
