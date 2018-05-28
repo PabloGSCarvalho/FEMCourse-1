@@ -30,7 +30,7 @@ public:
     L2Projection();
     
     // Constructor of L2Projection
-    L2Projection(Matrix &perm);
+    L2Projection(int materialid, Matrix &perm);
     
     // Copy constructor of L2Projection
     L2Projection(const L2Projection &copy);
@@ -69,7 +69,7 @@ public:
     virtual void Contribute(IntPointData &integrationpointdata, double weight, Matrix &EK, Matrix &EF) const;
     
     // Prepare and print post processing data
-    virtual std::vector<double> PostProcess(const IntPointData &integrationpointdata, const PostProcVar var) const;
+    virtual std::vector<double> PostProcessSolution(const IntPointData &integrationpointdata, const PostProcVar var) const;
 
     
 };

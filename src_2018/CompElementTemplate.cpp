@@ -22,7 +22,8 @@
 
     template<class Shape>
     CompElementTemplate<Shape>::CompElementTemplate() : CompElement(){
-        
+        dofindexes.resize(0);
+        intrule=0;
     }
 
     template<class Shape>
@@ -144,9 +145,7 @@
                 indexdof++;
             }
         }
-        
-        
-        
+           
     }
 
     template<class Shape>

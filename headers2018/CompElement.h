@@ -99,6 +99,10 @@ public:
     // Compute the element stifness matrix and force vector
     virtual void CalcStiff(Matrix &ek, Matrix &ef) const;
     
+    // Compute error and exact solution
+    virtual void EvaluateError(std::function<void(const VecDouble &loc,VecDouble &val,Matrix &deriv)> fp,
+                               VecDouble &errors) const;
+    
     // Compute shape functions set at point x
     virtual void ShapeFunctions(const VecDouble &intpoint, VecDouble &phi, Matrix &dphi) const = 0;
     

@@ -8,6 +8,10 @@
 #include "Analysis.h"
 #include "Assemble.h"
 #include "CompMesh.h"
+#include "CompElement.h"
+#include "CompElementTemplate.h"
+#include "MathStatement.h"
+#include "PostProcess.h"
 
     Analysis::Analysis(): cmesh(0), Solution(), GlobalSystem(), RightHandSide(){
         
@@ -27,7 +31,11 @@
         RightHandSide=cp.RightHandSide;
         return *this;
     }
-    
+
+    Analysis::~Analysis(){
+        
+    }
+
     Analysis::Analysis(CompMesh *mesh) : cmesh(mesh){
         
     }
@@ -71,9 +79,55 @@
         
     }
 
-    void Analysis::PostProcess(std::string &filename, class PostProcess &defPostProc) const{
+    void Analysis::PostProcessSolution(const std::string &filename, PostProcess &defPostProc) const{
         
-        
-        
+
+
     }
 
+    void Analysis::PostProcessError(VecDouble errorvec, std::ostream &out, PostProcess &defPostProc) const{
+        
+        VecDouble errors(6,0.);
+        VecDouble values(6,0.);
+        
+        int ncel = cmesh->GetElementVec().size();
+        for (int icel=0; icel<ncel; icel++) {
+            CompElement *cel = cmesh->GetElement(icel);
+            
+            if(cel->GetStatement()->GetMatID()==1){
+                std::fill(errors.begin(), errors.end(), 0.);
+                cel->EvaluateError(defPostProc.GetExact(), errors);
+                int nerrors = errors.size();
+                values.resize(nerrors, 0.);
+                for(int ier = 0; ier < nerrors; ier++)
+                {
+                    values[ier] += errors[ier] * errors[ier];
+                }
+                
+            }
+            
+        }
+        
+        int nerrors = errors.size();
+        errorvec.resize(nerrors);
+        std::fill(errorvec.begin(), errorvec.end(), -10.);
+        
+        if (nerrors < 3) {
+            out << "TPZAnalysis::PostProcess - At least 3 norms are expected." << std::endl;
+            out << std::endl<<"############"<<std::endl;
+            for(int ier = 0; ier < nerrors; ier++)
+                out << std::endl << "error " << ier << "  = " << sqrt(values[ier]);
+        }
+        else{
+            out << "############" << std::endl;
+            out <<"Norma H1 or L2 -> u = "  << sqrt(values[0]) << std::endl;
+            out <<"Norma L2 or L2 -> Grad u = "    << sqrt(values[1]) << std::endl;
+            out << "Semi-norma H1 or L2 -> div = "    << sqrt(values[2])  << std::endl;
+            for(int ier = 3; ier < nerrors; ier++)
+                out << "other norms = " << sqrt(values[ier]) << std::endl;
+        }
+        // Returns the calculated errors.
+        for(int i=0;i<nerrors;i++)
+            errorvec[i] = sqrt(values[i]);
+        
+    }

@@ -23,6 +23,7 @@
         MaterialId=0;
         Index=0;
         GMesh=0;
+        Reference=0;
     }
 
     GeoElement::GeoElement(int materialid, GeoMesh *mesh, int index) : GMesh(mesh), MaterialId(materialid), Index(index)

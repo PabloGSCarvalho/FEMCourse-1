@@ -8,7 +8,7 @@
 #ifndef PostProcessTemplate_h
 #define PostProcessTemplate_h
 
-#include "PostProcess.h"
+//#include "PostProcess.h"
 #include <list>
 
 template<class math>
@@ -23,7 +23,7 @@ class PostProcessTemplate
         math *locptr = dynamic_cast<typename math*> &mathStatement;
         if(!locptr) DebugStop();
         const numScalarVariables = NumScalarVariables();
-        return locptr->PostProcess(varIndex < numScalarVariables? scalarvariable[varIndex] : vectorvariables[varIndex-numScalarVariables], data);
+        return locptr->PostProcessSolution(varIndex < numScalarVariables? scalarvariable[varIndex] : vectorvariables[varIndex-numScalarVariables], data);
     }
     
     inline unsigned int NumScalarVariables() const {

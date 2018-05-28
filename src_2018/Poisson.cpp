@@ -13,7 +13,8 @@
         
     }
     
-    Poisson::Poisson(Matrix &perm){
+    Poisson::Poisson(int materialid, Matrix &perm){
+        SetMatID(materialid);
         permeability=perm;
     }
     
@@ -54,7 +55,7 @@
         Matrix &dphi=data.dphidx;
         VecDouble &x = data.x;
         Matrix &axes =data.axes;
- 
+        
         
         int nphi= phi.size();
    //     VecDouble f(1,0.); incluir set force function no main
@@ -96,7 +97,6 @@
                 EK(2*in+1,2*jn) += weight*(du[1]*dv[0]*perm(0,0)+du[1]*dv[1]*perm(1,0));
                 EK(2*in+1,2*jn+1) += weight*(du[1]*dv[0]*perm(0,1)+du[1]*dv[1]*perm(1,1));
                 
-
                 
             }
         }
@@ -105,7 +105,7 @@
         
     }
     
-    std::vector<double> Poisson::PostProcess(const IntPointData &integrationpointdata, const PostProcVar var) const{
+    std::vector<double> Poisson::PostProcessSolution(const IntPointData &integrationpointdata, const PostProcVar var) const{
         DebugStop();
     }
 

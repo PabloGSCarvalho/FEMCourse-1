@@ -9,13 +9,13 @@ Mesh.SecondOrderLinear = 0;
 
 a = 5; 
 b = 5;
-h = 10;
-L = 200;
-Lf = 200;
+h = 100;
+L = 100;
+Lf = 100;
 
 n_bc = 2;
-nx = 3;
-ny = 3;
+nx = 15;
+ny = 15;
 pr = 1;
 
 // Coordenadas dos pontos

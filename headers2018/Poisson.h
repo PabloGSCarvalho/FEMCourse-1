@@ -29,7 +29,7 @@ public:
     Poisson();
     
     // Constructor of Poisson
-    Poisson(Matrix &perm);
+    Poisson(int materialid, Matrix &perm);
     
     // Copy constructor of Poisson
     Poisson(const Poisson &copy);
@@ -68,7 +68,7 @@ public:
     virtual void Contribute(IntPointData &integrationpointdata, double weight , Matrix &EK, Matrix &EF) const;
     
     // Prepare and print post processing data
-    virtual std::vector<double> PostProcess(const IntPointData &integrationpointdata, const PostProcVar var) const;
+    virtual std::vector<double> PostProcessSolution(const IntPointData &integrationpointdata, const PostProcVar var) const;
 
 };
 #endif /* Poisson_h */

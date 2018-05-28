@@ -10,18 +10,18 @@
 
     
     GeoElementSide::GeoElementSide(){
-        this->fSide = 0;
-        this->fElement = 0;
+        fSide = 0;
+        fElement = 0;
     }
 
     
     GeoElementSide::GeoElementSide(const GeoElementSide &copy){
-        this->fElement=copy.fElement;
+        fElement=copy.fElement;
         fSide = copy.fSide;
     }
     
     GeoElementSide &GeoElementSide::operator=(const GeoElementSide &copy){
-        this->fElement=copy.fElement;
+        fElement=copy.fElement;
         fSide = copy.fSide;
         return *this;
     }

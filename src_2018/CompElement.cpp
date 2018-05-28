@@ -14,7 +14,11 @@
 
 
     CompElement::CompElement(){
-        
+        *compmesh = 0;
+        index = -1;
+        geoel = 0;
+        *intrule = 0;
+        mat = 0;
     }
 
     CompElement::CompElement(int64_t ind, CompMesh *cmesh, GeoElement *geo){
@@ -177,17 +181,31 @@
         int dim = Dimension();
         VecDouble intpoint(dim,0.);
         
-        ek.Resize(dim*NShapeFunctions(), dim*NShapeFunctions());
-        ef.Resize(dim*NShapeFunctions(), dim);
         for (int intd_id = 0; intd_id < intrulepoints; intd_id++) {
             intrule->Point(intd_id, data.ksi, data.weight);
             this->ComputeRequiredData(data, data.ksi);
+            int nshape = data.phi.size();
+            int nstate = GetStatement()->NState();
+            ek.Resize(nshape*nstate,nshape*nstate);
+            ef.Resize(nshape*nstate,nstate);
             weight=data.weight;
             weight *=fabs(data.detjac);
             material->Contribute(data, weight, ek, ef);
         }
         
     }
+
+    // Compute error and exact solution
+    void CompElement::EvaluateError(std::function<void(const VecDouble &loc,VecDouble &val,Matrix &deriv)> fp,
+                                    VecDouble &errors) const{
+        IntRule *intruleError = this->GetIntRule();
+        int maxorder = 15;
+        intruleError->SetOrder(maxorder);
+        
+        int ndof;
+        
+    }
+
     
     void CompElement::Solution(VecDouble &intpoint, VecDouble &sol, TMatrix &dsol) const{
 

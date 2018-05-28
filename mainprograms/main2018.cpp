@@ -26,6 +26,8 @@
 #include "L2Projection.h"
 #include "Assemble.h"
 #include "Analysis.h"
+#include "PostProcess.h"
+
 
 using std::cout;
 using std::endl;
@@ -41,7 +43,15 @@ double InnerVec(VecDouble &S , VecDouble &T);
 GeoMesh *CreateGMesh(int nx, int ny, double hx, double hy);
 CompMesh *CMesh(GeoMesh *gmesh, int pOrder);
 
+int matId = 1;
+int bc0 = -1; //define id para um material(cond contorno esq)
+int bc1 = -2; //define id para um material(cond contorno dir)
+int bc2 = -3; //define id para um material(cond contorno inf)
+int bc3 = -4; //define id para um material(cond contorno sup)
+
 void F_source(const VecDouble &x, VecDouble &f);
+
+void Sol_exact(const VecDouble &x, VecDouble &sol, Matrix &dsol);
 
 const double Pi=M_PI;
 
@@ -51,41 +61,39 @@ int main ()
     //TestIntegrate();
     
 //    VecDouble vec1;
-//    ReadGmsh read;
-//    GeoMesh geomesh;
+    ReadGmsh read;
+    GeoMesh geotest;
 //
-//    read.Read(geomesh, "GeometryBenchSimple.msh");
+    read.Read(geotest, "GeometryBenchSimple.msh");
 //
 //    //VTKGeoMesh::PrintGMeshVTK(&geomesh, "MalhaTeste.vtk");
 //    geomesh.Print(std::cout);
     
-    GeoMesh *geotest = CreateGMesh(3, 3, 1., 1.);
+//    GeoMesh *geotest = CreateGMesh(6, 6, 1., 1.);
     
-    geotest->Print(std::cout);
+    geotest.Print(std::cout);
     
-    VTKGeoMesh::PrintGMeshVTK(geotest, "MalhaTeste.vtk");
+    VTKGeoMesh::PrintGMeshVTK(&geotest, "MalhaTeste.vtk");
     
-    CompMesh *cmesh = CMesh(geotest, 1);
+    CompMesh *cmesh = CMesh(&geotest, 1);
     
 //    Assemble as(cmesh);
-//
 //    Matrix globmat, rhs;
-//
 //    as.Compute(globmat, rhs);
-//
 //    globmat.Print();
 
-    Analysis an(cmesh);
-    an.RunSimulation();
+    Analysis *an = new Analysis(cmesh);
+    an->RunSimulation();
     
     VecDouble Sol = cmesh->Solution();
-    for (int i =0; i<Sol.size(); i++) {
-        std::cout<<Sol[i]<<std::endl;
-    }
+//    for (int i =0; i<Sol.size(); i++) {
+//        std::cout<<Sol[i]<<std::endl;
+//    }
     
-    
-    
-    
+    PostProcess *solpos = new PostProcess(an);
+    solpos->SetExact(Sol_exact);
+    an->PostProcessSolution("SolutionPost.vtk", *solpos);
+
     VTKGeoMesh::PrintCMeshVTK(cmesh,2, "Solution.vtk");
     
     return 0;
@@ -108,35 +116,68 @@ void F_source(const VecDouble &x, VecDouble &f){
 }
 
 
+void Sol_exact(const VecDouble &x, VecDouble &sol, Matrix &dsol){
+    
+    dsol.Resize(3,2);
+    sol.resize(3);
+    
+    double xv = x[0];
+    double yv = x[1];
+    
+    double v_x =  cos(2*Pi*yv)*sin(2*Pi*xv);
+    double v_y =  -(cos(2*Pi*xv)*sin(2*Pi*yv));
+    double pressure= xv*xv+yv*yv;
+    
+    sol[0]=v_x;
+    sol[1]=v_y;
+    sol[2]=pressure;
+    
+    // vx direction
+    dsol(0,0)= 2*Pi*cos(2*Pi*xv)*cos(2*Pi*yv);
+    dsol(0,1)= 2*Pi*sin(2*Pi*xv)*sin(2*Pi*yv);
+    
+    // vy direction
+    dsol(1,0)= -2*Pi*sin(2*Pi*xv)*sin(2*Pi*yv);
+    dsol(1,1)= -2*Pi*cos(2*Pi*xv)*cos(2*Pi*yv);
+    
+    // Gradiente pressão
+    
+    dsol(2,0)= 2*xv;
+    dsol(2,1)= 2*yv;
+    
+}
+
+
 
 CompMesh *CMesh(GeoMesh *gmesh, int pOrder){
  
     Matrix perm(2,2,0.);
-    perm(0,0)=1.;
-    perm(1,1)=1.;
+    perm(0,0)=100.;
+    perm(1,1)=100.;
     
     Matrix proj(2,2,0.);
-    proj(0,0)=1.;
-    proj(1,1)=1.;
+    proj(0,0)=100.;
+    proj(1,1)=100.;
 
     CompMesh * cmesh = new CompMesh(gmesh);
 
-    
     int nel= gmesh->NumElements();
     for (int iel = 0; iel<nel; iel++) {
-    // Materiais internos (Poisson)
-        if(gmesh->Element(iel)->Type()==EQuadrilateral){
+        int geoMatID = gmesh->Element(iel)->Material();
+        if(geoMatID==matId){
+            // Materiais internos (Poisson)
             cmesh->SetNumberMath(iel+1);
-            Poisson *material = new Poisson(perm);
+            Poisson *material = new Poisson(geoMatID,perm);
             material->SetForceFunction(F_source);
             cmesh->SetMathStatement(iel, material);
-        }
-    // Condições de contorno (L2Projection)
-        if(gmesh->Element(iel)->Type()==EOned){
+            
+        }else{
+            // Condições de contorno (L2Projection)
             cmesh->SetNumberMath(iel+1);
-            L2Projection *bcmat = new L2Projection(proj);
-            cmesh->SetMathStatement(iel, bcmat);
+            L2Projection *bcmat0 = new L2Projection(geoMatID,proj);
+            cmesh->SetMathStatement(iel, bcmat0);
         }
+    
     }
     
     cmesh->SetDefaultOrder(pOrder);
@@ -149,11 +190,7 @@ CompMesh *CMesh(GeoMesh *gmesh, int pOrder){
 GeoMesh *CreateGMesh(int nx, int ny, double hx, double hy){
     
     GeoMesh *gmesh = new GeoMesh;
-    int matId = 1;
-    int bc0 = -1; //define id para um material(cond contorno esq)
-    int bc1 = -2; //define id para um material(cond contorno dir)
-    int bc2 = -3; //define id para um material(cond contorno inf)
-    int bc3 = -4; //define id para um material(cond contorno sup)
+
     
     int id, index;
     VecDouble coord(3,0.);

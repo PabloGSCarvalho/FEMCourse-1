@@ -12,7 +12,8 @@
         
     }
     
-    L2Projection::L2Projection(Matrix &perm){
+    L2Projection::L2Projection(int materialid, Matrix &perm){
+        SetMatID(materialid);
         projection=perm;
     }
     
@@ -77,7 +78,7 @@
         
     }
     
-    std::vector<double> L2Projection::PostProcess(const IntPointData &integrationpointdata, const PostProcVar var) const{
+    std::vector<double> L2Projection::PostProcessSolution(const IntPointData &integrationpointdata, const PostProcVar var) const{
         DebugStop();
     }
 

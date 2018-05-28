@@ -75,6 +75,7 @@
             
             VecInt iGlob(neq,0);
             
+            
             int ndofel = cel->NDOF();
             int indexdof = 0;
             for (int idof =0; idof<ndofel; idof++) {

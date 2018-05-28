@@ -44,6 +44,14 @@ public:
     // Method to implement integral over element's volume
     virtual void Contribute(IntPointData &integrationpointdata, double weight, Matrix &EK, Matrix &EF) const = 0;
     
+    virtual void SetMatID(int indexmat){
+        matid = indexmat;
+    }
+    
+    virtual int GetMatID(){
+        return matid;
+    }
+    
     
 };
 #endif /* MathStatement_h */
