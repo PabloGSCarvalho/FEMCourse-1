@@ -91,18 +91,15 @@ int main ()
 //        std::cout<<Sol[i]<<std::endl;
 //    }
     
-    PostProcess *solpos = new PostProcess(an);
+    PostProcess *solpos = new PostProcessTemplate<Poisson>(an);
     solpos->SetExact(Sol_exact);
-    PostProcessTemplate<Poisson> sol;
     
-    sol.AppendVariable(Poisson::ESol);
-    sol.AppendVariable(Poisson::EDSol);
-    sol.AppendVariable(Poisson::ESolExact);
-    sol.AppendVariable(Poisson::EDSolExact);
+    solpos->AppendVariable("Sol");
+    solpos->AppendVariable("DSol");
+    solpos->AppendVariable("Sol_exact");
+    solpos->AppendVariable("DSol_exact");
     
     an->PostProcessSolution("SolutionPost.vtk", *solpos);
-
-    
     
     return 0;
 }
@@ -177,6 +174,7 @@ CompMesh *CMesh(GeoMesh *gmesh, int pOrder){
             cmesh->SetNumberMath(iel+1);
             Poisson *material = new Poisson(geoMatID,perm);
             material->SetForceFunction(F_source);
+            material->SetExactSolution(Sol_exact);
             cmesh->SetMathStatement(iel, material);
             
         }else{

@@ -11,6 +11,8 @@
 #include "DataTypes.h"
 #include "IntRule.h"
 #include "IntPointData.h"
+#include "PostProcess.h"
+#include <functional>
 
 class CompMesh;
 class GeoElement;
@@ -108,7 +110,7 @@ public:
     
     // Compute the solution and its gradient at a parametric point
     // for dsol the row indicates the direction, the column indicates the state variable
-    virtual void Solution(VecDouble &intpoint, VecDouble &sol, TMatrix &dsol) const;
+    virtual void Solution(VecDouble &intpoint, int var, VecDouble &sol, TMatrix &dsol) const;
     
     // Get Multiplying Coeficients
     virtual void GetMultiplyingCoeficients(VecDouble &coefs) const = 0;

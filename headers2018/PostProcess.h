@@ -55,6 +55,18 @@ public:
         return fExact;
     }
     
+    virtual VecInt VectorvariablesIds() const = 0;
+    
+    virtual VecInt ScalarvariablesIds() const = 0;
+    
+    virtual void AppendVariable(const std::string &name) = 0;
+    
+    virtual inline unsigned int NumScalarVariables() const = 0;
+    
+    virtual  inline unsigned int NumVectorVariables() const = 0;
+    
+    virtual inline unsigned int NumVariables() const = 0;
+    
     
 };
 #endif /* PostProcess_h */

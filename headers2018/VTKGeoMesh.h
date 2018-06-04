@@ -9,6 +9,7 @@
 #define VTKGeoMesh_h
 
 #include <string>
+#include "DataTypes.h"
 
 class GeoMesh;
 class CompMesh;
@@ -21,6 +22,10 @@ class VTKGeoMesh
 
     /// Generate an output file for the solution and its gradient
     static void PrintCMeshVTK(CompMesh *cmesh, int dim, const std::string &filename);
+    
+    /// Generate an output file for the solution and its gradient
+    static void PrintSolVTK(CompMesh *cmesh, int var, const std::string &filename);
+    
 };
 
 #endif /* VTKGeoMesh_h */

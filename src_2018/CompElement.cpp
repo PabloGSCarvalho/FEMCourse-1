@@ -11,7 +11,8 @@
 #include "CompElementTemplate.h"
 #include "DataTypes.h"
 #include "MathStatement.h"
-
+#include "PostProcessTemplate.h"
+#include "PostProcess.h"
 
     CompElement::CompElement(){
         *compmesh = 0;
@@ -255,7 +256,7 @@
     }
 
     
-    void CompElement::Solution(VecDouble &intpoint, VecDouble &sol, TMatrix &dsol) const{
+    void CompElement::Solution(VecDouble &intpoint, int var, VecDouble &sol, TMatrix &dsol) const{
 
         IntPointData data;
         this->InitializeIntPointData(data);
@@ -266,10 +267,8 @@
         data.ComputeSolution();
         sol.resize(2);
         dsol.Resize(data.dsoldx.Rows(),data.dsoldx.Cols());
-
-//        mat->PostProcVar;
-        //mat->PostProcessSolution(data, ESol);
-        sol=data.solution;
+        
+        sol=mat->PostProcessSolution(data,var);
         dsol=data.dsoldx;
         
     }

@@ -62,7 +62,7 @@ public:
     }
     
     // Prepare and print post processing data
-//    virtual void EvaluateSolution(const IntPointData &integrationpointdata, PostProcess &defPostProc) const = 0;
+    virtual std::vector<double> PostProcessSolution(const IntPointData &integrationpointdata, const int var) const = 0;
     
     
 };

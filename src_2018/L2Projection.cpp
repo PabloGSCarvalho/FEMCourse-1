@@ -52,9 +52,13 @@
         return 1;
     }
 
-    // Return the variable index associated with the name
-    int L2Projection::VariableIndex(const std::string &name){
+    int L2Projection::VariableIndex(const PostProcVar var) const{
         return 0;
+    }
+
+    // Return the variable index associated with the name
+    L2Projection::PostProcVar L2Projection::VariableIndex(const std::string &name){
+        return ENone;
     }
 
     // Return the number of variables associated with the variable indexed by var. Param var Index variable into the solution, is obtained by calling VariableIndex
@@ -99,8 +103,9 @@
     }
 
 
-    std::vector<double> L2Projection::PostProcessSolution(const IntPointData &integrationpointdata, const PostProcVar var) const{
-        DebugStop();
+    std::vector<double> L2Projection::PostProcessSolution(const IntPointData &integrationpointdata, const int var) const{
+        VecDouble axl2(2,0.);
+        return axl2;
     }
 
     // Prepare and print post processing data

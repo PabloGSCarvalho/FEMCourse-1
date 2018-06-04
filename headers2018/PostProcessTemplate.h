@@ -22,18 +22,67 @@ class PostProcessTemplate: public PostProcess
 {
 
     public:
+    
+    PostProcessTemplate() : PostProcess(){
+    }
+    
+    PostProcessTemplate(const PostProcessTemplate &copy) : PostProcess(copy) {
+    }
+    
+    ~PostProcessTemplate(){
+        
+    }
+    
+    
+    PostProcessTemplate &operator=(const PostProcessTemplate &cp){
+        return *this;
+    }
+    
+    PostProcessTemplate(Analysis *Ref) : PostProcess(Ref){
+    }
+    
+    
     std::vector<typename math::PostProcVar> scalarvariables;
     std::vector<typename math::PostProcVar> vectorvariables;
     //TVec<typename math::PostProcVar> teste;
     
-    void AppendVariable(typename math::PostProcVar obj){
+    virtual VecInt VectorvariablesIds() const{
         math Statement;
-        int nsol = Statement.NSolutionVariables(obj);
+        VecInt VecVar(NumVectorVariables(),0);
+        
+        for (int index = 0; index< NumVectorVariables(); index++) {
+            VecVar[index]=Statement.VariableIndex(vectorvariables[index]);
+        }
+        
+        return VecVar;
+    }
+
+    virtual VecInt ScalarvariablesIds() const{
+        math Statement;
+        VecInt ScalVar(NumScalarVariables(),0);
+        
+        for (int index = 0; index< NumScalarVariables(); index++) {
+            ScalVar[index]=Statement.VariableIndex(scalarvariables[index]);
+        }
+        
+        return ScalVar;
+    }
+    
+    virtual void AppendVariable(const std::string &name){
+        math Statement;
+        typename math::PostProcVar var = Statement.VariableIndex(name);
+        AppendVariable(var);
+    }
+    
+    
+    void AppendVariable(typename math::PostProcVar var){
+        math Statement;
+        int nsol = Statement.NSolutionVariables(var);
         
         if (nsol==1) {
-            scalarvariables.push_back(obj);
+            scalarvariables.push_back(var);
         }else{
-            vectorvariables.push_back(obj);
+            vectorvariables.push_back(var);
         }
         
     }
@@ -46,15 +95,15 @@ class PostProcessTemplate: public PostProcess
         return locptr->PostProcessSolution(data, varIndex < numScalarVariables? scalarvariables[varIndex] : vectorvariables[varIndex-numScalarVariables]);
     }
     
-    inline unsigned int NumScalarVariables() const {
+    virtual inline unsigned int NumScalarVariables() const {
         return scalarvariables.size();
     }
     
-    inline unsigned int NumVectorVariables() const {
+    virtual  inline unsigned int NumVectorVariables() const {
         return vectorvariables.size();
     }
     
-    inline unsigned int NumVariables() const {
+    virtual inline unsigned int NumVariables() const {
         return NumScalarVariables() + NumVectorVariables();
     }
 };

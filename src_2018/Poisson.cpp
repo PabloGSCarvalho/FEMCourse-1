@@ -53,21 +53,32 @@
         return 2;
     }
 
+    int Poisson::VariableIndex(const PostProcVar var) const{
+        
+        int nvar = 10;
+        for (int i=0; i<nvar; i++) {
+            if (var==PostProcVar(i)) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
     // Return the variable index associated with the name
-    int Poisson::VariableIndex(const std::string &name){
+    Poisson::PostProcVar Poisson::VariableIndex(const std::string &name){
   
-        if (!strcmp("Sol", name.c_str()))  return 0;
-        if (!strcmp("Solution", name.c_str()))  return 0;
-        if (!strcmp("DSol", name.c_str()))  return 1;
-        if (!strcmp("DSolution", name.c_str()))  return 1;
-        if (!strcmp("Flux", name.c_str()))         return 2;
-        if (!strcmp("Force", name.c_str()))   return 3;
-        if (!strcmp("Sol_exact", name.c_str()))   return 4;
-        if (!strcmp("DSol_exact", name.c_str()))   return 5;
+        if (!strcmp("Sol", name.c_str()))  return ESol;
+        if (!strcmp("Solution", name.c_str()))  return ESol;
+        if (!strcmp("DSol", name.c_str()))  return EDSol;
+        if (!strcmp("DSolution", name.c_str()))  return EDSol;
+        if (!strcmp("Flux", name.c_str()))         return EFlux;
+        if (!strcmp("Force", name.c_str()))   return EForce;
+        if (!strcmp("Sol_exact", name.c_str()))   return ESolExact;
+        if (!strcmp("DSol_exact", name.c_str()))   return EDSolExact;
         
         std::cout  << " Var index not implemented " << std::endl;
         DebugStop();
-        return 0;;
+        return ENone;
     }
 
     // Return the number of variables associated with the variable indexed by var. Param var Index variable into the solution, is obtained by calling VariableIndex
@@ -75,17 +86,17 @@
         
         switch(var) {
                 
-            case 0:
+            case ESol:
                 return this->Dimension(); // Solution, Vector
-            case 1:
+            case EDSol:
                 return this->Dimension();// Derivative of solution, Vector
-            case 2:
+            case EFlux:
                 return this->Dimension(); // Flux, Vector
-            case 3:
+            case EForce:
                 return this->Dimension(); // Force vector, Vector
-            case 4:
+            case ESolExact:
                 return this->Dimension(); // Sol_exact, Vector
-            case 5:
+            case EDSolExact:
                 return this->Dimension(); // DSol_exact, Vector
 
             default:
@@ -104,7 +115,6 @@
         Matrix &dphi=data.dphidx;
         VecDouble &x = data.x;
         Matrix &axes =data.axes;
-        
         
         int nphi= phi.size();
    //     VecDouble f(1,0.); incluir set force function no main
@@ -169,8 +179,9 @@
         
     }
 
-    std::vector<double> Poisson::PostProcessSolution(const IntPointData &data, const PostProcVar var) const{
+    std::vector<double> Poisson::PostProcessSolution(const IntPointData &data, const int varindex) const{
         
+        PostProcVar var = PostProcVar(varindex);
         
         VecDouble u_h = data.solution;
         int usize = u_h.size();
@@ -181,15 +192,7 @@
         Matrix perm = GetPermeability();
         int permRows = perm.Rows();
         int permCols = perm.Cols();
-        Matrix flux(permRows,duCols,0.);
-        
-        for (int ik = 0; ik<permRows; ik++) {
-            for (int jk = 0; jk<duCols; jk++) {
-                for (int lk = 0; lk<permCols; lk++) {
-                    flux(ik,jk)+=perm(ik,lk)*du_h(lk,jk);
-                }
-            }
-        }
+
         
         VecDouble Solout;
         switch(var) {
@@ -207,7 +210,7 @@
                 Solout.resize(duRows,duCols);
                 for (int i = 0; i<duRows ; i++) {
                     for (int j = 0; j<duCols; j++) {
-                        Solout[j+i*duCols]=flux(i,j);
+                        Solout[j+i*duCols]=du_h(i,j);
                     }
                 }
             }
@@ -216,9 +219,20 @@
             case EFlux: //Flux = Perm x Grad u
             {
                 Solout.resize(permRows,duCols);
+                Matrix flux(permRows,duCols,0.);
+                
+                for (int ik = 0; ik<permRows; ik++) {
+                    for (int jk = 0; jk<duCols; jk++) {
+                        for (int lk = 0; lk<permCols; lk++) {
+                            flux(ik,jk)+=perm(ik,lk)*du_h(lk,jk);
+                        }
+                    }
+                }
+                
+                Solout.resize(permRows,duCols);
                 for (int i = 0; i<duRows ; i++) {
                     for (int j = 0; j<duCols; j++) {
-                        Solout[j+i*duCols]=du_h(i,j);
+                        Solout[j+i*duCols]=flux(i,j);
                     }
                 }
             }
@@ -226,6 +240,7 @@
                 
             case EForce: //f
             {
+                Solout.resize(2);
                 VecDouble f(2,0.0);
 
                 Solout[0] = f[0]; // fx
@@ -233,16 +248,18 @@
             }
                 break;
                 
-//            case ESolExact: //u_exact
-//            {
-//                TPZVec<STATE> sol(3,0.0);
-//                if(this->HasForcingFunctionExact()){
-//                    this->fForcingFunctionExact->Execute(datavec[vindex].x, sol, gradu); // @omar::check it!
-//                }
-//                Solout[0] = sol[0]; // vx
-//                Solout[1] = sol[1]; // vy
-//            }
-//                break;
+            case ESolExact: //u_exact
+            {
+                Solout.resize(2);
+                VecDouble sol(2,0.0);
+                Matrix dsol(2,1,0.0);
+                if(SolutionExact){
+                    SolutionExact(data.x,sol,dsol);
+                }
+                Solout[0] = sol[0]; // vx
+                Solout[1] = sol[1]; // vy
+            }
+                break;
 //
 //            case ESolExact: //du_exact
 //            {
