@@ -12,6 +12,7 @@
 #include "CompElementTemplate.h"
 #include "MathStatement.h"
 #include "PostProcess.h"
+#include "VTKGeoMesh.h"
 
     Analysis::Analysis(): cmesh(0), Solution(), GlobalSystem(), RightHandSide(){
         
@@ -80,6 +81,18 @@
     }
 
     void Analysis::PostProcessSolution(const std::string &filename, PostProcess &defPostProc) const{
+        
+        
+        VTKGeoMesh::PrintCMeshVTK(cmesh,2, filename);
+        
+        
+        int ncel = cmesh->GetElementVec().size();
+        for (int icel=0; icel<ncel; icel++) {
+            CompElement *cel = cmesh->GetElement(icel);
+            
+           
+            
+        }
         
 
 

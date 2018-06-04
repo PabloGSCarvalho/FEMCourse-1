@@ -44,10 +44,24 @@
         projection=proj;
     }
 
+    int L2Projection::NEvalErrors() const{
+        return 3;
+    }
+
     int L2Projection::NState() const{
         return 1;
     }
-    
+
+    // Return the variable index associated with the name
+    int L2Projection::VariableIndex(const std::string &name){
+        return 0;
+    }
+
+    // Return the number of variables associated with the variable indexed by var. Param var Index variable into the solution, is obtained by calling VariableIndex
+    int L2Projection::NSolutionVariables(const PostProcVar var){
+        return 0;
+    }
+
     void L2Projection::Contribute(IntPointData &data, double weight, Matrix &EK, Matrix &EF) const{
         
         VecDouble &phi = data.phi;
@@ -77,9 +91,21 @@
         }
         
     }
-    
+
+    // Method to implement error over element's volume
+    void L2Projection::ContributeError(IntPointData &integrationpointdata, VecDouble &u_exact, Matrix &du_exact, VecDouble &errors) const{
+        
+        return;
+    }
+
+
     std::vector<double> L2Projection::PostProcessSolution(const IntPointData &integrationpointdata, const PostProcVar var) const{
         DebugStop();
     }
+
+    // Prepare and print post processing data
+//    void L2Projection::EvaluateSolution(const IntPointData &integrationpointdata, PostProcess &defPostProc) const{
+//        DebugStop();
+//    }
 
 

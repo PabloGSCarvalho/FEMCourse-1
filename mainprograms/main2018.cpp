@@ -27,6 +27,7 @@
 #include "Assemble.h"
 #include "Analysis.h"
 #include "PostProcess.h"
+#include "PostProcessTemplate.h"
 
 
 using std::cout;
@@ -92,9 +93,16 @@ int main ()
     
     PostProcess *solpos = new PostProcess(an);
     solpos->SetExact(Sol_exact);
+    PostProcessTemplate<Poisson> sol;
+    
+    sol.AppendVariable(Poisson::ESol);
+    sol.AppendVariable(Poisson::EDSol);
+    sol.AppendVariable(Poisson::ESolExact);
+    sol.AppendVariable(Poisson::EDSolExact);
+    
     an->PostProcessSolution("SolutionPost.vtk", *solpos);
 
-    VTKGeoMesh::PrintCMeshVTK(cmesh,2, "Solution.vtk");
+    
     
     return 0;
 }

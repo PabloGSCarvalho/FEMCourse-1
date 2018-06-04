@@ -62,15 +62,30 @@ public:
         forceFunction = f;
     }
     
+    // Return the number of errors
+    virtual int NEvalErrors() const;
+    
     // Return the number of state variables
     virtual int NState() const;
+    
+    // Return the variable index associated with the name
+    virtual int VariableIndex(const std::string &name);
+    
+    // Return the number of variables associated with the variable indexed by var. Param var Index variable into the solution, is obtained by calling VariableIndex
+    virtual int NSolutionVariables(const PostProcVar var);
     
     // Method to implement integral over element's volume
     virtual void Contribute(IntPointData &integrationpointdata, double weight, Matrix &EK, Matrix &EF) const;
     
+    // Method to implement error over element's volume
+    virtual void ContributeError(IntPointData &integrationpointdata, VecDouble &u_exact, Matrix &du_exact, VecDouble &errors) const;
+    
     // Prepare and print post processing data
     virtual std::vector<double> PostProcessSolution(const IntPointData &integrationpointdata, const PostProcVar var) const;
 
+    // Prepare and print post processing data
+    //virtual void EvaluateSolution(const IntPointData &integrationpointdata, PostProcess &defPostProc) const;
+    
     
 };
 #endif /* L2Projection_h */

@@ -97,6 +97,7 @@
         data.dphidksi.Resize(dim,nshape);
         data.dphidx.Resize(dim,nshape);
         data.axes.Resize(dim,3);
+//        data.gradx.Resize
         data.x.resize(3);
         data.ksi.resize(dim);
         data.solution.resize(nstate);
@@ -177,11 +178,11 @@
         IntPointData data;
         this->InitializeIntPointData(data);
         double weight =0.;
-        int intrulepoints = GetIntRule()->NPoints();
+        int nintrulepoints = GetIntRule()->NPoints();
         int dim = Dimension();
         VecDouble intpoint(dim,0.);
         
-        for (int intd_id = 0; intd_id < intrulepoints; intd_id++) {
+        for (int intd_id = 0; intd_id < nintrulepoints; intd_id++) {
             intrule->Point(intd_id, data.ksi, data.weight);
             this->ComputeRequiredData(data, data.ksi);
             int nshape = data.phi.size();
@@ -198,11 +199,58 @@
     // Compute error and exact solution
     void CompElement::EvaluateError(std::function<void(const VecDouble &loc,VecDouble &val,Matrix &deriv)> fp,
                                     VecDouble &errors) const{
+        
+        MathStatement *mat=this->GetStatement();
         IntRule *intruleError = this->GetIntRule();
         int maxorder = 15;
         intruleError->SetOrder(maxorder);
         
-        int ndof;
+        int nerrors = errors.size();
+        std::fill(errors.begin(), errors.end(), 0.);
+        
+        int nstate = mat->NState();
+        int dim = Dimension();
+        VecDouble u_exact(nstate);
+        Matrix du_exact(dim,nstate);
+        VecDouble values(nerrors);
+        
+        IntPointData data;
+        this->InitializeIntPointData(data);
+        double weight =0.;
+        int nintrulepoints = GetIntRule()->NPoints();
+        VecDouble intpoint(dim,0.);
+        GeoElement *ref = this->GetGeoElement();
+        
+        for (int intd_id = 0; intd_id < nintrulepoints; intd_id++) {
+            
+            GetIntRule()->Point(intd_id, data.ksi, data.weight);
+            this->ComputeRequiredData(data, data.ksi);
+            
+            int nshape = data.phi.size();
+            int nstate = GetStatement()->NState();
+            
+            weight=data.weight;
+            weight *=fabs(data.detjac);
+            
+            if(fp) {
+                fp(data.x,u_exact,du_exact);
+            }
+            mat->ContributeError(data,u_exact,du_exact,values);
+            
+            for(int ier = 0; ier < nerrors; ier++)
+            {
+                errors[ier] += values[ier]*weight;
+            }
+            
+        }
+
+        //Norma sobre o elemento
+        for(int ier = 0; ier < nerrors; ier++){
+            errors[ier] = sqrt(errors[ier]);
+        }
+        
+//        intrule->SetOrder(prevorder);
+        
         
     }
 
@@ -212,11 +260,16 @@
         IntPointData data;
         this->InitializeIntPointData(data);
         GetMultiplyingCoeficients(data.coefs);
+        MathStatement *mat = this->GetStatement();
         
         ComputeRequiredData(data,intpoint);
         data.ComputeSolution();
         sol.resize(2);
         dsol.Resize(data.dsoldx.Rows(),data.dsoldx.Cols());
+
+//        mat->PostProcVar;
+        //mat->PostProcessSolution(data, ESol);
         sol=data.solution;
         dsol=data.dsoldx;
+        
     }
