@@ -95,7 +95,11 @@
                     globmat(iGlob[i],iGlob[j])+=EK(i,j);
                 }
             }
-
+            
+//            globmat.Print();
+//            std::cout<<std::endl;
+//            std::cout<<std::endl;
+            
         }
         
     }

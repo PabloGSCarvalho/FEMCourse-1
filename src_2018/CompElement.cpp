@@ -14,12 +14,8 @@
 #include "PostProcessTemplate.h"
 #include "PostProcess.h"
 
-    CompElement::CompElement(){
-        *compmesh = 0;
-        index = -1;
-        geoel = 0;
-        *intrule = 0;
-        mat = 0;
+    CompElement::CompElement() : compmesh(0), index(-1), geoel(0), intrule(0), mat(0) {
+
     }
 
     CompElement::CompElement(int64_t ind, CompMesh *cmesh, GeoElement *geo){

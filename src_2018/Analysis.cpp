@@ -61,7 +61,7 @@
         
         as.Compute(K, F);
         
-        //K.Print();
+        K.Print();
         //F.Print();
         
         GlobalSystem = K;
@@ -81,33 +81,10 @@
     }
 
     void Analysis::PostProcessSolution(const std::string &filename, PostProcess &defPostProc) const{
-        
-        
-        
-        
-        VecDouble sol;
-        TMatrix dsol;
-        VecDouble intpoint(12);
-        
-        int nVecSol = defPostProc.NumVectorVariables();
-        
-        VecInt vecvar = defPostProc.VectorvariablesIds();
-        
-        VTKGeoMesh::PrintSolVTK(cmesh,vecvar[2], filename);
-    //    VTKGeoMesh::PrintSolVTK(cmesh,vecvar[1], filename);
-        
-//        int ncel = cmesh->GetElementVec().size();
-//        for (int icel=0; icel<ncel; icel++) {
-//            CompElement *cel = cmesh->GetElement(icel);
-//
-//            cel->Solution(intpoint, vecvar[0], sol, dsol);
-//
-//            VTKGeoMesh::PrintSolVTK(sol, filename);
-//
-//        }
-        
 
-
+        
+        VTKGeoMesh::PrintSolVTK(cmesh,defPostProc, filename);
+        
 
     }
 

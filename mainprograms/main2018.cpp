@@ -65,7 +65,7 @@ int main ()
     ReadGmsh read;
     GeoMesh geotest;
 //
-    read.Read(geotest, "GeometryBenchSimple.msh");
+    read.Read(geotest, "GeometryBench000.msh");
 //
 //    //VTKGeoMesh::PrintGMeshVTK(&geomesh, "MalhaTeste.vtk");
 //    geomesh.Print(std::cout);
@@ -78,11 +78,6 @@ int main ()
     
     CompMesh *cmesh = CMesh(&geotest, 1);
     
-//    Assemble as(cmesh);
-//    Matrix globmat, rhs;
-//    as.Compute(globmat, rhs);
-//    globmat.Print();
-
     Analysis *an = new Analysis(cmesh);
     an->RunSimulation();
     
@@ -95,9 +90,9 @@ int main ()
     solpos->SetExact(Sol_exact);
     
     solpos->AppendVariable("Sol");
-    solpos->AppendVariable("DSol");
+  //  solpos->AppendVariable("DSol");
     solpos->AppendVariable("Sol_exact");
-    solpos->AppendVariable("DSol_exact");
+  //  solpos->AppendVariable("DSol_exact");
     
     an->PostProcessSolution("SolutionPost.vtk", *solpos);
     
@@ -112,8 +107,8 @@ void F_source(const VecDouble &x, VecDouble &f){
     double yv = x[1];
     //    STATE zv = x[2];
     
-    double f_x = + 8.0*Pi*Pi*cos(2.0*Pi*yv)*sin(2.0*Pi*xv);
-    double f_y = - 8.0*Pi*Pi*cos(2.0*Pi*xv)*sin(2.0*Pi*yv);
+    double f_x = - 8.0*Pi*Pi*cos(2.0*Pi*yv)*sin(2.0*Pi*xv);
+    double f_y = + 8.0*Pi*Pi*cos(2.0*Pi*xv)*sin(2.0*Pi*yv);
     
     f[0] = f_x; // x direction
     f[1] = f_y; // y direction
@@ -123,19 +118,18 @@ void F_source(const VecDouble &x, VecDouble &f){
 
 void Sol_exact(const VecDouble &x, VecDouble &sol, Matrix &dsol){
     
-    dsol.Resize(3,2);
-    sol.resize(3);
+    dsol.Resize(2,2);
+    sol.resize(2);
     
     double xv = x[0];
     double yv = x[1];
     
     double v_x =  cos(2*Pi*yv)*sin(2*Pi*xv);
     double v_y =  -(cos(2*Pi*xv)*sin(2*Pi*yv));
-    double pressure= xv*xv+yv*yv;
+
     
     sol[0]=v_x;
     sol[1]=v_y;
-    sol[2]=pressure;
     
     // vx direction
     dsol(0,0)= 2*Pi*cos(2*Pi*xv)*cos(2*Pi*yv);
@@ -145,11 +139,6 @@ void Sol_exact(const VecDouble &x, VecDouble &sol, Matrix &dsol){
     dsol(1,0)= -2*Pi*sin(2*Pi*xv)*sin(2*Pi*yv);
     dsol(1,1)= -2*Pi*cos(2*Pi*xv)*cos(2*Pi*yv);
     
-    // Gradiente pressão
-    
-    dsol(2,0)= 2*xv;
-    dsol(2,1)= 2*yv;
-    
 }
 
 
@@ -157,12 +146,12 @@ void Sol_exact(const VecDouble &x, VecDouble &sol, Matrix &dsol){
 CompMesh *CMesh(GeoMesh *gmesh, int pOrder){
  
     Matrix perm(2,2,0.);
-    perm(0,0)=100.;
-    perm(1,1)=100.;
+    perm(0,0)=1.;
+    perm(1,1)=1.;
     
     Matrix proj(2,2,0.);
-    proj(0,0)=100.;
-    proj(1,1)=100.;
+    proj(0,0)=1.;
+    proj(1,1)=1.;
 
     CompMesh * cmesh = new CompMesh(gmesh);
 
@@ -181,6 +170,7 @@ CompMesh *CMesh(GeoMesh *gmesh, int pOrder){
             // Condições de contorno (L2Projection)
             cmesh->SetNumberMath(iel+1);
             L2Projection *bcmat0 = new L2Projection(geoMatID,proj);
+            bcmat0->SetExactSolution(Sol_exact);
             cmesh->SetMathStatement(iel, bcmat0);
         }
     

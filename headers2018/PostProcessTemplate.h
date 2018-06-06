@@ -21,6 +21,15 @@ template<class math>
 class PostProcessTemplate: public PostProcess
 {
 
+    protected:
+    
+    std::vector<typename math::PostProcVar> scalarvariables;
+    std::vector<typename math::PostProcVar> vectorvariables;
+    
+    std::vector<std::string> vectornames;
+    std::vector<std::string> scalarnames;
+
+    
     public:
     
     PostProcessTemplate() : PostProcess(){
@@ -42,9 +51,13 @@ class PostProcessTemplate: public PostProcess
     }
     
     
-    std::vector<typename math::PostProcVar> scalarvariables;
-    std::vector<typename math::PostProcVar> vectorvariables;
-    //TVec<typename math::PostProcVar> teste;
+    virtual std::vector<std::string> Vectornames() const{
+        return vectornames;
+    }
+
+    virtual std::vector<std::string> Scalarnames() const{
+        return scalarnames;
+    }
     
     virtual VecInt VectorvariablesIds() const{
         math Statement;
@@ -72,6 +85,15 @@ class PostProcessTemplate: public PostProcess
         math Statement;
         typename math::PostProcVar var = Statement.VariableIndex(name);
         AppendVariable(var);
+        
+        int nsol = Statement.NSolutionVariables(var);
+        
+        if (nsol==1) {
+            scalarnames.push_back(name);
+        }else{
+            vectornames.push_back(name);
+        }
+        
     }
     
     

@@ -7,6 +7,8 @@
 
 #ifndef PostProcess_h
 #define PostProcess_h
+#include <functional>
+#include "DataTypes.h"
 
 class Analysis;
 
@@ -54,6 +56,10 @@ public:
     virtual std::function<void (const VecDouble &loc, VecDouble &result, Matrix &deriv)> GetExact(){
         return fExact;
     }
+    
+    virtual std::vector<std::string> Vectornames() const = 0;
+    
+    virtual std::vector<std::string> Scalarnames() const = 0;
     
     virtual VecInt VectorvariablesIds() const = 0;
     

@@ -9,9 +9,8 @@
 #include "GeoMesh.h"
 
     
-    GeoElementSide::GeoElementSide(){
-        fSide = 0;
-        fElement = 0;
+    GeoElementSide::GeoElementSide() : fElement(0), fSide(0) {
+
     }
 
     

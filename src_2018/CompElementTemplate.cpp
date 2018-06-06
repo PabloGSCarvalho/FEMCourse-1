@@ -21,9 +21,8 @@
 
 
     template<class Shape>
-    CompElementTemplate<Shape>::CompElementTemplate() : CompElement(){
-        dofindexes.resize(0);
-        intrule=0;
+    CompElementTemplate<Shape>::CompElementTemplate() : CompElement(), dofindexes(0){
+        
     }
 
     template<class Shape>
@@ -34,6 +33,7 @@
         //ind = Nelem-1;
         cmesh->SetElement(ind, this);
         geo->SetReference(this);
+        int nsidesw = geo->NSides();
         this->SetIndex(ind);
         int order = cmesh->GetDefaultOrder();
         intrule.SetOrder(order*2);
@@ -54,8 +54,23 @@
             }
             if(neighbour != gelside)
             {
-                CompElement *cel = neighbour.Element()->GetReference();
-                dofindexes[is] = cel->GetDOFIndex(neighbour.Side());
+                int indexneigh = neighbour.Element()->GetIndex();
+                if (indexneigh<ind) {
+                    CompElement *cel = neighbour.Element()->GetReference();
+                    this->SetDOFIndex(is, cel->GetDOFIndex(neighbour.Side()));
+                }else{
+                    
+                    int order = cmesh->GetDefaultOrder();
+                    int nshape = Shape::NShapeFunctions(is,order);
+                    int nstate = mat->NState();
+                    int64_t ndof = cmesh->GetNumberDOF();
+                    cmesh->SetNumberDOF(ndof+1);
+                    DOF dof;
+                    dof.SetNShapeStateOrder(nshape,nstate,order);
+                    cmesh->SetDOF(ndof, dof);
+                    this->SetDOFIndex(is, ndof);
+                }
+
             }
             else
             {
@@ -67,7 +82,7 @@
                 DOF dof;
                 dof.SetNShapeStateOrder(nshape,nstate,order);
                 cmesh->SetDOF(ndof, dof);
-                dofindexes[is] = ndof;
+                this->SetDOFIndex(is, ndof);
             }
         }
     }

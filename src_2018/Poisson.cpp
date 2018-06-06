@@ -141,8 +141,9 @@
             VecDouble f(2,0.);
             forceFunction(x,f);
             
-            EF(2*in,0)+= -weight*phi[in]*f[0]; //Nada oioioioi
-            EF(2*in+1,0)+= -weight*phi[in]*f[1]; //Nada oioioioi
+            EF(2*in,0)+= weight*phi[in]*f[0]; //Nada oioioioi
+            EF(2*in+1,0)+= weight*phi[in]*f[1]; //Nada oioioioi
+            
             for(int jn = 0; jn<nphi; jn++){
                 
                 VecDouble du(2);
@@ -156,12 +157,13 @@
                 EK(2*in+1,2*jn) += weight*(du[1]*dv[0]*perm(0,0)+du[1]*dv[1]*perm(1,0));
                 EK(2*in+1,2*jn+1) += weight*(du[1]*dv[0]*perm(0,1)+du[1]*dv[1]*perm(1,1));
                 
-                
             }
         }
         
-        //EK.Print();
-        
+//        EK.Print();
+//        EF.Print();
+//        std::cout<<std::endl;
+//        std::cout<<std::endl;
     }
 
     // Method to implement error over element's volume
@@ -258,6 +260,7 @@
                 }
                 Solout[0] = sol[0]; // vx
                 Solout[1] = sol[1]; // vy
+                          
             }
                 break;
 //

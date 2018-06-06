@@ -49,7 +49,7 @@
     }
 
     int L2Projection::NState() const{
-        return 1;
+        return 2;
     }
 
     int L2Projection::VariableIndex(const PostProcVar var) const{
@@ -72,11 +72,13 @@
         Matrix &dphi = data.dphidx;
         VecDouble &x = data.x;
         Matrix &axes = data.axes;
+        VecDouble uh = data.solution;
         
         int nphi= phi.size();
-        VecDouble f(nphi,0.);
+        VecDouble ud(nphi,0.);
     //    forceFunction(x,f);
-        
+        Matrix dsol;
+        SolutionExact(x,ud,dsol);
         Matrix proj = GetProjectionMatrix();
         VecDouble ProjVec(2,0.);
         
@@ -88,9 +90,11 @@
         }
         
         for (int in = 0; in<nphi; in++) {
-            EF(in,0)+= -weight*f[in]*phi[in]*0.;
+            EF(2*in,0)+= -weight*(ud[0])*phi[in]*gBigNumber*0.;
+            EF(2*in+1,0)+= -weight*(ud[1])*phi[in]*gBigNumber*0.;
             for(int jn = 0; jn<nphi; jn++){
-                    EK(in,jn) += weight*ProjVec[in]*phi[jn]*gBigNumber;
+                EK(2*in,2*jn) += weight*phi[in]*phi[jn]*gBigNumber*0.;
+                EK(2*in+1,2*jn+1) += weight*phi[in]*phi[jn]*gBigNumber*0.;
             }
         }
         
