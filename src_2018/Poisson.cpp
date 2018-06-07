@@ -267,6 +267,7 @@
             {
                 Solout.resize(2);
                 VecDouble f(2,0.0);
+                forceFunction(data.x,f);
 
                 Solout[0] = f[0]; // fx
                 Solout[1] = f[1]; // fy

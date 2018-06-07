@@ -94,7 +94,7 @@ int main ()
     solpos->AppendVariable("Sol");
   //  solpos->AppendVariable("DSol");
     solpos->AppendVariable("Sol_exact");
-  //  solpos->AppendVariable("DSol_exact");
+    solpos->AppendVariable("Force");
     
     an->PostProcessSolution("SolutionPost.vtk", *solpos);
     
