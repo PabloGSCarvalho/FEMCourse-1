@@ -36,7 +36,7 @@
         int nsidesw = geo->NSides();
         this->SetIndex(ind);
         int order = cmesh->GetDefaultOrder();
-        intrule.SetOrder(order*2);
+        intrule.SetOrder(order*8);
         SetIntRule(&intrule);
         MathStatement *mat = cmesh->GetMath(ind);
         this->SetStatement(mat);

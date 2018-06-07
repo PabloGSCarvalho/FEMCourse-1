@@ -96,8 +96,11 @@
                 }
             }
             
+//            std::cout<<"el = "<<el<<std::endl;
+//            std::cout<<std::endl;
 //            globmat.Print();
 //            std::cout<<std::endl;
+//            rhs.Print();
 //            std::cout<<std::endl;
             
         }

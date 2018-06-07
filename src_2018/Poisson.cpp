@@ -116,12 +116,15 @@
         VecDouble &x = data.x;
         Matrix &axes =data.axes;
         
+//        data.dphidx.Print();
+//        data.dphidksi.Print();
+        
         int nphi= phi.size();
    //     VecDouble f(1,0.); incluir set force function no main
         
         Matrix perm = GetPermeability();
         Matrix Kdphi(2,2,0.);
- 
+
         
 //        for (int ik=0; ik<4; ik++) {
 //            for (int jk=0; jk<4; jk++) {
@@ -141,8 +144,8 @@
             VecDouble f(2,0.);
             forceFunction(x,f);
             
-            EF(2*in,0)+= weight*phi[in]*f[0]; //Nada oioioioi
-            EF(2*in+1,0)+= weight*phi[in]*f[1]; //Nada oioioioi
+            EF(2*in,0)+= -weight*phi[in]*f[0];
+            EF(2*in+1,0)+= -weight*phi[in]*f[1];
             
             for(int jn = 0; jn<nphi; jn++){
                 
@@ -160,6 +163,7 @@
             }
         }
         
+//        axes.Print();
 //        EK.Print();
 //        EF.Print();
 //        std::cout<<std::endl;
@@ -176,7 +180,26 @@
         Sol = this->PostProcessSolution(data,ESol);
         DSol = this->PostProcessSolution(data,EDSol);
         
+        //values[0] : erro norma L2
+        double diff;
+        errors[0] = 0.;
+        for(int i=0; i<NState(); i++) {
+            diff = Sol[i] - u_exact[i];
+            errors[0]  += diff*diff;
+        }
         
+        //values[1] : erro em semi norma H1
+        errors[1] = 0.;
+        double diff2;
+        for(int i=0; i<Dimension(); i++) {
+            for(int j=0; j<NState(); j++) {
+                diff2 = DSol[j+i*NState()] - du_exact(i,j);
+                errors[1]  += diff2*diff2;
+            }
+        }
+        
+        //values[2] : erro em norma H1 <=> norma Energia
+        errors[2]  = errors[1]+errors[2];
         
         
     }
@@ -209,7 +232,7 @@
                 
             case EDSol: //Grad u
             {
-                Solout.resize(duRows,duCols);
+                Solout.resize(duRows*duCols,0.);
                 for (int i = 0; i<duRows ; i++) {
                     for (int j = 0; j<duCols; j++) {
                         Solout[j+i*duCols]=du_h(i,j);
@@ -220,7 +243,7 @@
                 
             case EFlux: //Flux = Perm x Grad u
             {
-                Solout.resize(permRows,duCols);
+                Solout.resize(permRows*duCols,0.);
                 Matrix flux(permRows,duCols,0.);
                 
                 for (int ik = 0; ik<permRows; ik++) {
@@ -231,7 +254,7 @@
                     }
                 }
                 
-                Solout.resize(permRows,duCols);
+                Solout.resize(permRows*duCols,0.);
                 for (int i = 0; i<duRows ; i++) {
                     for (int j = 0; j<duCols; j++) {
                         Solout[j+i*duCols]=flux(i,j);

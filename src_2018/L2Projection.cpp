@@ -75,7 +75,8 @@
         VecDouble uh = data.solution;
         
         int nphi= phi.size();
-        VecDouble ud(nphi,0.);
+        
+        VecDouble ud(2,0.);
     //    forceFunction(x,f);
         Matrix dsol;
         SolutionExact(x,ud,dsol);
@@ -90,13 +91,19 @@
         }
         
         for (int in = 0; in<nphi; in++) {
-            EF(2*in,0)+= -weight*(ud[0])*phi[in]*gBigNumber*0.;
-            EF(2*in+1,0)+= -weight*(ud[1])*phi[in]*gBigNumber*0.;
+            EF(2*in,0)+= weight*(ud[0])*phi[in]*gBigNumber;
+            EF(2*in+1,0)+= weight*(ud[1])*phi[in]*gBigNumber;
             for(int jn = 0; jn<nphi; jn++){
-                EK(2*in,2*jn) += weight*phi[in]*phi[jn]*gBigNumber*0.;
-                EK(2*in+1,2*jn+1) += weight*phi[in]*phi[jn]*gBigNumber*0.;
+                EK(2*in,2*jn) += weight*phi[in]*phi[jn]*gBigNumber;
+                EK(2*in+1,2*jn+1) += weight*phi[in]*phi[jn]*gBigNumber;
             }
         }
+        
+//                EK.Print();
+//                EF.Print();
+//                std::cout<<std::endl;
+//                std::cout<<std::endl;
+        
         
     }
 

@@ -1,6 +1,7 @@
 
 
 #include <iostream>
+#include <fstream>
 #include <math.h>
 #include "IntRule.h"
 #include "IntRule1d.h"
@@ -63,20 +64,21 @@ int main ()
     
 //    VecDouble vec1;
     ReadGmsh read;
-    GeoMesh geotest;
+//    GeoMesh geotest;
 //
-    read.Read(geotest, "GeometryBench000.msh");
+ //   read.Read(geotest, "GeometryBench001.msh");
 //
 //    //VTKGeoMesh::PrintGMeshVTK(&geomesh, "MalhaTeste.vtk");
 //    geomesh.Print(std::cout);
     
-//    GeoMesh *geotest = CreateGMesh(6, 6, 1., 1.);
+    int div = 4;
+    GeoMesh *geotest = CreateGMesh(div+1, div+1, 1., 1.);
     
-    geotest.Print(std::cout);
+    geotest->Print(std::cout);
     
-    VTKGeoMesh::PrintGMeshVTK(&geotest, "MalhaTeste.vtk");
+    VTKGeoMesh::PrintGMeshVTK(geotest, "MalhaTeste.vtk");
     
-    CompMesh *cmesh = CMesh(&geotest, 1);
+    CompMesh *cmesh = CMesh(geotest, 1);
     
     Analysis *an = new Analysis(cmesh);
     an->RunSimulation();
@@ -95,6 +97,12 @@ int main ()
   //  solpos->AppendVariable("DSol_exact");
     
     an->PostProcessSolution("SolutionPost.vtk", *solpos);
+    
+    //Calculo do erro
+    std::cout << "Comuting Error " << std::endl;
+    VecDouble Errors(3);
+    std::ofstream ErroOut("Error.txt");
+    an->PostProcessError(Errors, ErroOut, *solpos);
     
     return 0;
 }

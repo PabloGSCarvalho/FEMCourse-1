@@ -61,8 +61,8 @@
         
         as.Compute(K, F);
         
-        K.Print();
-        //F.Print();
+//        K.Print();
+//        F.Print();
         
         GlobalSystem = K;
         RightHandSide = F;
@@ -76,7 +76,7 @@
         }
         cmesh->LoadSolution(lsol);
         
-        //Solution.Print();
+        Solution.Print();
         
     }
 
@@ -106,9 +106,7 @@
                 {
                     values[ier] += errors[ier] * errors[ier];
                 }
-                
             }
-            
         }
         
         int nerrors = errors.size();
@@ -123,9 +121,9 @@
         }
         else{
             out << "############" << std::endl;
-            out <<"Norma H1 or L2 -> u = "  << sqrt(values[0]) << std::endl;
-            out <<"Norma L2 or L2 -> Grad u = "    << sqrt(values[1]) << std::endl;
-            out << "Semi-norma H1 or L2 -> div = "    << sqrt(values[2])  << std::endl;
+            out <<"Norma L2 -> u = "  << sqrt(values[0]) << std::endl;
+            out <<"Norma L2 -> Grad u (Semi-norma H1) = "    << sqrt(values[1]) << std::endl;
+            out << "Norma H1 -> u = "    << sqrt(values[2])  << std::endl;
             for(int ier = 3; ier < nerrors; ier++)
                 out << "other norms = " << sqrt(values[ier]) << std::endl;
         }

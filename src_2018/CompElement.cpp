@@ -178,14 +178,16 @@
         int nintrulepoints = GetIntRule()->NPoints();
         int dim = Dimension();
         VecDouble intpoint(dim,0.);
+        ek.Zero();
+        ef.Zero();
+        int nshape = data.phi.size();
+        int nstate = GetStatement()->NState();
+        ek.Resize(nshape*nstate,nshape*nstate);
+        ef.Resize(nshape*nstate,nstate);
         
         for (int intd_id = 0; intd_id < nintrulepoints; intd_id++) {
             intrule->Point(intd_id, data.ksi, data.weight);
             this->ComputeRequiredData(data, data.ksi);
-            int nshape = data.phi.size();
-            int nstate = GetStatement()->NState();
-            ek.Resize(nshape*nstate,nshape*nstate);
-            ef.Resize(nshape*nstate,nstate);
             weight=data.weight;
             weight *=fabs(data.detjac);
             material->Contribute(data, weight, ek, ef);
@@ -194,8 +196,7 @@
     }
 
     // Compute error and exact solution
-    void CompElement::EvaluateError(std::function<void(const VecDouble &loc,VecDouble &val,Matrix &deriv)> fp,
-                                    VecDouble &errors) const{
+    void CompElement::EvaluateError(std::function<void(const VecDouble &loc,VecDouble &val,Matrix &deriv)> fp,VecDouble &errors) const{
         
         MathStatement *mat=this->GetStatement();
         IntRule *intruleError = this->GetIntRule();
@@ -216,16 +217,13 @@
         double weight =0.;
         int nintrulepoints = GetIntRule()->NPoints();
         VecDouble intpoint(dim,0.);
-        GeoElement *ref = this->GetGeoElement();
         
         for (int intd_id = 0; intd_id < nintrulepoints; intd_id++) {
             
             GetIntRule()->Point(intd_id, data.ksi, data.weight);
             this->ComputeRequiredData(data, data.ksi);
-            
-            int nshape = data.phi.size();
-            int nstate = GetStatement()->NState();
-            
+            GetMultiplyingCoeficients(data.coefs);
+            data.ComputeSolution();
             weight=data.weight;
             weight *=fabs(data.detjac);
             

@@ -64,7 +64,7 @@ public:
         forceFunction = f;
     }
     
-    // Set the exact solution related to Poisson math statement
+    // Set the exact solution related to L2 projection math statement
     void SetExactSolution(const std::function<void(const VecDouble &loc, VecDouble &result, Matrix &deriv)> &Exact)
     {
         SolutionExact = Exact;
