@@ -71,7 +71,7 @@ int main ()
 //    //VTKGeoMesh::PrintGMeshVTK(&geomesh, "MalhaTeste.vtk");
 //    geomesh.Print(std::cout);
     
-    int div = 4;
+    int div = 8;
     GeoMesh *geotest = CreateGMesh(div+1, div+1, 1., 1.);
     
     geotest->Print(std::cout);
@@ -115,8 +115,8 @@ void F_source(const VecDouble &x, VecDouble &f){
     double yv = x[1];
     //    STATE zv = x[2];
     
-    double f_x = - 8.0*Pi*Pi*cos(2.0*Pi*yv)*sin(2.0*Pi*xv);
-    double f_y = + 8.0*Pi*Pi*cos(2.0*Pi*xv)*sin(2.0*Pi*yv);
+    double f_x = + 8.0*Pi*Pi*cos(2.0*Pi*yv)*sin(2.0*Pi*xv);
+    double f_y = - 8.0*Pi*Pi*cos(2.0*Pi*xv)*sin(2.0*Pi*yv);
     
     f[0] = f_x; // x direction
     f[1] = f_y; // y direction

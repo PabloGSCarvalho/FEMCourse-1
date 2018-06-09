@@ -76,8 +76,6 @@
         }
         cmesh->LoadSolution(lsol);
         
-        Solution.Print();
-        
     }
 
     void Analysis::PostProcessSolution(const std::string &filename, PostProcess &defPostProc) const{

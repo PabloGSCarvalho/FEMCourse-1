@@ -116,58 +116,92 @@
         VecDouble &x = data.x;
         Matrix &axes =data.axes;
         
-//        data.dphidx.Print();
-//        data.dphidksi.Print();
-        
-        int nphi= phi.size();
-   //     VecDouble f(1,0.); incluir set force function no main
         
         Matrix perm = GetPermeability();
         Matrix Kdphi(2,2,0.);
 
-        
-//        for (int ik=0; ik<4; ik++) {
-//            for (int jk=0; jk<4; jk++) {
-//
-//                    Kdphi(ik,jk)+=perm(ik,ik)*dphi(jk,ik);
-//            }
-//        }
-        
-        for (int in = 0; in<nphi; in++) {
-            
-            VecDouble dv(2);
-            //    Derivative for Vx
-            dv[0] = dphi(0,in)*axes(0,0)+dphi(1,in)*axes(1,0);
-            //    Derivative for Vy
-            dv[1] = dphi(0,in)*axes(0,1)+dphi(1,in)*axes(1,1);
-            
-            VecDouble f(2,0.);
-            forceFunction(x,f);
-            
-            EF(2*in,0)+= -weight*phi[in]*f[0];
-            EF(2*in+1,0)+= -weight*phi[in]*f[1];
-            
-            for(int jn = 0; jn<nphi; jn++){
-                
-                VecDouble du(2);
-                //    Derivative for Ux
-                du[0] = dphi(0,jn)*axes(0,0)+dphi(1,jn)*axes(1,0);
-                //    Derivative for Uy
-                du[1] = dphi(0,jn)*axes(0,1)+dphi(1,jn)*axes(1,1);
-                
-                EK(2*in,2*jn) += weight*(du[0]*dv[0]*perm(0,0)+du[0]*dv[1]*perm(1,0));
-                EK(2*in,2*jn+1) += weight*(du[0]*dv[0]*perm(0,1)+du[0]*dv[1]*perm(1,1));
-                EK(2*in+1,2*jn) += weight*(du[1]*dv[0]*perm(0,0)+du[1]*dv[1]*perm(1,0));
-                EK(2*in+1,2*jn+1) += weight*(du[1]*dv[0]*perm(0,1)+du[1]*dv[1]*perm(1,1));
-                
+
+        // shape index for nstate
+        int dim = Dimension();
+        int nphi= phi.size();
+        int nshape = nphi*NState();
+        int index=0, inormal = 0;
+        VecDouble shapeindex(nshape,0.), normalindex(nshape,0.);
+        for (int i = 0; i<nphi; i++) {
+            inormal = 0;
+            for (int s = 0; s<NState(); s++) {
+                shapeindex[index]=i;
+                normalindex[index]=inormal;
+                index++;
+                inormal++;
             }
         }
         
-//        axes.Print();
-//        EK.Print();
-//        EF.Print();
-//        std::cout<<std::endl;
-//        std::cout<<std::endl;
+        Matrix Normalvec(NState(),NState(),0.);
+        for (int in =0; in<NState(); in++) {
+            Normalvec(in,in)=1.;
+        }
+        
+        for(int i = 0; i < nshape; i++ )
+        {
+            int iphi = shapeindex[i];
+            int ivec = normalindex[i];
+            Matrix phiVi(dim,1,0.),GradVi(dim,dim,0.);
+            for (int e=0; e<dim; e++) {
+                phiVi(e,0) = phi[iphi]*Normalvec(e,ivec);
+            
+                // Grad V
+                for (int f=0; f<dim; f++) {
+                    GradVi(e,f) = Normalvec(e,ivec)*dphi(f,iphi);
+                }
+            }
+            
+            
+            // Force vector :
+            
+            VecDouble f(NState(),0.);
+            forceFunction(x,f);
+
+            double phi_dot_f = 0.0;
+            for (int e=0; e<dim; e++) {
+                phi_dot_f += phiVi(e,0)*f[e];
+            }
+            
+            EF(i,0) += phi_dot_f * weight;
+            
+            
+            for(int j = 0; j < nshape; j++){
+                int jphi = shapeindex[j];
+                int jvec = normalindex[j];
+                
+                Matrix GradVj(dim,dim,0.), KGradVj(dim,dim,0.);
+                for (int e=0; e<dim; e++) {
+                    for (int f=0; f<dim; f++) {
+                        GradVj(e,f) = Normalvec(e,jvec)*dphi(f,jphi);
+                    }
+                }
+                
+                // K * Grad U
+                for (int ik=0; ik<dim; ik++) {
+                    for (int jk=0; jk<dim; jk++) {
+                        for (int l=0; l<dim; l++){
+                            KGradVj(ik,jk) += perm(ik,l)*GradVj(l,jk);
+                        }
+                    }
+                }
+                
+                double val = Inner(GradVi, KGradVj);
+                EK(i,j) += weight * val;
+                
+            }
+            
+        }
+        
+
+    //    EK.Print();
+    //    EF.Print();
+    //    std::cout<<std::endl;
+
     }
 
     // Method to implement error over element's volume
@@ -310,6 +344,22 @@
         return Solout;
         
     }
+
+double Poisson::Inner(Matrix &S, Matrix &T) const{
+    
+    double Val = 0.;
+    
+    for(int i = 0; i < S.Cols(); i++){
+        for(int j = 0; j < S.Cols(); j++){
+            Val += S(i,j)*T(i,j);
+        }
+    }
+    
+    return Val;
+    
+}
+
+
 
 //    // Prepare and print post processing data
 //    void Poisson::EvaluateSolution(const IntPointData &integrationpointdata, PostProcess &defPostProc) const{

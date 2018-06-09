@@ -95,5 +95,8 @@ public:
     // Prepare and print post processing data
     virtual std::vector<double> PostProcessSolution(const IntPointData &integrationpointdata, const int var) const;
 
+    virtual double Inner(Matrix &S,Matrix &T) const;
+    
+    
 };
 #endif /* Poisson_h */
