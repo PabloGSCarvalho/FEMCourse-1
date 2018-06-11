@@ -42,7 +42,7 @@ public:
     // Operator of copy
     L2Projection &operator=(const L2Projection &copy);
     
-    int GetBCType() { return BCType; }
+    int GetBCType() const { return BCType; }
     
     // Method for creating a copy of the element
     virtual L2Projection *Clone() const;

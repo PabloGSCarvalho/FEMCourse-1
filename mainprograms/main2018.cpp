@@ -80,7 +80,8 @@ int main ()
 
 void TestPoisson2D(){
     
-    for (int it=1; it<6; it++) {
+    int ndiv = 6;
+    for (int it=1; it<ndiv; it++) {
         
         int div = pow(2,it);
         

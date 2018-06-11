@@ -81,23 +81,42 @@
         SolutionExact(x,ud,dsol);
         Matrix proj = GetProjectionMatrix();
         VecDouble ProjVec(2,0.);
-        
-        
-        for (int ik=0; ik<2; ik++) {
-                for (int kd=0; kd<2; kd++) {
-                    ProjVec[ik]+=proj(ik,kd)*phi[kd];
+
+        switch (GetBCType()) {
+            case 0: //Dirichlet
+            {
+                for (int ik=0; ik<2; ik++) {
+                    for (int kd=0; kd<2; kd++) {
+                        ProjVec[ik]+=proj(ik,kd)*phi[kd];
+                    }
+                }
+                
+                for (int in = 0; in<nphi; in++) {
+                    EF(2*in,0)+= weight*(ud[0])*phi[in]*gBigNumber;
+                    EF(2*in+1,0)+= weight*(ud[1])*phi[in]*gBigNumber;
+                    for(int jn = 0; jn<nphi; jn++){
+                        EK(2*in,2*jn) += weight*phi[in]*phi[jn]*gBigNumber;
+                        EK(2*in+1,2*jn+1) += weight*phi[in]*phi[jn]*gBigNumber;
+                    }
+                }
             }
-        }
-        
-        for (int in = 0; in<nphi; in++) {
-            EF(2*in,0)+= weight*(ud[0])*phi[in]*gBigNumber;
-            EF(2*in+1,0)+= weight*(ud[1])*phi[in]*gBigNumber;
-            for(int jn = 0; jn<nphi; jn++){
-                EK(2*in,2*jn) += weight*phi[in]*phi[jn]*gBigNumber;
-                EK(2*in+1,2*jn+1) += weight*phi[in]*phi[jn]*gBigNumber;
+                break;
+            case 1: // Neumann
+            {
+                for (int in = 0; in<nphi; in++) {
+                    EF(2*in,0)+= weight*(dsol(0,0))*phi[in];
+                    EF(2*in+1,0)+= weight*(dsol(1,0))*phi[in];
+                }
             }
+                break;
+                
+            default:{
+                std::cout << "Boundary not implemented " << std::endl;
+                DebugStop();
+            }
+                break;
         }
-        
+
 //                EK.Print();
 //                EF.Print();
 //                std::cout<<std::endl;
