@@ -156,7 +156,6 @@
                 }
             }
             
-            
             // Force vector :
             
             VecDouble f(NState(),0.);

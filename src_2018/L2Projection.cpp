@@ -12,9 +12,8 @@
         
     }
     
-    L2Projection::L2Projection(int materialid, Matrix &perm){
+    L2Projection::L2Projection(int bctype ,int materialid , Matrix &proj) : BCType(bctype), projection(proj){
         SetMatID(materialid);
-        projection=perm;
     }
     
     L2Projection::L2Projection(const L2Projection &copy){

@@ -86,7 +86,7 @@
 
     }
 
-    void Analysis::PostProcessError(VecDouble errorvec, std::ostream &out, PostProcess &defPostProc) const{
+    VecDouble Analysis::PostProcessError(std::ostream &out, PostProcess &defPostProc) const{
         
         VecDouble errors(6,0.);
         VecDouble values(6,0.);
@@ -108,25 +108,29 @@
         }
         
         int nerrors = errors.size();
-        errorvec.resize(nerrors);
+        VecDouble errorvec(nerrors);
         std::fill(errorvec.begin(), errorvec.end(), -10.);
         
         if (nerrors < 3) {
             out << "TPZAnalysis::PostProcess - At least 3 norms are expected." << std::endl;
-            out << std::endl<<"############"<<std::endl;
+            out << std::endl<<"------ Erros: ------"<<std::endl;
             for(int ier = 0; ier < nerrors; ier++)
                 out << std::endl << "error " << ier << "  = " << sqrt(values[ier]);
         }
         else{
-            out << "############" << std::endl;
+            out << "----- Erros: ---------------------" << std::endl;
             out <<"Norma L2 -> u = "  << sqrt(values[0]) << std::endl;
-            out <<"Norma L2 -> Grad u (Semi-norma H1) = "    << sqrt(values[1]) << std::endl;
+            out <<"Norma L2 -> Grad u = "    << sqrt(values[1]) << std::endl;
             out << "Norma H1 -> u = "    << sqrt(values[2])  << std::endl;
-            for(int ier = 3; ier < nerrors; ier++)
-                out << "other norms = " << sqrt(values[ier]) << std::endl;
+//            for(int ier = 3; ier < nerrors; ier++)
+//                out << "other norms = " << sqrt(values[ier]) << std::endl;
         }
-        // Returns the calculated errors.
-        for(int i=0;i<nerrors;i++)
-            errorvec[i] = sqrt(values[i]);
         
+        
+        // Returns the calculated errors.
+        for(int i=0;i<nerrors;i++){
+            errorvec[i] = sqrt(values[i]);
+        }
+        
+        return errorvec;
     }

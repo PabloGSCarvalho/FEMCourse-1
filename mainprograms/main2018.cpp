@@ -36,6 +36,8 @@ using std::endl;
 using std::cin;
 
 void TestIntegrate();
+void TestGmsh();
+void TestPoisson2D();
 
 void UXi(VecDouble &coord, VecDouble &uXi, VecDouble &gradu);
 VecDouble X(VecDouble &coordXi);
@@ -45,66 +47,102 @@ double InnerVec(VecDouble &S , VecDouble &T);
 GeoMesh *CreateGMesh(int nx, int ny, double hx, double hy);
 CompMesh *CMesh(GeoMesh *gmesh, int pOrder);
 
+void F_source(const VecDouble &x, VecDouble &f);
+void Sol_exact(const VecDouble &x, VecDouble &sol, Matrix &dsol);
+void ComputeRateOfConvergence(std::ostream &out, VecDouble &FirstError, VecDouble &erro, double nel);
+
 int matId = 1;
 int bc0 = -1; //define id para um material(cond contorno esq)
 int bc1 = -2; //define id para um material(cond contorno dir)
 int bc2 = -3; //define id para um material(cond contorno inf)
 int bc3 = -4; //define id para um material(cond contorno sup)
-
-void F_source(const VecDouble &x, VecDouble &f);
-
-void Sol_exact(const VecDouble &x, VecDouble &sol, Matrix &dsol);
-
+double hx = 1., hy=1.;
+VecDouble FirstError(3,0.); // Vetor de erros
 const double Pi=M_PI;
 
 int main ()
 {
-
-    //TestIntegrate();
+//  Primeiro teste: Verifica integração numérica
     
-//    VecDouble vec1;
-    ReadGmsh read;
-//    GeoMesh geotest;
-//
- //   read.Read(geotest, "GeometryBench001.msh");
-//
-//    //VTKGeoMesh::PrintGMeshVTK(&geomesh, "MalhaTeste.vtk");
-//    geomesh.Print(std::cout);
+//  TestIntegrate();
     
-    int div = 8;
-    GeoMesh *geotest = CreateGMesh(div+1, div+1, 1., 1.);
+//  Segundo teste: Geração de malha Gmsh, impressão VTK
     
-    geotest->Print(std::cout);
+//  TestGmsh()
+ 
+//  Terceiro teste : Poisson 2D, obtenção de erros e taxas de convergência
     
-    VTKGeoMesh::PrintGMeshVTK(geotest, "MalhaTeste.vtk");
-    
-    CompMesh *cmesh = CMesh(geotest, 1);
-    
-    Analysis *an = new Analysis(cmesh);
-    an->RunSimulation();
-    
-    VecDouble Sol = cmesh->Solution();
-//    for (int i =0; i<Sol.size(); i++) {
-//        std::cout<<Sol[i]<<std::endl;
-//    }
-    
-    PostProcess *solpos = new PostProcessTemplate<Poisson>(an);
-    solpos->SetExact(Sol_exact);
-    
-    solpos->AppendVariable("Sol");
-  //  solpos->AppendVariable("DSol");
-    solpos->AppendVariable("Sol_exact");
-    solpos->AppendVariable("Force");
-    
-    an->PostProcessSolution("SolutionPost.vtk", *solpos);
-    
-    //Calculo do erro
-    std::cout << "Comuting Error " << std::endl;
-    VecDouble Errors(3);
-    std::ofstream ErroOut("Error.txt");
-    an->PostProcessError(Errors, ErroOut, *solpos);
+    TestPoisson2D();
     
     return 0;
+}
+
+
+void TestPoisson2D(){
+    
+    for (int it=1; it<6; it++) {
+        
+        int div = pow(2,it);
+        
+        // Malha geométrica :
+        GeoMesh *geotest = CreateGMesh(div+1, div+1, hx, hy);
+        geotest->Print(std::cout);
+        VTKGeoMesh::PrintGMeshVTK(geotest, "MalhaTeste.vtk");
+        
+        // Malha computacional :
+        CompMesh *cmesh = CMesh(geotest, 1);
+        
+        // Análise numérica :
+        Analysis an(cmesh);
+        an.RunSimulation();
+        VecDouble Sol = cmesh->Solution();
+        
+        // Pós-processamento :
+        PostProcess *solpos = new PostProcessTemplate<Poisson>(&an);
+        solpos->SetExact(Sol_exact);
+        solpos->AppendVariable("Sol");
+        solpos->AppendVariable("Sol_exact");
+        solpos->AppendVariable("Force");
+        an.PostProcessSolution("SolutionPost.vtk", *solpos);
+        
+        // Calculo do erro :
+        std::cout << "Comuting Error " << std::endl;
+        VecDouble errovec(6,0.);
+        std::ofstream ErroOut("Errors&Rates.txt", std::ofstream::app);
+        errovec = an.PostProcessError(ErroOut, *solpos);
+        
+        // Taxa de convergência :
+        
+        ComputeRateOfConvergence(ErroOut, FirstError, errovec, div);
+        
+    }
+    
+}
+
+
+
+void ComputeRateOfConvergence(std::ostream &out, VecDouble &FirstError, VecDouble &erro, double div){
+
+    double h0 = 2*hx/div;
+    double h1 = hx/div;
+    
+    if (div==2) {
+        for (int i = 0; i< erro.size(); i++) {
+            FirstError[i] = erro[i];
+        }
+        return;
+    }
+    
+    out << "----- Taxa de convergência : -----" << std::endl;
+    out << "Norma L2 -> u = "<<(log(FirstError[0])-log(erro[0]))/(log(h0)-log(h1)) <<std::endl;
+    out << "Norma L2 -> Grad u = "<<(log(FirstError[1])-log(erro[1]))/(log(h0)-log(h1)) <<std::endl;
+    out << "Norma H1 -> u = "<<(log(FirstError[2])-log(erro[2]))/(log(h0)-log(h1)) <<std::endl;
+    out << "---------------------------------- " << std::endl;
+    
+    for (int i = 0; i< erro.size(); i++) {
+        FirstError[i] = erro[i];
+    }
+    
 }
 
 void F_source(const VecDouble &x, VecDouble &f){
@@ -177,7 +215,7 @@ CompMesh *CMesh(GeoMesh *gmesh, int pOrder){
         }else{
             // Condições de contorno (L2Projection)
             cmesh->SetNumberMath(iel+1);
-            L2Projection *bcmat0 = new L2Projection(geoMatID,proj);
+            L2Projection *bcmat0 = new L2Projection(0,geoMatID,proj);
             bcmat0->SetExactSolution(Sol_exact);
             cmesh->SetMathStatement(iel, bcmat0);
         }
@@ -277,7 +315,16 @@ GeoMesh *CreateGMesh(int nx, int ny, double hx, double hy){
     return gmesh;
 }
 
-
+void TestGmsh(){
+    
+    VecDouble vec1;
+    ReadGmsh read;
+    GeoMesh geomesh;
+    read.Read(geomesh, "GeometryBench001.msh");
+    VTKGeoMesh::PrintGMeshVTK(&geomesh, "MalhaTeste.vtk");
+    geomesh.Print(std::cout);
+    
+}
 
 void TestIntegrate()
 {
@@ -531,12 +578,7 @@ void TestIntegrate()
     cout<<"Resultado Integral ||Gradu(x,y)||:  "<< val4 << "  -> Número de pontos de integração = "<< nPoints*nPoints << endl;
     cout<<"-----------------------------------"<< endl;
     
-
-    
 }
-
-
-
 
 void UXi(VecDouble &coord, VecDouble &uxi, VecDouble &gradu)
 {
