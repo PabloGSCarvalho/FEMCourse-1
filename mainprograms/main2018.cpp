@@ -37,14 +37,15 @@ using std::cin;
 
 void TestIntegrate();
 void TestGmsh();
-void TestPoisson2D();
+void TestPoisson2DQuad();
+void TestPoisson2DTri();
 
 void UXi(VecDouble &coord, VecDouble &uXi, VecDouble &gradu);
 VecDouble X(VecDouble &coordXi);
 void Jacobian(VecDouble &Coord, TMatrix &jacobian, double &detjac);
 double InnerVec(VecDouble &S , VecDouble &T);
 
-GeoMesh *CreateGMesh(int nx, int ny, double hx, double hy);
+GeoMesh *CreateGMesh(int nx, int ny, double hx, double hy, ElementType type);
 CompMesh *CMesh(GeoMesh *gmesh, int pOrder);
 
 void F_source(const VecDouble &x, VecDouble &f);
@@ -72,24 +73,66 @@ int main ()
  
 //  Terceiro teste : Poisson 2D, obtenção de erros e taxas de convergência
     
-    TestPoisson2D();
+    TestPoisson2DTri();
     
     return 0;
 }
 
-
-void TestPoisson2D(){
+void TestPoisson2DTri(){
     
-    int ndiv = 2;
+    int ndiv = 6;
     int pOrder = 1;
     
     for (int it=1; it<ndiv; it++) {
         
         int div = pow(2,it);
-        div=8;
         
         // Malha geométrica :
-        GeoMesh *geotest = CreateGMesh(div+1, div+1, hx, hy);
+        GeoMesh *geotest = CreateGMesh(div+1, div+1, hx, hy, ETriangle);
+        geotest->Print(std::cout);
+        VTKGeoMesh::PrintGMeshVTK(geotest, "MalhaTeste.vtk");
+        
+        // Malha computacional :
+        CompMesh *cmesh = CMesh(geotest, pOrder);
+        
+        // Análise numérica :
+        Analysis an(cmesh);
+        an.RunSimulation();
+        VecDouble Sol = cmesh->Solution();
+        
+        // Pós-processamento :
+        PostProcess *solpos = new PostProcessTemplate<Poisson>(&an);
+        solpos->SetExact(Sol_exact);
+        solpos->AppendVariable("Sol");
+        solpos->AppendVariable("Sol_exact");
+        solpos->AppendVariable("Force");
+        an.PostProcessSolution("SolutionPost.vtk", *solpos);
+        
+        // Calculo do erro :
+        std::cout << "Comuting Error " << std::endl;
+        VecDouble errovec(6,0.);
+        std::ofstream ErroOut("Errors&Rates.txt", std::ofstream::app);
+        errovec = an.PostProcessError(ErroOut, *solpos);
+        
+        // Taxa de convergência :
+        
+        ComputeRateOfConvergence(ErroOut, FirstError, errovec, div);
+    }
+    
+}
+
+
+void TestPoisson2DQuad(){
+    
+    int ndiv = 5;
+    int pOrder = 2;
+    
+    for (int it=1; it<ndiv; it++) {
+        
+        int div = pow(2,it);
+        
+        // Malha geométrica :
+        GeoMesh *geotest = CreateGMesh(div+1, div+1, hx, hy, EQuadrilateral);
         geotest->Print(std::cout);
         VTKGeoMesh::PrintGMeshVTK(geotest, "MalhaTeste.vtk");
         
@@ -234,7 +277,7 @@ CompMesh *CMesh(GeoMesh *gmesh, int pOrder){
 }
 
 
-GeoMesh *CreateGMesh(int nx, int ny, double hx, double hy){
+GeoMesh *CreateGMesh(int nx, int ny, double hx, double hy, ElementType eltype){
     
     GeoMesh *gmesh = new GeoMesh;
 
@@ -256,18 +299,65 @@ GeoMesh *CreateGMesh(int nx, int ny, double hx, double hy){
     VecInt nodeind(nnodes);
     VecInt nodeindBC(2,0.);
     
-    for(int iq = 0; iq < (ny - 1); iq++){
-        for(int jq = 0; jq < (nx - 1); jq++){
-            index = iq*(nx - 1)+ jq;
-            nodeind[0] = iq*ny + jq;
-            nodeind[1] = nodeind[0]+1;
-            nodeind[2] = nodeind[1]+(nx);
-            nodeind[3] = nodeind[0]+(nx);
-            GeoElement *gel = new GeoElementTemplate<GeomQuad>(nodeind,matId,gmesh,index);
-            gmesh->SetNumElements(index+1);
-            gmesh->SetElement(index, gel);
+    
+    switch (eltype) {
+        case EQuadrilateral:
+        {
+            for(int iq = 0; iq < (ny - 1); iq++){
+                for(int jq = 0; jq < (nx - 1); jq++){
+                    index = iq*(nx - 1)+ jq;
+                    nodeind[0] = iq*ny + jq;
+                    nodeind[1] = nodeind[0]+1;
+                    nodeind[2] = nodeind[1]+(nx);
+                    nodeind[3] = nodeind[0]+(nx);
+                    GeoElement *gel = new GeoElementTemplate<GeomQuad>(nodeind,matId,gmesh,index);
+                    gmesh->SetNumElements(index+1);
+                    gmesh->SetElement(index, gel);
+                }
+            }
         }
+            break;
+        case ETriangle:
+        {
+            
+            VecInt nodeindD(3,0);
+            VecInt nodeindU(3,0);
+            
+            for(int iq = 0; iq < (ny - 1); iq++){
+                for(int jq = 0; jq < (nx - 1); jq++){
+                    index = (iq)*(nx - 1)+ (jq);
+                    nodeindD[0] = (iq)*ny + (jq);
+                    nodeindD[1] = nodeindD[0]+1;
+                    nodeindD[2] = nodeindD[0]+nx;
+                    GeoElement *gelD = new GeoElementTemplate<GeomTriangle>(nodeindD,matId,gmesh,index);
+                    gmesh->SetNumElements(index+1);
+                    gmesh->SetElement(index, gelD);
+                    
+                    index++;
+                    
+                    nodeindU[0] = nodeindD[1];
+                    nodeindU[1] = nodeindD[1]+nx;
+                    nodeindU[2] = nodeindD[0]+nx;
+                    GeoElement *gelU = new GeoElementTemplate<GeomTriangle>(nodeindU,matId,gmesh,index);
+                    gmesh->SetNumElements(index+1);
+                    gmesh->SetElement(index, gelU);
+                    
+                   // id++;
+                }
+            }
+        }
+            break;
+            
+        default:
+        {
+            std::cout << "Element type is not valid" << std::endl;
+            DebugStop();
+        }
+            break;
     }
+    
+    
+
     
     for(int iq = 0; iq < (ny - 1); iq++){
         for(int jq = 0; jq < (nx - 1); jq++){
