@@ -34,7 +34,7 @@ public:
     L2Projection();
     
     // Constructor of L2Projection
-    L2Projection(int bctype, int materialid, Matrix &perm);
+    L2Projection(int bctype, int materialid, Matrix &proj);
     
     // Copy constructor of L2Projection
     L2Projection(const L2Projection &copy);

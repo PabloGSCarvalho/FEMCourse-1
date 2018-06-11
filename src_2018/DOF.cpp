@@ -8,7 +8,7 @@
 #include "DOF.h"
 
 
-    DOF::DOF(){
+    DOF::DOF():nshape(0),nstate(0),order(0){
         
     }
     
@@ -16,12 +16,14 @@
         firstequation=copy.firstequation;
         nshape=copy.nshape;
         nstate=copy.nstate;
+        order=copy.order;
     }
     
     DOF &DOF::operator=(const DOF &copy){
         firstequation=copy.firstequation;
         nshape=copy.nshape;
         nstate=copy.nstate;
+        order=copy.order;
         return *this;
     }
     
@@ -37,10 +39,10 @@
         firstequation=first;
     }
     
-    void DOF::SetNShapeStateOrder(int NShape, int NState, int Order){
+    void DOF::SetNShapeStateOrder(int NShape, int NState, int ord){
         nshape=NShape;
         nstate=NState;
-        order = Order;
+        order = ord;
     }
     
     int DOF::GetNShape() const{

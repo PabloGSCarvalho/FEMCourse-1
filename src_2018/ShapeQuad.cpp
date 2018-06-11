@@ -12,7 +12,12 @@
     /// computes the shape functions in function of the coordinate in parameter space and orders of the shape functions (size of orders is number of sides of the element topology)
     void ShapeQuad::Shape(const VecDouble &xi, VecInt &orders, VecDouble &phi, Matrix &dphi){
         
-        int nshape = Shape1d::NShapeFunctions(orders);
+        VecInt orders1D(3,0.);
+        for (int i=0; i<3; i++) {
+            orders1D[i]=orders[i];
+        }
+
+        int nshape = Shape1d::NShapeFunctions(orders1D);
         //int nsides = orders.size();
 
         VecDouble coxi(1,0.);
@@ -24,30 +29,35 @@
         VecDouble phixi(nshape), phieta(nshape);
         TMatrix dphixi(1,nshape),dphieta(1,nshape);
         
-        Matrix Indices(1,1,0.);
+        Matrix Indices(2,2,0.);
         int nshapeQuad = nshape*nshape;
         
         if (nshapeQuad==4) {
             phi.resize(4);
             dphi.Resize(2, 4);
             Indices.Resize(2,2);
-            Indices(0,0)=0,Indices(0,1)=3,Indices(1,0)=1,Indices(1,1)=2;
+//            Indices(0,0)=0,Indices(0,1)=3,Indices(1,0)=1,Indices(1,1)=2;
         }else if(nshapeQuad==9){
             phi.resize(9);
             dphi.Resize(2, 9);
-            Indices.Resize(3,3);
-            Indices(0,0)=0,Indices(0,1)=7,Indices(0,2)=3,Indices(1,0)=4,Indices(1,1)=8,Indices(1,2)=6,Indices(2,0)=1,Indices(2,1)=5,Indices(2,2)=2;
+            //  Indices.Resize(3,3);
+            //  Indices(0,0)=0,Indices(0,1)=7,Indices(0,2)=3,Indices(1,0)=4,Indices(1,1)=8,Indices(1,2)=6,Indices(2,0)=1,Indices(2,1)=5,Indices(2,2)=2;
         }else{
             DebugStop();
         }
+  
+        //Corners
+        orders1D.resize(Shape1d::nCorners);
         
-            for (int ixi=0; ixi<nshape; ixi++) {
+        Indices(0,0)=0,Indices(0,1)=3,Indices(1,0)=1,Indices(1,1)=2;
+        
+            for (int ixi=0; ixi<2; ixi++) {
     
-                Shape1d::Shape(coxi, orders, phixi, dphixi);
+                Shape1d::Shape(coxi, orders1D, phixi, dphixi);
                 
-                for (int ieta=0; ieta<nshape; ieta++) {
+                for (int ieta=0; ieta<2; ieta++) {
                     
-                    Shape1d::Shape(coeta, orders, phieta, dphieta);
+                    Shape1d::Shape(coeta, orders1D, phieta, dphieta);
                     
                     phi[Indices(ixi,ieta)]=phixi[ixi]*phieta[ieta];
                     
@@ -56,7 +66,35 @@
                     
                 }
             }
-      
+        
+        // Sides
+        
+        if(nshapeQuad==9){
+            
+            for(int is=4; is<8; is++)
+            {
+                phi[is] = phi[is%4]*phi[(is+1)%4];
+                dphi(0,is) = dphi(0,is%4)*phi[(is+1)%4]+phi[is%4]*dphi(0,(is+1)%4);
+                dphi(1,is) = dphi(1,is%4)*phi[(is+1)%4]+phi[is%4]*dphi(1,(is+1)%4);
+            }
+            phi[8] = phi[0]*phi[2];
+            dphi(0,8) = dphi(0,0)*phi[2]+phi[0]*dphi(0,2);
+            dphi(1,8) = dphi(1,0)*phi[2]+phi[0]*dphi(1,2);
+            
+            // Make the generating shape functions linear and unitary
+            for(int is=4; is<8; is++)
+            {
+                phi[is] += phi[8];
+                dphi(0,is) += dphi(0,8);
+                dphi(1,is) += dphi(1,8);
+                phi[is] *= 4.;
+                dphi(0,is) *= 4.;
+                dphi(1,is) *= 4.;
+            }
+            phi[8] *= 16.;
+            dphi(0,8) *= 16.;
+            dphi(1,8) *= 16.;
+        }
 
         
     }

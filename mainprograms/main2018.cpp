@@ -80,10 +80,13 @@ int main ()
 
 void TestPoisson2D(){
     
-    int ndiv = 6;
+    int ndiv = 2;
+    int pOrder = 1;
+    
     for (int it=1; it<ndiv; it++) {
         
         int div = pow(2,it);
+        div=8;
         
         // Malha geométrica :
         GeoMesh *geotest = CreateGMesh(div+1, div+1, hx, hy);
@@ -91,7 +94,7 @@ void TestPoisson2D(){
         VTKGeoMesh::PrintGMeshVTK(geotest, "MalhaTeste.vtk");
         
         // Malha computacional :
-        CompMesh *cmesh = CMesh(geotest, 1);
+        CompMesh *cmesh = CMesh(geotest, pOrder);
         
         // Análise numérica :
         Analysis an(cmesh);
@@ -216,6 +219,7 @@ CompMesh *CMesh(GeoMesh *gmesh, int pOrder){
         }else{
             // Condições de contorno (L2Projection)
             cmesh->SetNumberMath(iel+1);
+            Matrix val1, val2;
             L2Projection *bcmat0 = new L2Projection(0,geoMatID,proj);
             bcmat0->SetExactSolution(Sol_exact);
             cmesh->SetMathStatement(iel, bcmat0);

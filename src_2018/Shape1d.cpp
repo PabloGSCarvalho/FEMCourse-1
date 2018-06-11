@@ -21,23 +21,22 @@
                 dphi(0,i)=0.;
             }
 
-
-            for (int i=0; i<nshape; i++) {
-                double epsi=-1.+i*2./(nshape-1);
+            for (int i=0; i<nCorners; i++) {
+                double epsi=-1.+i*2./(nCorners-1);
                 
-                for (int j=0; j<nshape; j++) {
+                for (int j=0; j<nCorners; j++) {
                     
-                    Matrix axdphi(1,nshape);
+                    Matrix axdphi(1,nCorners);
                     if (i!=j) {
-                        double epsj=-1.+j*2./(nshape-1);
+                        double epsj=-1.+j*2./(nCorners-1);
                         
                         phi[i]*=(xi[0]-epsj)/(epsi-epsj);;
                         
                         axdphi(0,i)=1./(epsi-epsj);
                         
-                        for (int k=0; k<nshape; k++) {
+                        for (int k=0; k<nCorners; k++) {
                             if (k!=i&&k!=j) {
-                                epsj=-1.+k*2./(nshape-1);
+                                epsj=-1.+k*2./(nCorners-1);
                                 axdphi(0,i)*=(xi[0]-epsj)/(epsi-epsj);
                             }
                             
@@ -51,7 +50,13 @@
                 
             }
 
-        
+        if (nshape==3) {
+            phi[2] = phi[0]*phi[1];
+            dphi(0,2) = dphi(0,0)*phi[1]+phi[0]*dphi(0,1);
+            
+            phi[2] *= 4.;
+            dphi(0,2) *= 4.;
+        }
 
     }
     
