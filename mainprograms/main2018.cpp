@@ -80,8 +80,8 @@ int main ()
 
 void TestPoisson2DTri(){
     
-    int ndiv = 6;
-    int pOrder = 1;
+    int ndiv = 5;
+    int pOrder = 2;
     
     for (int it=1; it<ndiv; it++) {
         
@@ -322,10 +322,11 @@ GeoMesh *CreateGMesh(int nx, int ny, double hx, double hy, ElementType eltype){
             
             VecInt nodeindD(3,0);
             VecInt nodeindU(3,0);
-            
+  
+            index =0;
             for(int iq = 0; iq < (ny - 1); iq++){
                 for(int jq = 0; jq < (nx - 1); jq++){
-                    index = (iq)*(nx - 1)+ (jq);
+                 //   index = (iq)*(nx - 1)+ (jq);
                     nodeindD[0] = (iq)*ny + (jq);
                     nodeindD[1] = nodeindD[0]+1;
                     nodeindD[2] = nodeindD[0]+nx;
@@ -342,9 +343,10 @@ GeoMesh *CreateGMesh(int nx, int ny, double hx, double hy, ElementType eltype){
                     gmesh->SetNumElements(index+1);
                     gmesh->SetElement(index, gelU);
                     
-                   // id++;
+                    index++;
                 }
             }
+            index--;
         }
             break;
             

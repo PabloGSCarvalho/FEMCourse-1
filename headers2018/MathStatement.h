@@ -65,5 +65,8 @@ public:
     virtual std::vector<double> PostProcessSolution(const IntPointData &integrationpointdata, const int var) const = 0;
     
     
+    virtual void Axes2XYZ(const Matrix &dudaxes, Matrix &dudx, const Matrix &axesv, bool colMajor = true) const;
+    
+    
 };
 #endif /* MathStatement_h */

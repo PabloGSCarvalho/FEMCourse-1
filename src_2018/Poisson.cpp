@@ -116,10 +116,13 @@
         VecDouble &x = data.x;
         Matrix &axes =data.axes;
         
+        //axes.Print();
         
         Matrix perm = GetPermeability();
         Matrix Kdphi(2,2,0.);
-
+        
+        Matrix dphiU(Dimension(),dphi.Cols());
+        Axes2XYZ(dphi, dphiU, data.axes);
 
         // shape index for nstate
         int dim = Dimension();
@@ -152,7 +155,7 @@
             
                 // Grad V
                 for (int f=0; f<dim; f++) {
-                    GradVi(e,f) = Normalvec(e,ivec)*dphi(f,iphi);
+                    GradVi(e,f) = Normalvec(e,ivec)*dphiU(f,iphi);
                 }
             }
             
@@ -176,7 +179,7 @@
                 Matrix GradVj(dim,dim,0.), KGradVj(dim,dim,0.);
                 for (int e=0; e<dim; e++) {
                     for (int f=0; f<dim; f++) {
-                        GradVj(e,f) = Normalvec(e,jvec)*dphi(f,jphi);
+                        GradVj(e,f) = Normalvec(e,jvec)*dphiU(f,jphi);
                     }
                 }
                 
@@ -213,6 +216,11 @@
         Sol = this->PostProcessSolution(data,ESol);
         DSol = this->PostProcessSolution(data,EDSol);
         
+        Matrix &dsol = data.dsoldx;
+        Matrix dsolxy;
+        Axes2XYZ(dsol, dsolxy, data.axes);
+        
+        
         //values[0] : erro norma L2
         double diff;
         errors[0] = 0.;
@@ -226,7 +234,8 @@
         double diff2;
         for(int i=0; i<Dimension(); i++) {
             for(int j=0; j<NState(); j++) {
-                diff2 = DSol[j+i*NState()] - du_exact(i,j);
+      //          diff2 = DSol[j+i*NState()] - du_exact(i,j);
+                diff2 = dsolxy(i,j)-du_exact(i,j);
                 errors[1]  += diff2*diff2;
             }
         }
