@@ -8,11 +8,11 @@
 #include "L2Projection.h"
 #include "tpanic.h"
 
-    L2Projection::L2Projection(){
+    L2Projection::L2Projection(): BCType(0), projection(), BCVal1(), BCVal2(){
         
     }
     
-    L2Projection::L2Projection(int bctype ,int materialid , Matrix &proj) : BCType(bctype), projection(proj){
+    L2Projection::L2Projection(int bctype ,int materialid , Matrix &proj, Matrix Val1, Matrix Val2) : BCType(bctype), projection(proj), BCVal1(Val1), BCVal2(Val2) {
         SetMatID(materialid);
     }
     
@@ -103,9 +103,10 @@
                 break;
             case 1: // Neumann
             {
+                
                 for (int in = 0; in<nphi; in++) {
-                    EF(2*in,0)+= weight*(dsol(0,0))*phi[in];
-                    EF(2*in+1,0)+= weight*(dsol(1,0))*phi[in];
+                    EF(2*in,0)+= weight*(Val2()(0,0))*phi[in];
+                    EF(2*in+1,0)+= weight*(Val2()(1,0))*phi[in];
                 }
             }
                 break;

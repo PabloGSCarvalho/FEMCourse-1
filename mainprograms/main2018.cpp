@@ -73,7 +73,7 @@ int main ()
  
 //  Terceiro teste : Poisson 2D, obtenção de erros e taxas de convergência
     
-    TestPoisson2DTri();
+    TestPoisson2DQuad();
     
     return 0;
 }
@@ -125,7 +125,7 @@ void TestPoisson2DTri(){
 void TestPoisson2DQuad(){
     
     int ndiv = 5;
-    int pOrder = 2;
+    int pOrder = 1;
     
     for (int it=1; it<ndiv; it++) {
         
@@ -262,8 +262,8 @@ CompMesh *CMesh(GeoMesh *gmesh, int pOrder){
         }else{
             // Condições de contorno (L2Projection)
             cmesh->SetNumberMath(iel+1);
-            Matrix val1, val2;
-            L2Projection *bcmat0 = new L2Projection(0,geoMatID,proj);
+            Matrix val1(2,1,0.), val2(2,1,0.);
+            L2Projection *bcmat0 = new L2Projection(0,geoMatID,proj,val1,val2);
             bcmat0->SetExactSolution(Sol_exact);
             cmesh->SetMathStatement(iel, bcmat0);
         }
