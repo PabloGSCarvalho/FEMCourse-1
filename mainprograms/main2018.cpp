@@ -39,6 +39,7 @@ void TestIntegrate();
 void TestGmsh();
 void TestPoisson2DQuad();
 void TestPoisson2DTri();
+void TestPoisson3DTetra();
 
 void UXi(VecDouble &coord, VecDouble &uXi, VecDouble &gradu);
 VecDouble X(VecDouble &coordXi);
@@ -46,6 +47,7 @@ void Jacobian(VecDouble &Coord, TMatrix &jacobian, double &detjac);
 double InnerVec(VecDouble &S , VecDouble &T);
 
 GeoMesh *CreateGMesh(int nx, int ny, double hx, double hy, ElementType type);
+GeoMesh *CreateGMesh3D(int nx, int ny, int nz, double hx, double hy, double hz, ElementType type);
 CompMesh *CMesh(GeoMesh *gmesh, int pOrder);
 
 void F_source(const VecDouble &x, VecDouble &f);
@@ -57,7 +59,11 @@ int bc0 = -1; //define id para um material(cond contorno esq)
 int bc1 = -2; //define id para um material(cond contorno dir)
 int bc2 = -3; //define id para um material(cond contorno inf)
 int bc3 = -4; //define id para um material(cond contorno sup)
-double hx = 1., hy=1.;
+
+int bc4 = -5; //define id para um material(cond contorno Frente)
+int bc5 = -6; //define id para um material(cond contorno Atrás)
+
+double hx = 1., hy=1.,hz=1.;
 VecDouble FirstError(3,0.); // Vetor de erros
 const double Pi=M_PI;
 
@@ -73,10 +79,56 @@ int main ()
  
 //  Terceiro teste : Poisson 2D, obtenção de erros e taxas de convergência
     
-    TestPoisson2DQuad();
+    TestPoisson3DTetra();
     
     return 0;
 }
+
+void TestPoisson3DTetra(){
+    
+    int ndiv = 2;
+    int pOrder = 1;
+    
+    for (int it=1; it<ndiv; it++) {
+        
+        int div = pow(2,it);
+        
+        div = 1;
+        
+        // Malha geométrica :
+        GeoMesh *geotest = CreateGMesh3D(div+1, div+1, div+1, hx, hy, hz, ETetraedro);
+        geotest->Print(std::cout);
+        VTKGeoMesh::PrintGMeshVTK(geotest, "MalhaTeste.vtk");
+        
+        // Malha computacional :
+        CompMesh *cmesh = CMesh(geotest, pOrder);
+        
+        // Análise numérica :
+        Analysis an(cmesh);
+        an.RunSimulation();
+        VecDouble Sol = cmesh->Solution();
+        
+        // Pós-processamento :
+        PostProcess *solpos = new PostProcessTemplate<Poisson>(&an);
+        solpos->SetExact(Sol_exact);
+        solpos->AppendVariable("Sol");
+        solpos->AppendVariable("Sol_exact");
+        solpos->AppendVariable("Force");
+        an.PostProcessSolution("SolutionPost.vtk", *solpos);
+        
+        // Calculo do erro :
+        std::cout << "Comuting Error " << std::endl;
+        VecDouble errovec(6,0.);
+        std::ofstream ErroOut("Errors&Rates.txt", std::ofstream::app);
+        errovec = an.PostProcessError(ErroOut, *solpos);
+        
+        // Taxa de convergência :
+        
+        ComputeRateOfConvergence(ErroOut, FirstError, errovec, div);
+    }
+    
+}
+
 
 void TestPoisson2DTri(){
     
@@ -411,6 +463,270 @@ GeoMesh *CreateGMesh(int nx, int ny, double hx, double hy, ElementType eltype){
     
     return gmesh;
 }
+
+GeoMesh *CreateGMesh3D(int nx, int ny, int nz, double hx, double hy, double hz, ElementType eltype){
+    
+    GeoMesh *gmesh = new GeoMesh;
+    
+    
+    int id, index;
+    VecDouble coord(3,0.);
+    int nnodes=nx*ny*nz;
+    gmesh->SetNumNodes(nnodes);
+    for (int k=0; k<nz; k++) {
+        for(int i = 0; i < ny; i++){
+            for(int j = 0; j < nx; j++){
+                id = i*nx + j+ k*nx*ny;
+                coord[0] = (j)*hx/(nx - 1);
+                coord[1] = (i)*hy/(ny - 1);
+                coord[2] = (k)*hz/(nz - 1);
+                gmesh->Node(id).SetCo(coord);
+            }
+        }
+    }
+
+    
+    VecInt nodeind(8);
+    VecInt nodeindBC(3,0.);
+    
+    
+    switch (eltype) {
+        case ETetraedro:
+        {
+            
+            VecInt nodeindD1(4,0);
+            VecInt nodeindD2(4,0);
+            VecInt nodeindU1(4,0);
+            VecInt nodeindU2(4,0);
+            VecInt nodeindL1(4,0);
+            VecInt nodeindL2(4,0);
+            
+            index =0;
+            for (int kq=0; kq<(nz-1); kq++) {
+                for(int iq = 0; iq < (ny - 1); iq++){
+                    for(int jq = 0; jq < (nx - 1); jq++){
+                        
+                        // Plano xy
+                        
+                        nodeindD1[0] = (iq)*ny + (jq) + kq*nx*ny;
+                        nodeindD1[1] = nodeindD1[0]+1;
+                        nodeindD1[2] = nodeindD1[0]+nx;
+                        nodeindD1[3] = nodeindD1[1] + (1)*nx*ny;
+                        GeoElement *gelD1 = new GeoElementTemplate<GeomTetrahedron>(nodeindD1,matId,gmesh,index);
+                        gmesh->SetNumElements(index+1);
+                        gmesh->SetElement(index, gelD1);
+                    
+                        index++;
+                    
+                        nodeindD2[0] = nodeindD1[1];
+                        nodeindD2[1] = nodeindD1[2];
+                        nodeindD2[2] = nodeindD1[1]+nx;
+                        nodeindD2[3] = nodeindD1[1] + (1)*nx*ny;
+                        GeoElement *gelD2 = new GeoElementTemplate<GeomTetrahedron>(nodeindD2,matId,gmesh,index);
+                        gmesh->SetNumElements(index+1);
+                        gmesh->SetElement(index, gelD2);
+
+                        index++;
+
+                        nodeindU1[0] = nodeindD1[0] + (1)*nx*ny;
+                        nodeindU1[1] = nodeindU1[0]+1;
+                        nodeindU1[2] = nodeindU1[0]+nx;
+                        nodeindU1[3] = nodeindD1[2];
+                        GeoElement *gelU1 = new GeoElementTemplate<GeomTetrahedron>(nodeindU1,matId,gmesh,index);
+                        gmesh->SetNumElements(index+1);
+                        gmesh->SetElement(index, gelU1);
+
+                        index++;
+
+                        nodeindU2[0] = nodeindU1[1];
+                        nodeindU2[1] = nodeindU1[2];
+                        nodeindU2[2] = nodeindU1[1]+nx;
+                        nodeindU2[3] = nodeindD1[2];
+                        GeoElement *gelU2 = new GeoElementTemplate<GeomTetrahedron>(nodeindU2,matId,gmesh,index);
+                        gmesh->SetNumElements(index+1);
+                        gmesh->SetElement(index, gelU2);
+
+                        index++;
+
+                        // Plano xz
+                        
+                        nodeindL1[0] = nodeindD1[0];
+                        nodeindL1[1] = nodeindD1[2];
+                        nodeindL1[2] = nodeindL1[0]+nx*ny;
+                        nodeindL1[3] = nodeindU1[1];
+                        GeoElement *gelL1 = new GeoElementTemplate<GeomTetrahedron>(nodeindL1,matId,gmesh,index);
+                        gmesh->SetNumElements(index+1);
+                        gmesh->SetElement(index, gelL1);
+                        
+                        index++;
+
+                        
+                        nodeindL2[0] = nodeindD2[2];
+                        nodeindL2[1] = nodeindD1[1]+nx*ny;
+                        nodeindL2[2] = nodeindU2[2];
+                        nodeindL2[3] = nodeindU2[3];
+                        GeoElement *gelL2 = new GeoElementTemplate<GeomTetrahedron>(nodeindL2,matId,gmesh,index);
+                        gmesh->SetNumElements(index+1);
+                        gmesh->SetElement(index, gelL2);
+
+                        index++;
+                        
+                        
+                    }
+                }
+            }
+            index--;
+        }
+            break;
+            
+        default:
+        {
+            std::cout << "Element type is not valid" << std::endl;
+            DebugStop();
+        }
+            break;
+    }
+    
+    
+
+    for (int kq = 0; kq < (nz-1); kq++) {
+        for(int iq = 0; iq < (ny - 1); iq++){
+            for(int jq = 0; jq < (nx - 1); jq++){
+                nodeind[0] = (iq)*ny + (jq) + kq*nx*ny;
+                nodeind[1] = nodeind[0]+1;
+                nodeind[2] = nodeind[0]+(nx);
+                nodeind[3] = nodeind[0]+(nx+1);
+
+                nodeind[4] = nodeind[0]+nx*ny;
+                nodeind[5] = nodeind[4]+1;
+                nodeind[6] = nodeind[4]+(nx);
+                nodeind[7] = nodeind[4]+(nx+1);
+                
+
+                //Condição esquerda:
+                if(jq==0){
+                    index ++;
+                    nodeindBC[0]=nodeind[2];
+                    nodeindBC[1]=nodeind[0];
+                    nodeindBC[2]=nodeind[4];
+                    GeoElement *gelbc00 = new GeoElementTemplate<GeomTriangle>(nodeindBC,bc0,gmesh,index);
+                    gmesh->SetNumElements(index+1);
+                    gmesh->SetElement(index, gelbc00);
+                    
+                    index ++;
+                    nodeindBC[0]=nodeind[2];
+                    nodeindBC[1]=nodeind[6];
+                    nodeindBC[2]=nodeind[4];
+                    GeoElement *gelbc01 = new GeoElementTemplate<GeomTriangle>(nodeindBC,bc0,gmesh,index);
+                    gmesh->SetNumElements(index+1);
+                    gmesh->SetElement(index, gelbc01);
+                    
+                }
+                //Condição direita:
+                if(jq==nx-2){
+                    index ++;
+                    nodeindBC[0]=nodeind[1];
+                    nodeindBC[1]=nodeind[3];
+                    nodeindBC[2]=nodeind[5];
+                    GeoElement *gelbc10 = new GeoElementTemplate<GeomTriangle>(nodeindBC,bc1,gmesh,index);
+                    gmesh->SetNumElements(index+1);
+                    gmesh->SetElement(index, gelbc10);
+                    
+                    index ++;
+                    nodeindBC[0]=nodeind[3];
+                    nodeindBC[1]=nodeind[7];
+                    nodeindBC[2]=nodeind[5];
+                    GeoElement *gelbc11 = new GeoElementTemplate<GeomTriangle>(nodeindBC,bc1,gmesh,index);
+                    gmesh->SetNumElements(index+1);
+                    gmesh->SetElement(index, gelbc11);
+                    
+                }
+                //Condição inf:
+                if(kq==0){
+                    index ++;
+                    nodeindBC[0]=nodeind[2];
+                    nodeindBC[1]=nodeind[3];
+                    nodeindBC[2]=nodeind[1];
+                    GeoElement *gelbc20 = new GeoElementTemplate<GeomTriangle>(nodeindBC,bc2,gmesh,index);
+                    gmesh->SetNumElements(index+1);
+                    gmesh->SetElement(index, gelbc20);
+                    
+                    index ++;
+                    nodeindBC[0]=nodeind[2];
+                    nodeindBC[1]=nodeind[1];
+                    nodeindBC[2]=nodeind[0];
+                    GeoElement *gelbc21 = new GeoElementTemplate<GeomTriangle>(nodeindBC,bc2,gmesh,index);
+                    gmesh->SetNumElements(index+1);
+                    gmesh->SetElement(index, gelbc21);
+                    
+                }
+                //Condição sup:
+                if(kq==ny-2){
+                    index ++;
+                    nodeindBC[0]=nodeind[4];
+                    nodeindBC[1]=nodeind[5];
+                    nodeindBC[2]=nodeind[6];
+                    GeoElement *gelbc30 = new GeoElementTemplate<GeomTriangle>(nodeindBC,bc3,gmesh,index);
+                    gmesh->SetNumElements(index+1);
+                    gmesh->SetElement(index, gelbc30);
+                    
+                    index ++;
+                    nodeindBC[0]=nodeind[5];
+                    nodeindBC[1]=nodeind[7];
+                    nodeindBC[2]=nodeind[6];
+                    GeoElement *gelbc31 = new GeoElementTemplate<GeomTriangle>(nodeindBC,bc3,gmesh,index);
+                    gmesh->SetNumElements(index+1);
+                    gmesh->SetElement(index, gelbc31);
+                }
+                //Condição Frente:
+                if(iq==0){
+                    index ++;
+                    nodeindBC[0]=nodeind[0];
+                    nodeindBC[1]=nodeind[1];
+                    nodeindBC[2]=nodeind[5];
+                    GeoElement *gelbc40 = new GeoElementTemplate<GeomTriangle>(nodeindBC,bc4,gmesh,index);
+                    gmesh->SetNumElements(index+1);
+                    gmesh->SetElement(index, gelbc40);
+ 
+                    index ++;
+                    nodeindBC[0]=nodeind[0];
+                    nodeindBC[1]=nodeind[5];
+                    nodeindBC[2]=nodeind[4];
+                    GeoElement *gelbc41 = new GeoElementTemplate<GeomTriangle>(nodeindBC,bc4,gmesh,index);
+                    gmesh->SetNumElements(index+1);
+                    gmesh->SetElement(index, gelbc41);
+                    
+                }
+                //Condição Atrás:
+                if(iq==ny-2){
+                    index ++;
+                    nodeindBC[0]=nodeind[3];
+                    nodeindBC[1]=nodeind[2];
+                    nodeindBC[2]=nodeind[7];
+                    GeoElement *gelbc50 = new GeoElementTemplate<GeomTriangle>(nodeindBC,bc5,gmesh,index);
+                    gmesh->SetNumElements(index+1);
+                    gmesh->SetElement(index, gelbc50);
+                    
+                    index ++;
+                    nodeindBC[0]=nodeind[2];
+                    nodeindBC[1]=nodeind[6];
+                    nodeindBC[2]=nodeind[7];
+                    GeoElement *gelbc51 = new GeoElementTemplate<GeomTriangle>(nodeindBC,bc5,gmesh,index);
+                    gmesh->SetNumElements(index+1);
+                    gmesh->SetElement(index, gelbc51);
+                
+                }
+            }
+        }
+    }
+
+    //Generate neighborhod information
+   // gmesh->BuildConnectivity();
+    
+    return gmesh;
+}
+
+
 
 void TestGmsh(){
     

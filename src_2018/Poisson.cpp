@@ -87,15 +87,15 @@
         switch(var) {
                 
             case ESol:
-                return this->Dimension(); // Solution, Vector
+                return this->NState(); // Solution, Vector
             case EDSol:
                 return this->Dimension();// Derivative of solution, Vector
             case EFlux:
                 return this->Dimension(); // Flux, Vector
             case EForce:
-                return this->Dimension(); // Force vector, Vector
+                return this->NState(); // Force vector, Vector
             case ESolExact:
-                return this->Dimension(); // Sol_exact, Vector
+                return this->NState(); // Sol_exact, Vector
             case EDSolExact:
                 return this->Dimension(); // DSol_exact, Vector
 

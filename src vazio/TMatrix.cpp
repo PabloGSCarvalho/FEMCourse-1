@@ -475,7 +475,6 @@ void TMatrix::LU_Decomposition()
 	{
 		if (GetVal(k, k) == 0) {
 			DebugStop();
-
 		}
 		else{
 
@@ -488,7 +487,6 @@ void TMatrix::LU_Decomposition()
 				}
 
 			}
-
 
 		}
 

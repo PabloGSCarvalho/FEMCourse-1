@@ -103,7 +103,6 @@
             }
         }
         
-        
         for(int iel=0; iel<nelem; iel++)
         {
             GeoElement *el = Element(iel);
