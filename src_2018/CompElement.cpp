@@ -118,7 +118,7 @@
         this->ShapeFunctions(intpoint, data.phi, data.dphidksi);
         
         this->Convert2Axes(data.dphidksi, JacInv, data.dphidx);
-        
+        data.dphidx.Print();
      
     }
 

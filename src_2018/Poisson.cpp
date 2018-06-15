@@ -49,10 +49,6 @@
         return 3;
     }
 
-    int Poisson::NState() const{
-        return 2;
-    }
-
     int Poisson::VariableIndex(const PostProcVar var) const{
         
         int nvar = 10;
@@ -116,14 +112,18 @@
         VecDouble &x = data.x;
         Matrix &axes =data.axes;
         
-        //axes.Print();
+       // dphi.Print();
+        data.axes.Print();
+        
         
         Matrix perm = GetPermeability();
-        Matrix Kdphi(2,2,0.);
+//        Matrix Kdphi(2,2,0.);
         
         Matrix dphiU(Dimension(),dphi.Cols());
         Axes2XYZ(dphi, dphiU, data.axes);
 
+       // dphiU.Print();
+        
         // shape index for nstate
         int dim = Dimension();
         int nphi= phi.size();
@@ -200,9 +200,9 @@
         }
         
 
-   //     EK.Print();
-   //     EF.Print();
-   //     std::cout<<std::endl;
+       // EK.Print();
+      //  EF.Print();
+      //  std::cout<<std::endl;
 
     }
 

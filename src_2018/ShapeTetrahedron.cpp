@@ -13,8 +13,8 @@
         int nshape = NShapeFunctions(orders);
         //int nsides = orders.size();
         
-        phi.resize(nshape);
-        dphi.Resize(2, nshape);
+//        phi.resize(nshape);
+//        dphi.Resize(2, nshape);
         
         if (nshape==4) {
             phi[0]=1-xi[0]-xi[1]-xi[2];

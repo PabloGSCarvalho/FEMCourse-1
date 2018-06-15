@@ -37,9 +37,9 @@ using std::cin;
 
 void TestIntegrate();
 void TestGmsh();
-void TestPoisson2DQuad();
-void TestPoisson2DTri();
-void TestPoisson3DTetra();
+void TestPoisson2DQuad(int order);
+void TestPoisson2DTri(int order);
+void TestPoisson3DTetra(int order);
 
 void UXi(VecDouble &coord, VecDouble &uXi, VecDouble &gradu);
 VecDouble X(VecDouble &coordXi);
@@ -48,7 +48,7 @@ double InnerVec(VecDouble &S , VecDouble &T);
 
 GeoMesh *CreateGMesh(int nx, int ny, double hx, double hy, ElementType type);
 GeoMesh *CreateGMesh3D(int nx, int ny, int nz, double hx, double hy, double hz, ElementType type);
-CompMesh *CMesh(GeoMesh *gmesh, int pOrder);
+CompMesh *CMesh(GeoMesh *gmesh, int pOrder, int dim);
 
 void F_source(const VecDouble &x, VecDouble &f);
 void Sol_exact(const VecDouble &x, VecDouble &sol, Matrix &dsol);
@@ -69,25 +69,35 @@ const double Pi=M_PI;
 
 int main ()
 {
-//  Primeiro teste: Verifica integração numérica
+//  1 - Verifica integração numérica
     
 //  TestIntegrate();
     
-//  Segundo teste: Geração de malha Gmsh, impressão VTK
+//  2 - Geração de malha Gmsh, impressão VTK
     
 //  TestGmsh()
  
-//  Terceiro teste : Poisson 2D, obtenção de erros e taxas de convergência
+//  3 - Poisson 2D, quadrilátero (linear e quadrático), obtenção de erros e taxas de convergência
     
-    TestPoisson3DTetra();
+//    TestPoisson2DQuad(1);
+//    TestPoisson2DQuad(2);
+    
+//  4 - Poisson 2D, triângulo (linear e quadrático), obtenção de erros e taxas de convergência
+    
+ //   TestPoisson2DTri(1);
+ //   TestPoisson2DTri(2);
+
+//  5 - Poisson 3D, obtenção de erros e taxas de convergência
+    
+    TestPoisson3DTetra(1);
+    
     
     return 0;
 }
 
-void TestPoisson3DTetra(){
+void TestPoisson3DTetra(int pOrder){
     
     int ndiv = 2;
-    int pOrder = 1;
     
     for (int it=1; it<ndiv; it++) {
         
@@ -101,7 +111,7 @@ void TestPoisson3DTetra(){
         VTKGeoMesh::PrintGMeshVTK(geotest, "MalhaTeste.vtk");
         
         // Malha computacional :
-        CompMesh *cmesh = CMesh(geotest, pOrder);
+        CompMesh *cmesh = CMesh(geotest, pOrder,3);
         
         // Análise numérica :
         Analysis an(cmesh);
@@ -130,10 +140,9 @@ void TestPoisson3DTetra(){
 }
 
 
-void TestPoisson2DTri(){
+void TestPoisson2DTri(int pOrder){
     
     int ndiv = 5;
-    int pOrder = 2;
     
     for (int it=1; it<ndiv; it++) {
         
@@ -145,7 +154,7 @@ void TestPoisson2DTri(){
         VTKGeoMesh::PrintGMeshVTK(geotest, "MalhaTeste.vtk");
         
         // Malha computacional :
-        CompMesh *cmesh = CMesh(geotest, pOrder);
+        CompMesh *cmesh = CMesh(geotest, pOrder,2);
         
         // Análise numérica :
         Analysis an(cmesh);
@@ -174,10 +183,9 @@ void TestPoisson2DTri(){
 }
 
 
-void TestPoisson2DQuad(){
+void TestPoisson2DQuad(int pOrder){
     
     int ndiv = 5;
-    int pOrder = 1;
     
     for (int it=1; it<ndiv; it++) {
         
@@ -189,7 +197,7 @@ void TestPoisson2DQuad(){
         VTKGeoMesh::PrintGMeshVTK(geotest, "MalhaTeste.vtk");
         
         // Malha computacional :
-        CompMesh *cmesh = CMesh(geotest, pOrder);
+        CompMesh *cmesh = CMesh(geotest, pOrder,2);
         
         // Análise numérica :
         Analysis an(cmesh);
@@ -288,15 +296,14 @@ void Sol_exact(const VecDouble &x, VecDouble &sol, Matrix &dsol){
 
 
 
-CompMesh *CMesh(GeoMesh *gmesh, int pOrder){
+CompMesh *CMesh(GeoMesh *gmesh, int pOrder, int dim){
  
-    Matrix perm(2,2,0.);
-    perm(0,0)=1.;
-    perm(1,1)=1.;
-    
-    Matrix proj(2,2,0.);
-    proj(0,0)=1.;
-    proj(1,1)=1.;
+    Matrix perm(dim,dim,0.), proj(dim,dim,0.);
+
+    for (int i =0 ; i<dim; i++) {
+        perm(i,i)=1.;
+        proj(i,i)=1.;
+    }
 
     CompMesh * cmesh = new CompMesh(gmesh);
 
@@ -307,6 +314,8 @@ CompMesh *CMesh(GeoMesh *gmesh, int pOrder){
             // Materiais internos (Poisson)
             cmesh->SetNumberMath(iel+1);
             Poisson *material = new Poisson(geoMatID,perm);
+            material->SetNState(dim);
+            material->SetDimension(dim);
             material->SetForceFunction(F_source);
             material->SetExactSolution(Sol_exact);
             cmesh->SetMathStatement(iel, material);
@@ -316,6 +325,7 @@ CompMesh *CMesh(GeoMesh *gmesh, int pOrder){
             cmesh->SetNumberMath(iel+1);
             Matrix val1(2,1,0.), val2(2,1,0.);
             L2Projection *bcmat0 = new L2Projection(0,geoMatID,proj,val1,val2);
+            bcmat0->SetNState(dim);
             bcmat0->SetExactSolution(Sol_exact);
             cmesh->SetMathStatement(iel, bcmat0);
         }

@@ -94,8 +94,6 @@ public:
     // Return the number of errors
     virtual int NEvalErrors() const;
     
-    // Return the number of state variables
-    virtual int NState() const;
     
     virtual int VariableIndex(const PostProcVar var) const;
     

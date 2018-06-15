@@ -14,6 +14,9 @@
 
 class MathStatement
 {
+    
+    int MathDim;
+    
     // Math statement ID
     int matid = 0;
     
@@ -40,9 +43,16 @@ public:
     
     // Method for creating a copy of the element
     virtual MathStatement *Clone() const = 0;
+
+    // Set number number of state variables
+    virtual void SetNState(int numstate){
+        nstate = numstate;
+    };
     
     // Return the number of state variables
-    virtual int NState() const = 0;
+    virtual int NState() const {
+        return nstate;
+    };
     
     // Return the number of errors
     virtual int NEvalErrors() const = 0;
@@ -60,6 +70,14 @@ public:
     virtual int GetMatID(){
         return matid;
     }
+
+    virtual void SetDimension(int dim){
+        MathDim = dim;
+    };
+    
+    virtual int Dimension() const{
+        return MathDim;
+    };
     
     // Prepare and print post processing data
     virtual std::vector<double> PostProcessSolution(const IntPointData &integrationpointdata, const int var) const = 0;

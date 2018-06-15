@@ -15,6 +15,9 @@
 
 class Poisson : public MathStatement
 {
+//    //Poisson dimension
+//    int MathDim;
+//
     // Permeability matrix
     Matrix permeability;
     
@@ -69,13 +72,16 @@ public:
         SolutionExact = Exact;
     }
     
-    // returns the integrable dimension of the material
-    int Dimension() const {return 2;}
+//    virtual void SetDimension(int matdim){
+//        MathDim = matdim;
+//    }
+    
+//    virtual int Dimension() const{
+//        return MathDim;
+//    }
     
     virtual int NEvalErrors() const;
     
-    // Return the number of state variables
-    virtual int NState() const;
     
     virtual int VariableIndex(const PostProcVar var) const;
     

@@ -47,10 +47,6 @@
         return 3;
     }
 
-    int L2Projection::NState() const{
-        return 2;
-    }
-
     int L2Projection::VariableIndex(const PostProcVar var) const{
         return 0;
     }

@@ -179,7 +179,7 @@ double &TMatrix::g( const int64_t row, const int64_t col) const {
 
 void TMatrix::Multiply(const TMatrix &A, TMatrix &B, int opt) const {
     if ((opt==0 && Cols() != A.Rows()) || (opt ==1 && Rows() != A.Rows()))
-        std::cout << "Multiply (TPZMatrix<>&,TPZMatrix<TVar> &) <incompatible dimensions>" <<std::endl;
+        std::cout << "Multiply -> incompatible dimensions" <<std::endl;
     if(!opt && (B.Rows() != Rows() || B.Cols() != A.Cols())) {
         B.Resize(Rows(),A.Cols());
     }
@@ -194,11 +194,11 @@ void TMatrix::MultAdd(const TMatrix &x,const TMatrix &y, TMatrix &z,
                                const double alpha,const double beta,const int opt) const {
     
     if ((!opt && this->Cols() != x.Rows()) || (opt && this->Rows() != x.Rows())) {
-        std::cout<< "TPZFMatrix::MultAdd matrix x with incompatible dimensions>" <<std::endl;
+        std::cout<< "MultAdd matrix x with incompatible dimensions>" <<std::endl;
         return;
     }
     if(beta != (double)0. && ((!opt && this->Rows() != y.Rows()) || (opt && this->Cols() != y.Rows()) || y.Cols() != x.Cols())) {
-        std::cout << "TPZFMatrix::MultAdd matrix y with incompatible dimensions>" <<std::endl;
+        std::cout << "MultAdd matrix y with incompatible dimensions>" <<std::endl;
         return;
     }
     if(!opt) {
