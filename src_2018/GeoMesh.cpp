@@ -86,6 +86,9 @@
             if(!el) continue;
             int nnos = el->NCornerNodes();
             for(int no=0; no<nnos; no++) {
+                
+                GeoElementSide gelside(el,no);
+                
                 int64_t nodindex = el->NodeIndex(no);
                 if(sides[nodindex] == -1)
                 {
@@ -112,20 +115,20 @@
             
             for(int is=ncor; is<nsides; is++)
             {
-                
                     GeoElementSide gelside(el,is);
                     std::vector<GeoElementSide> neighbours;
                     gelside.ComputeNeighbours(neighbours);
                 
                     int nneigh = neighbours.size();
                 
+                    neighbours.resize(nneigh+1);
+                    neighbours[nneigh] = gelside;
+                
                     for(int in=0; in<nneigh; in++)
                     {
-
                         gelside.IsertConnectivity(neighbours[in]);
                     }
   
-                    
             }
         }
         

@@ -468,7 +468,6 @@ GeoMesh *CreateGMesh3D(int nx, int ny, int nz, double hx, double hy, double hz, 
     
     GeoMesh *gmesh = new GeoMesh;
     
-    
     int id, index;
     VecDouble coord(3,0.);
     int nnodes=nx*ny*nz;
@@ -721,7 +720,7 @@ GeoMesh *CreateGMesh3D(int nx, int ny, int nz, double hx, double hy, double hz, 
     }
 
     //Generate neighborhod information
-   // gmesh->BuildConnectivity();
+    gmesh->BuildConnectivity();
     
     return gmesh;
 }

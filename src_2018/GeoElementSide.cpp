@@ -9,7 +9,7 @@
 #include "GeoMesh.h"
 
     
-    GeoElementSide::GeoElementSide() : fElement(0), fSide(0) {
+    GeoElementSide::GeoElementSide() : fElement(0), fSide(-1) {
 
     }
 
@@ -35,6 +35,19 @@
         fElement->SetNeighbour(fSide,neighbour);
     }
 
+    bool GeoElementSide::DataConsistency(GeoElementSide &candidate){
+        int a = IsNeighbour(candidate);
+        int b = candidate.IsNeighbour(*this);
+        if((a && !b) || (!a && b))
+        {
+            std::cout << "Wrong data structure" <<std::endl;
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+
     bool GeoElementSide::IsNeighbour(const GeoElementSide &candidate){
         if(candidate == *this) return 1;
         GeoElementSide neighbour = Neighbour();
@@ -47,13 +60,16 @@
     }
 
     void GeoElementSide::IsertConnectivity(GeoElementSide &candidate){
+#ifdef PADEBUG
+        if(!DataConsistency(candidate)) DebugStop();
+#endif
         if(IsNeighbour(candidate)) return;
-        GeoElementSide neigh1=Neighbour();
-        GeoElementSide neigh2=candidate.Neighbour();
-        neigh1.SetNeighbour(neigh2);
-        candidate.SetNeighbour(neigh1);
-        //Element()->SetNeighbour(Side(), neigh2);
-        //Element()->SetNeighbour(candidate.Side(), neigh1);
+        GeoElementSide neighneigh, currentneigh;
+        neighneigh = candidate.Neighbour();
+        currentneigh = Neighbour();
+        SetNeighbour(neighneigh);
+        candidate.SetNeighbour(currentneigh);
+        
     }
 
     void GeoElementSide::AllNeighbours(std::vector<GeoElementSide> &allneigh) {

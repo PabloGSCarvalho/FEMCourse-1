@@ -68,6 +68,17 @@
     }
 
     template<class TGeom>
+    int GeoElementTemplate<TGeom>::SideIsUndefined(int side){
+        if (side < 0 || side > NSides()){
+            std::cout << "TPZGeoElRefLess<TGeo>::SideIsUndefined - bad side: " << side << std::endl;
+            DebugStop();
+        }
+        
+        return (this->Neighbour(side).Side() == -1);
+    }
+
+
+    template<class TGeom>
     int GeoElementTemplate<TGeom>::WhichSide(VecInt &SideNodeIds){
         int64_t cap = SideNodeIds.size();
         int nums = NSides();

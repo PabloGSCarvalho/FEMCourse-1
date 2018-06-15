@@ -12,6 +12,9 @@
 
     int SideNodes[6][2]  = { {0,1},{1,2},{2,0},{0,3},{1,3},{2,3} };
 
+    static int FaceConnectLocId[4][7] = { {0,1,2,4,5,6,10},{0,1,3,4,8,7,11},
+    {1,2,3,5,9,8,12},{0,2,3,6,9,7,13} };
+
     static int nsidenodes[15] = {1,1,1,1,2,2,2,2,2,2,3,3,3,3,4};
 
     /// Number of nodes associated with a side
