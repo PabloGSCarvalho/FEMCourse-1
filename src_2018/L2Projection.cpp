@@ -69,14 +69,34 @@
         Matrix &axes = data.axes;
         VecDouble uh = data.solution;
         
-        int nphi= phi.size();
-        
-        VecDouble ud(2,0.);
-    //    forceFunction(x,f);
+        VecDouble ud(NState(),0.);
         Matrix dsol;
         SolutionExact(x,ud,dsol);
         Matrix proj = GetProjectionMatrix();
         VecDouble ProjVec(2,0.);
+        
+        // shape index for nstate
+
+        int nphi= phi.size();
+        int nshape = nphi*NState();
+        int index=0, inormal = 0;
+        VecDouble shapeindex(nshape,0.), normalindex(nshape,0.);
+        for (int i = 0; i<nphi; i++) {
+            inormal = 0;
+            for (int s = 0; s<NState(); s++) {
+                shapeindex[index]=i;
+                normalindex[index]=inormal;
+                index++;
+                inormal++;
+            }
+        }
+        
+        Matrix Normalvec(NState(),NState(),0.);
+        for (int in =0; in<NState(); in++) {
+            Normalvec(in,in)=1.;
+        }
+        
+        
 
         switch (GetBCType()) {
             case 0: //Dirichlet
@@ -87,12 +107,43 @@
                     }
                 }
                 
-                for (int in = 0; in<nphi; in++) {
-                    EF(2*in,0)+= weight*(ud[0])*phi[in]*gBigNumber;
-                    EF(2*in+1,0)+= weight*(ud[1])*phi[in]*gBigNumber;
-                    for(int jn = 0; jn<nphi; jn++){
-                        EK(2*in,2*jn) += weight*phi[in]*phi[jn]*gBigNumber;
-                        EK(2*in+1,2*jn+1) += weight*phi[in]*phi[jn]*gBigNumber;
+                for (int in = 0; in<nshape; in++) {
+                    
+                    int iphi = shapeindex[in];
+                    int ivec = normalindex[in];
+                    Matrix phiVi(NState(),1,0.);
+                    for (int e=0; e<NState(); e++) {
+                        phiVi(e,0) = phi[iphi]*Normalvec(e,ivec);
+                    }
+                    
+                    double phi_dot_f = 0.0;
+                    for (int e=0; e<NState(); e++) {
+                        phi_dot_f += phiVi(e,0)*ud[e];
+                    }
+                    
+//                    for (int i = 0; i<NState(); i++) {
+//                        std::cout<<phiVi(i,0)<<std::endl;
+//                    }
+                    std::cout<<weight<<std::endl;
+                    
+                    EF(in,0) += weight * phi_dot_f * gBigNumber;
+                    
+                    for(int jn = 0; jn<nshape; jn++){
+                        
+                        int jphi = shapeindex[jn];
+                        int jvec = normalindex[jn];
+
+                        Matrix phiVj(NState(),1,0.);
+                        for (int e=0; e<NState(); e++) {
+                            phiVj(e,0) = phi[jphi]*Normalvec(e,jvec);
+                        }
+                        
+                        double phi_dot_k = 0.0;
+                        for (int e=0; e<NState(); e++) {
+                            phi_dot_k += phiVi(e,0)*phiVj(e,0);
+                        }
+
+                        EK(in,jn) += weight * phi_dot_k * gBigNumber;
                     }
                 }
             }
@@ -101,8 +152,21 @@
             {
                 
                 for (int in = 0; in<nphi; in++) {
-                    EF(2*in,0)+= weight*(Val2()(0,0))*phi[in];
-                    EF(2*in+1,0)+= weight*(Val2()(1,0))*phi[in];
+                    
+                    int iphi = shapeindex[in];
+                    int ivec = normalindex[in];
+                    Matrix phiVi(NState(),1,0.);
+                    for (int e=0; e<NState(); e++) {
+                        phiVi(e,0) = phi[iphi]*Normalvec(e,ivec);
+                    }
+                    
+                    double phi_dot_f = 0.0;
+                    for (int e=0; e<NState(); e++) {
+                        phi_dot_f += phiVi(e,0) * Val2()(e,0);
+                    }
+                    
+                    EF(in,0) += weight * phi_dot_f * gBigNumber;
+                    
                 }
             }
                 break;
@@ -114,10 +178,10 @@
                 break;
         }
 
-//                EK.Print();
-//                EF.Print();
-//                std::cout<<std::endl;
-//                std::cout<<std::endl;
+      //          EK.Print();
+      //          EF.Print();
+      //          std::cout<<std::endl;
+      //          std::cout<<std::endl;
         
         
     }

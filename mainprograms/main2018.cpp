@@ -103,7 +103,7 @@ void TestPoisson3DTetra(int pOrder){
         
         int div = pow(2,it);
         
-        div = 1;
+        div = 8;
         
         // Malha geométrica :
         GeoMesh *geotest = CreateGMesh3D(div+1, div+1, div+1, hx, hy, hz, ETetraedro);
@@ -117,6 +117,11 @@ void TestPoisson3DTetra(int pOrder){
         Analysis an(cmesh);
         an.RunSimulation();
         VecDouble Sol = cmesh->Solution();
+        
+        for (int i = 0; i<Sol.size(); i++) {
+            std::cout<<Sol[i]<<std::endl;
+        }
+        
         
         // Pós-processamento :
         PostProcess *solpos = new PostProcessTemplate<Poisson>(&an);

@@ -113,7 +113,7 @@
         Matrix &axes =data.axes;
         
        // dphi.Print();
-        data.axes.Print();
+      //  data.axes.Print();
         
         
         Matrix perm = GetPermeability();
@@ -200,9 +200,9 @@
         }
         
 
-       // EK.Print();
-      //  EF.Print();
-      //  std::cout<<std::endl;
+    //    EK.Print();
+    //    EF.Print();
+    //    std::cout<<std::endl;
 
     }
 
