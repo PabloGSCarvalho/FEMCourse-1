@@ -121,10 +121,6 @@
                         phi_dot_f += phiVi(e,0)*ud[e];
                     }
                     
-//                    for (int i = 0; i<NState(); i++) {
-//                        std::cout<<phiVi(i,0)<<std::endl;
-//                    }
-                    std::cout<<weight<<std::endl;
                     
                     EF(in,0) += weight * phi_dot_f * gBigNumber;
                     

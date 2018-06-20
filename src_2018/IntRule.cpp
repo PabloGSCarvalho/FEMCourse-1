@@ -12,6 +12,7 @@
 #include "DataTypes.h"
 #include "IntRule.h"
 #include "tpanic.h"
+#include "IntRuleTetrahedron.h"
 
     IntRule::IntRule(){
         
@@ -50,11 +51,17 @@
             DebugStop();
         }
         
-        co.resize(2);
+        co.resize(3);
         
         co[0]=fPoints.GetVal(p, 0);
         co[1]=fPoints.GetVal(p, 1);
+        if(fPoints.Cols()==3){
+            co[2]=fPoints.GetVal(p, 2);
+        }
+
         weight=fWeights[p];
+        
+        
     }
 
     

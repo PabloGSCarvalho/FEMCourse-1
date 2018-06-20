@@ -200,21 +200,23 @@
         }
         
 
-    //    EK.Print();
-    //    EF.Print();
-    //    std::cout<<std::endl;
+//        EK.Print();
+//        EF.Print();
+//        std::cout<<std::endl;
 
     }
 
     // Method to implement error over element's volume
     void Poisson::ContributeError(IntPointData &data, VecDouble &u_exact, Matrix &du_exact, VecDouble &errors) const{
         
+        du_exact.Resize(NState(), NState());
+        u_exact.resize(NState());
         errors.resize(NEvalErrors());
         std::fill(errors.begin(), errors.end(),0.);
         VecDouble Sol, DSol;
        
         Sol = this->PostProcessSolution(data,ESol);
-        DSol = this->PostProcessSolution(data,EDSol);
+      //  DSol = this->PostProcessSolution(data,EDSol);
         
         Matrix &dsol = data.dsoldx;
         Matrix dsolxy;
@@ -264,11 +266,13 @@
         VecDouble Solout;
         switch(var) {
                 
-            case ESol: //ux, uy
+            case ESol: //ux, uy, uz
             {
-                Solout.resize(2);
-                Solout[0] = u_h[0];
-                Solout[1] = u_h[1];
+                Solout.resize(NState());
+                for (int isol = 0; isol< NState(); isol++) {
+                    Solout[isol]=u_h[isol];
+                }
+                
             }
                 break;
                 
@@ -307,26 +311,38 @@
                 
             case EForce: //f
             {
-                Solout.resize(2);
-                VecDouble f(2,0.0);
+                Solout.resize(NState());
+                VecDouble f(NState(),0.0);
                 forceFunction(data.x,f);
-
-                Solout[0] = f[0]; // fx
-                Solout[1] = f[1]; // fy
+                
+                for (int isol = 0; isol< NState(); isol++) {
+                    Solout[isol]=f[isol];
+                }
+                
+                
             }
                 break;
                 
             case ESolExact: //u_exact
             {
-                Solout.resize(2);
-                VecDouble sol(2,0.0);
-                Matrix dsol(2,1,0.0);
+                Solout.resize(NState());
+                VecDouble sol(NState(),0.0);
+                Matrix dsol(NState(),1,0.0);
                 if(SolutionExact){
                     SolutionExact(data.x,sol,dsol);
                 }
-                Solout[0] = sol[0]; // vx
-                Solout[1] = sol[1]; // vy
-                          
+                for (int isol = 0; isol< NState(); isol++) {
+                    Solout[isol]=sol[isol];
+                }
+                
+//                std::cout << std::endl;
+//                for (int isol = 0; isol< NState(); isol++) {
+//                    Solout[isol]=sol[isol];
+//                    std::cout << "x[i] = " << data.x[isol]<<std::endl;
+//                    std::cout << "v[i] = " << sol[isol]<<std::endl;
+//                }
+//                std::cout << std::endl;
+                
             }
                 break;
 //

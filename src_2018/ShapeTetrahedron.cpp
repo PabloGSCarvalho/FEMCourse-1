@@ -6,6 +6,7 @@
 //
 
 #include "ShapeTetrahedron.h"
+#include "tpanic.h"
 
     /// computes the shape functions in function of the coordinate in parameter space and orders of the shape functions (size of orders is number of sides of the element topology)
     void ShapeTetrahedron::Shape(const VecDouble &xi, VecInt &orders, VecDouble &phi, Matrix &dphi){
@@ -16,79 +17,82 @@
 //        phi.resize(nshape);
 //        dphi.Resize(2, nshape);
         
-        if (nshape==4) {
             phi[0]=1-xi[0]-xi[1]-xi[2];
             phi[1]=xi[0];
             phi[2]=xi[1];
             phi[3]=xi[2];
             
-            dphi(0,0)=-1;
-            dphi(0,1)=1;
-            dphi(0,2)=0;
-            dphi(0,3)=0;
-            
-            dphi(1,0)=-1;
-            dphi(1,1)=0;
-            dphi(1,2)=1;
-            dphi(1,2)=0;
-            
-            dphi(1,0)=-1;
-            dphi(1,1)=0;
-            dphi(1,2)=0;
-            dphi(1,2)=1;
-        }
+            dphi(0,0) = -1.0;
+            dphi(1,0) = -1.0;
+            dphi(2,0) = -1.0;
+            dphi(0,1) =  1.0;
+            dphi(1,1) =  0.0;
+            dphi(2,1) =  0.0;
+            dphi(0,2) =  0.0;
+            dphi(1,2) =  1.0;
+            dphi(2,2) =  0.0;
+            dphi(0,3) =  0.0;
+            dphi(1,3) =  0.0;
+            dphi(2,3) =  1.0;
         
         if (nshape==10) {
             
-            VecDouble eps(3);
-            eps[0]=1-xi[0]-xi[1]-xi[2];
-            eps[1]=xi[0];
-            eps[2]=xi[1];
-            eps[3]=xi[2];
-            
-            
-            for (int i=0; i<=3; i++) {
-                phi[i]=eps[i]*(2.*eps[i]-1.);
+            int is;
+            // 6 ribs
+            for(is=4; is<nshape; is++)
+            {
+                int nsnodes = NSideNodes(is);
+                switch(nsnodes)
+                {
+                    case 2:
+                    {
+                        int is1 = SideNodeIndex(is,0);
+                        int is2 = SideNodeIndex(is,1);
+                        phi[is] = phi[is1]*phi[is2];
+                        dphi(0,is) = dphi(0,is1)*phi[is2]+phi[is1]*dphi(0,is2);
+                        dphi(1,is) = dphi(1,is1)*phi[is2]+phi[is1]*dphi(1,is2);
+                        dphi(2,is) = dphi(2,is1)*phi[is2]+phi[is1]*dphi(2,is2);
+                    }
+                        break;
+                    case 3:
+                    {
+                        //int face = is-10;
+                        int is1 = SideNodeIndex(is,0); //ShapeFaceId[face][0];
+                        int is2 = SideNodeIndex(is,1); //ShapeFaceId[face][1];
+                        int is3 = SideNodeIndex(is,2); //ShapeFaceId[face][2];
+                        phi[is] = phi[is1]*phi[is2]*phi[is3];
+                        dphi(0,is) = dphi(0,is1)*phi[is2]*phi[is3]+phi[is1]*dphi(0,is2)*phi[is3]+phi[is1]*phi[is2]*dphi(0,is3);
+                        dphi(1,is) = dphi(1,is1)*phi[is2]*phi[is3]+phi[is1]*dphi(1,is2)*phi[is3]+phi[is1]*phi[is2]*dphi(1,is3);
+                        dphi(2,is) = dphi(2,is1)*phi[is2]*phi[is3]+phi[is1]*dphi(2,is2)*phi[is3]+phi[is1]*phi[is2]*dphi(2,is3);
+                    }
+                        break;
+                    case 4:
+                    {
+                        phi[is] = phi[0]*phi[1]*phi[2]*phi[3];
+                        for(int xj=0;xj<3;xj++) {
+                            dphi(xj,is) = dphi(xj,0)* phi[1]* phi[2]* phi[3] +
+                            phi[0]*dphi(xj,1)* phi[2]* phi[3] +
+                            phi[0]* phi[1]*dphi(xj,2)* phi[3] +
+                            phi[0]* phi[1]* phi[2]*dphi(xj,3);
+                        }
+                    }
+                        break;
+                        
+                    default:
+                        DebugStop();
+                }
             }
-            phi[4]=4.*phi[0]*phi[1];
-            phi[5]=4.*phi[1]*phi[2];
-            phi[6]=4.*phi[2]*phi[0];
-            phi[7]=4.*phi[0]*phi[3];
-            phi[8]=4.*phi[1]*phi[3];
-            phi[9]=4.*phi[2]*phi[3];
-         
-            dphi(0,0)=1.-4.*(1-eps[0]-eps[1]-eps[2]);
-            dphi(0,1)=-1.+4.*eps[0];
-            dphi(0,2)=0.;
-            dphi(0,3)=0.;
-            dphi(0,4)= -4.*eps[0]*(-1.+2.*eps[0])*(-1.+2.*(1.-eps[0]-eps[1]-eps[2]))-8.*eps[0]*(-1.+2.*eps[0])*(1.-eps[0]-eps[1]-eps[2])+8.*eps[0]*(-1.+2.*(1.-eps[0]-eps[1]-eps[2]))*(1.-eps[0]-eps[1]-eps[2])+4.*(-1.+2.*eps[0])*(-1.+2.*(1.-eps[0]-eps[1]-eps[2]))*(1.-eps[0]-eps[1]-eps[2]);
-            dphi(0,5)= 8.*eps[0]*eps[1]*(-1.+2.*eps[1])+4.*(-1.+2.*eps[0])*eps[1]*(-1.+2.*eps[1]);
-            dphi(0,6)= -4*eps[1]*(-1.+2.*eps[1])*(-1.+2.*(1.-eps[0]-eps[1]-eps[2]))-8.*eps[1]*(-1.+2.*eps[1])*(1.-eps[0]-eps[1]-eps[2]);
-            dphi(0,7)= -4*(-1.+2.*(1.-eps[0]-eps[1]-eps[2]))*eps[2]*(-1.+2.*eps[2])-8.*(1.-eps[0]-eps[1]-eps[2])*eps[2]*(-1.+2.*eps[2]);
-            dphi(0,8)= 8.*eps[0]*eps[2]*(-1.+2.*eps[2])+4.*(-1.+2.*eps[0])*eps[2]*(-1.+2.*eps[2]);
-            dphi(0,9)=0.;
             
-            dphi(1,0)= 1.-4.*(1.-eps[0]-eps[1]-eps[2]);
-            dphi(1,1)= 0.;
-            dphi(1,2)= -1.+4.*eps[1];
-            dphi(1,3)= 0.;
-            dphi(1,4)= -4.*eps[0]*(-1.+2.*eps[0])*(-1.+2.*(1.-eps[0]-eps[1]-eps[2]))-8.*eps[0]*(-1.+2.*eps[0])*(1.-eps[0]-eps[1]-eps[2]);
-            dphi(1,5)= 8.*eps[0]*(-1.+2.*eps[0])*eps[1]+4*eps[0]*(-1.+2.*eps[0])*(-1+2.*eps[1]);
-            dphi(1,6)= -4.*eps[1]*(-1.+2.*eps[1])*(-1.+2.*(1.-eps[0]-eps[1]-eps[2]))-8.*eps[1]*(-1.+2.*eps[1])*(1.-eps[0]-eps[1]-eps[2])+8.*eps[1]*(-1.+2.*(1.-eps[0]-eps[1]-eps[2]))*(1.-eps[0]-eps[1]-eps[2])+4.*(-1.+2.*eps[1])*(-1.+2.*(1.-eps[0]-eps[1]-eps[2]))*(1.-eps[0]-eps[1]-eps[2]);
-            dphi(1,7)=-4.*(-1.+2.*(1.-eps[0]-eps[1]-eps[2]))*eps[2]*(-1.+2.*eps[2])-8.*(1.-eps[0]-eps[1]-eps[2])*eps[2]*(-1.+2.*eps[2]);
-            dphi(1,8)=0.;
-            dphi(1,9)= 8.*eps[1]*eps[2]*(-1.+2.*eps[2])+4.*(-1.+2.*eps[1])*eps[2]*(-1.+2.*eps[2]);
+            double mult[] = {1.,1.,1.,1.,4.,4.,4.,4.,4.,4.,27.,27.,27.,27.,54.};
+            for(is=4;is<nshape; is++)
+            {
+                phi[is] *= mult[is];
+                dphi(0,is) *= mult[is];
+                dphi(1,is) *= mult[is];
+                dphi(2,is) *= mult[is];
+            }
             
-            dphi(2,0)= 1.-4.*(1.-eps[0]-eps[1]-eps[2]);
-            dphi(2,1)= 0.;
-            dphi(2,2)= 0.;
-            dphi(2,3)= -1.+4.*eps[2];
-            dphi(2,4)= -4.*eps[0]*(-1.+2.*eps[0])*(-1.+2.*(1.-eps[0]-eps[1]-eps[2]))-8.*eps[0]*(-1.+2.*eps[0])*(1.-eps[0]-eps[1]-eps[2]);
-            dphi(2,5)= 0.;
-            dphi(2,6)= -4*eps[1]*(-1.+2.*eps[1])*(-1.+2.*(1.-eps[0]-eps[1]-eps[2]))-8.*eps[1]*(-1.+2.*eps[1])*(1.-eps[0]-eps[1]-eps[2]);
-            dphi(2,7)= 8.*(-1.+2.*(1.-eps[0]-eps[1]-eps[2]))*(1.-eps[0]-eps[1]-eps[2])*eps[2]+4.*(-1.+2.*(1.-eps[0]-eps[1]-eps[2]))*(1.-eps[0]-eps[1]-eps[2])*(-1.+2.*eps[2])-4.*(-1+2.*(1.-eps[0]-eps[1]-eps[2]))*eps[2]*(-1.+2.*eps[2])-8.*(1.-eps[0]-eps[1]-eps[2])*eps[2]*(-1.+2.*eps[2]);
-            dphi(2,8)= 8.*eps[0]*(-1.+2.*eps[0])*eps[2]+4.*eps[0]*(-1.+2.*eps[0])*(-1.+2.*eps[2]);
-            dphi(2,9)= 8.*eps[1]*(-1.+2.*eps[1])*eps[2]+4.*eps[1]*(-1.+2.*eps[1])*(-1.+2.*eps[2]);
+          
         }
         
         
@@ -99,10 +103,22 @@
         
         if (side<4) {
             return 1;
-        }else{
-            return order-1;
         }
-        
+        if(side<10) return order-1;//4 a 9
+        if(side<14) {//10 a 13
+            int sum = 0;
+            for(int i=0;i<order-1;i++) sum += i;
+            return sum;
+        }
+        if(side==14) {
+            int totsum = 0,sum;
+            for(int i=1;i<order-2;i++) {
+                sum = i*(i+1) / 2;
+                totsum += sum;
+            }
+            return totsum;
+        }
+        return 0;
     }
     
     /// returns the total number of shape functions

@@ -89,7 +89,8 @@ int main ()
 
 //  5 - Poisson 3D, obtenção de erros e taxas de convergência
     
-    TestPoisson3DTetra(1);
+//    TestPoisson3DTetra(1);
+    TestPoisson3DTetra(2);
     
     
     return 0;
@@ -97,13 +98,11 @@ int main ()
 
 void TestPoisson3DTetra(int pOrder){
     
-    int ndiv = 2;
+    int ndiv = 4;
     
     for (int it=1; it<ndiv; it++) {
         
         int div = pow(2,it);
-        
-        div = 8;
         
         // Malha geométrica :
         GeoMesh *geotest = CreateGMesh3D(div+1, div+1, div+1, hx, hy, hz, ETetraedro);
@@ -117,12 +116,7 @@ void TestPoisson3DTetra(int pOrder){
         Analysis an(cmesh);
         an.RunSimulation();
         VecDouble Sol = cmesh->Solution();
-        
-        for (int i = 0; i<Sol.size(); i++) {
-            std::cout<<Sol[i]<<std::endl;
-        }
-        
-        
+    
         // Pós-processamento :
         PostProcess *solpos = new PostProcessTemplate<Poisson>(&an);
         solpos->SetExact(Sol_exact);
@@ -267,31 +261,45 @@ void F_source(const VecDouble &x, VecDouble &f){
     
     double f_x = + 8.0*Pi*Pi*cos(2.0*Pi*yv)*sin(2.0*Pi*xv);
     double f_y = - 8.0*Pi*Pi*cos(2.0*Pi*xv)*sin(2.0*Pi*yv);
+
+//    double f_x = 2.;
+//    double f_y = 2.;
+//    double f_z = 2.;
     
     f[0] = f_x; // x direction
     f[1] = f_y; // y direction
+//    f[2] = f_z; // y direction
 
 }
 
 
 void Sol_exact(const VecDouble &x, VecDouble &sol, Matrix &dsol){
     
-    dsol.Resize(2,2);
-    sol.resize(2);
+    dsol.Resize(3,3);
+    sol.resize(3);
+    dsol.Zero();
     
     double xv = x[0];
     double yv = x[1];
+    double zv = x[2];
     
     double v_x =  cos(2*Pi*yv)*sin(2*Pi*xv);
     double v_y =  -(cos(2*Pi*xv)*sin(2*Pi*yv));
 
+//    double v_x =  xv*xv;
+//    double v_y =  yv*yv;
+//    double v_z =  zv*zv;
     
     sol[0]=v_x;
     sol[1]=v_y;
+//    sol[2]=v_z;
     
     // vx direction
     dsol(0,0)= 2*Pi*cos(2*Pi*xv)*cos(2*Pi*yv);
     dsol(0,1)= 2*Pi*sin(2*Pi*xv)*sin(2*Pi*yv);
+//    dsol(0,0)= 2*xv;
+//    dsol(1,1)= 2*yv;
+//    dsol(2,2)= 2*zv;
     
     // vy direction
     dsol(1,0)= -2*Pi*sin(2*Pi*xv)*sin(2*Pi*yv);

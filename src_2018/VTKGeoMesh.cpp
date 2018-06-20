@@ -438,7 +438,7 @@ void VTKGeoMesh::PrintSolVTK(CompMesh *cmesh, PostProcess &defPostProc, const st
                 
             }
             
-            (file) << "SCALARS " << "varname" << " float" << std::endl << "LOOKUP_TABLE default\n";
+            (file) << "SCALARS " << varname << " float" << std::endl << "LOOKUP_TABLE default\n";
             file << scalsol[ivar].str();
             
         }
@@ -474,12 +474,12 @@ void VTKGeoMesh::PrintSolVTK(CompMesh *cmesh, PostProcess &defPostProc, const st
                     for(int i=0; i< xi.size(); i++) xi[i] = ParamCo(t,i);
                     gel->X(xi, xco);
 
-                    VecDouble sol(2);
-                    TMatrix dsol(2,1);
+                    VecDouble sol(3);
+                    TMatrix dsol(3,1);
                     cel->Solution(xi, var, sol, dsol);
                     
                     int is;
-                    for (is=0; is<2; is++) {
+                    for (is=0; is<3; is++) {
                         solution[ivar] << sol[is] << " ";
                     }
                     for(; is<3; is++) solution[ivar] << 0. << " ";
