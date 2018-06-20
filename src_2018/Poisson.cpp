@@ -149,8 +149,8 @@
         {
             int iphi = shapeindex[i];
             int ivec = normalindex[i];
-            Matrix phiVi(dim,1,0.),GradVi(dim,dim,0.);
-            for (int e=0; e<dim; e++) {
+            Matrix phiVi(NState(),1,0.),GradVi(NState(),dim,0.);
+            for (int e=0; e<NState(); e++) {
                 phiVi(e,0) = phi[iphi]*Normalvec(e,ivec);
             
                 // Grad V
@@ -176,8 +176,8 @@
                 int jphi = shapeindex[j];
                 int jvec = normalindex[j];
                 
-                Matrix GradVj(dim,dim,0.), KGradVj(dim,dim,0.);
-                for (int e=0; e<dim; e++) {
+                Matrix GradVj(NState(),dim,0.), KGradVj(NState(),dim,0.);
+                for (int e=0; e<NState(); e++) {
                     for (int f=0; f<dim; f++) {
                         GradVj(e,f) = Normalvec(e,jvec)*dphiU(f,jphi);
                     }
@@ -185,7 +185,7 @@
                 
                 // K * Grad U
                 for (int ik=0; ik<dim; ik++) {
-                    for (int jk=0; jk<dim; jk++) {
+                    for (int jk=0; jk<NState(); jk++) {
                         for (int l=0; l<dim; l++){
                             KGradVj(ik,jk) += perm(ik,l)*GradVj(l,jk);
                         }

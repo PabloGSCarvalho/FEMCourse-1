@@ -79,7 +79,7 @@ int main ()
  
 //  3 - Poisson 2D, quadrilátero (linear e quadrático), obtenção de erros e taxas de convergência
     
-//    TestPoisson2DQuad(1);
+    TestPoisson2DQuad(1);
 //    TestPoisson2DQuad(2);
     
 //  4 - Poisson 2D, triângulo (linear e quadrático), obtenção de erros e taxas de convergência
@@ -90,7 +90,7 @@ int main ()
 //  5 - Poisson 3D, obtenção de erros e taxas de convergência
     
 //    TestPoisson3DTetra(1);
-    TestPoisson3DTetra(2);
+//    TestPoisson3DTetra(2);
     
     
     return 0;
