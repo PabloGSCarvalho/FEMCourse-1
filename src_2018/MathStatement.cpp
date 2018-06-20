@@ -15,12 +15,10 @@
     }
     
     MathStatement::MathStatement(const MathStatement &copy){
-        nstate=copy.nstate;
         matid=copy.matid;
     }
     
     MathStatement &MathStatement::operator=(const MathStatement &copy){
-        nstate=copy.nstate;
         matid=copy.matid;
         return *this;
     }

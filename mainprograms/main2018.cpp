@@ -327,7 +327,6 @@ CompMesh *CMesh(GeoMesh *gmesh, int pOrder, int dim){
             // Materiais internos (Poisson)
             cmesh->SetNumberMath(iel+1);
             Poisson *material = new Poisson(geoMatID,perm);
-            material->SetNState(dim);
             material->SetDimension(dim);
             material->SetForceFunction(F_source);
             material->SetExactSolution(Sol_exact);
@@ -338,7 +337,6 @@ CompMesh *CMesh(GeoMesh *gmesh, int pOrder, int dim){
             cmesh->SetNumberMath(iel+1);
             Matrix val1(2,1,0.), val2(2,1,0.);
             L2Projection *bcmat0 = new L2Projection(0,geoMatID,proj,val1,val2);
-            bcmat0->SetNState(dim);
             bcmat0->SetExactSolution(Sol_exact);
             cmesh->SetMathStatement(iel, bcmat0);
         }

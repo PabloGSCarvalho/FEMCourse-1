@@ -20,9 +20,6 @@ class MathStatement
     // Math statement ID
     int matid = 0;
     
-    // Number of state variable
-    int nstate = 0;
-    
 public:
     
 //    enum PostProcVar;
@@ -43,16 +40,9 @@ public:
     
     // Method for creating a copy of the element
     virtual MathStatement *Clone() const = 0;
-
-    // Set number number of state variables
-    virtual void SetNState(int numstate){
-        nstate = numstate;
-    };
     
     // Return the number of state variables
-    virtual int NState() const {
-        return nstate;
-    };
+    virtual int NState() const =0;
     
     // Return the number of errors
     virtual int NEvalErrors() const = 0;

@@ -72,13 +72,10 @@ public:
         SolutionExact = Exact;
     }
     
-//    virtual void SetDimension(int matdim){
-//        MathDim = matdim;
-//    }
-    
-//    virtual int Dimension() const{
-//        return MathDim;
-//    }
+    // Return the number of state variables
+    virtual int NState() const {
+        return 2;
+    };
     
     virtual int NEvalErrors() const;
     

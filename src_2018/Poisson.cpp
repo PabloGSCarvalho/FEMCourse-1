@@ -165,7 +165,7 @@
             forceFunction(x,f);
 
             double phi_dot_f = 0.0;
-            for (int e=0; e<dim; e++) {
+            for (int e=0; e<NState(); e++) {
                 phi_dot_f += phiVi(e,0)*f[e];
             }
             
@@ -176,24 +176,33 @@
                 int jphi = shapeindex[j];
                 int jvec = normalindex[j];
                 
-                Matrix GradVj(NState(),dim,0.), KGradVj(NState(),dim,0.);
+                Matrix GradVj(NState(),dim,0.), KGradVj(dim,NState(),0.);
                 for (int e=0; e<NState(); e++) {
                     for (int f=0; f<dim; f++) {
                         GradVj(e,f) = Normalvec(e,jvec)*dphiU(f,jphi);
                     }
                 }
                 
-                // K * Grad U
-                for (int ik=0; ik<dim; ik++) {
-                    for (int jk=0; jk<NState(); jk++) {
-                        for (int l=0; l<dim; l++){
-                            KGradVj(ik,jk) += perm(ik,l)*GradVj(l,jk);
+                if (NState()==dim) {
+                    // K * Grad U
+                    for (int ik=0; ik<dim; ik++) {
+                        for (int jk=0; jk<NState(); jk++) {
+                            for (int l=0; l<dim; l++){
+                                KGradVj(ik,jk) += perm(ik,l)*GradVj(l,jk);
+                            }
                         }
                     }
+                    
+                    double val = Inner(GradVi, KGradVj);
+                    EK(i,j) += weight * val;
+                }else{
+                    
+                    double val = Inner(GradVi, GradVj);
+                    EK(i,j) += weight * val;
+                    
                 }
                 
-                double val = Inner(GradVi, KGradVj);
-                EK(i,j) += weight * val;
+                
                 
             }
             
@@ -209,7 +218,7 @@
     // Method to implement error over element's volume
     void Poisson::ContributeError(IntPointData &data, VecDouble &u_exact, Matrix &du_exact, VecDouble &errors) const{
         
-        du_exact.Resize(NState(), NState());
+        du_exact.Resize(Dimension(), NState());
         u_exact.resize(NState());
         errors.resize(NEvalErrors());
         std::fill(errors.begin(), errors.end(),0.);
@@ -373,7 +382,7 @@ double Poisson::Inner(Matrix &S, Matrix &T) const{
     
     double Val = 0.;
     
-    for(int i = 0; i < S.Cols(); i++){
+    for(int i = 0; i < S.Rows(); i++){
         for(int j = 0; j < S.Cols(); j++){
             Val += S(i,j)*T(i,j);
         }

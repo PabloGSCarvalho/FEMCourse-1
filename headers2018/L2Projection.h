@@ -91,9 +91,13 @@ public:
         SolutionExact = Exact;
     }
     
+    // Return the number of state variables
+    virtual int NState() const {
+        return 2;
+    };
+    
     // Return the number of errors
     virtual int NEvalErrors() const;
-    
     
     virtual int VariableIndex(const PostProcVar var) const;
     

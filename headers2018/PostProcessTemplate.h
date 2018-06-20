@@ -10,6 +10,7 @@
 
 #include "MathStatement.h"
 #include "Poisson.h"
+#include "Analysis.h"
 #include "L2Projection.h"
 #include "IntPointData.h"
 #include "PostProcess.h"
@@ -85,7 +86,7 @@ class PostProcessTemplate: public PostProcess
         math Statement;
         typename math::PostProcVar var = Statement.VariableIndex(name);
         AppendVariable(var);
-        
+    
         int nsol = Statement.NSolutionVariables(var);
         
         if (nsol==1) {
