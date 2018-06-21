@@ -176,31 +176,40 @@
                 int jphi = shapeindex[j];
                 int jvec = normalindex[j];
                 
-                Matrix GradVj(NState(),dim,0.), KGradVj(dim,NState(),0.);
+                Matrix GradVj(NState(),dim,0.), KGradVj(NState(),dim,0.);
                 for (int e=0; e<NState(); e++) {
                     for (int f=0; f<dim; f++) {
                         GradVj(e,f) = Normalvec(e,jvec)*dphiU(f,jphi);
                     }
                 }
                 
-                if (NState()==dim) {
-                    // K * Grad U
-                    for (int ik=0; ik<dim; ik++) {
-                        for (int jk=0; jk<NState(); jk++) {
+//                if (NState()==dim) {
+//                    // K * Grad U
+//                    for (int ik=0; ik<dim; ik++) {
+//                        for (int jk=0; jk<NState(); jk++) {
+//                            for (int l=0; l<dim; l++){
+//                                KGradVj(ik,jk) += perm(ik,l)*GradVj(l,jk);
+//                            }
+//                        }
+//                    }
+//
+//                    double val = Inner(GradVi, KGradVj);
+//                    EK(i,j) += weight * val;
+//                }else{
+                
+                    GradVj.Transpose();
+                    for (int ik=0; ik<NState(); ik++) {
+                        for (int jk=0; jk<dim; jk++) {
                             for (int l=0; l<dim; l++){
-                                KGradVj(ik,jk) += perm(ik,l)*GradVj(l,jk);
+                                KGradVj(ik,jk) += perm(jk,l)*GradVj(l,ik);
                             }
                         }
                     }
                     
                     double val = Inner(GradVi, KGradVj);
                     EK(i,j) += weight * val;
-                }else{
                     
-                    double val = Inner(GradVi, GradVj);
-                    EK(i,j) += weight * val;
-                    
-                }
+//                }
                 
                 
                 

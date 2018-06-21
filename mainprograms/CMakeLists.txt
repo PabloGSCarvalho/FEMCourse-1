@@ -11,3 +11,4 @@ add_executable(TestMatrix Testmatrix.cpp ${FemSCSOURCE})
 
 add_executable(Fem2018 main2018.cpp ${FemSOURCE2018} ${SOURCES2018})
 
+target_link_libraries(Fem2018)

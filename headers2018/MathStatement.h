@@ -75,6 +75,9 @@ public:
     
     virtual void Axes2XYZ(const Matrix &dudaxes, Matrix &dudx, const Matrix &axesv, bool colMajor = true) const;
     
+    //Method to print MathStatement
+    virtual void Print(std::ostream &out);
+    
     
 };
 #endif /* MathStatement_h */

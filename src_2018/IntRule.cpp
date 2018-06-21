@@ -64,5 +64,23 @@
         
     }
 
-    
+    void IntRule::Print(std::ostream &out) {
+        int np = NPoints();
+        VecInt order(3,0);
+        out << "Cubature rule " << np << " : Order ( "<< fOrder;
+        out << " ) \nNumber of points " << NPoints() << std::endl;
+        int ip;
+        VecDouble pos(3);
+        double w;
+        for(ip=0; ip<np; ip++) {
+            Point(ip,pos,w);
+            out << " ip : " << ip << std::endl;
+            out <<" pos : ";
+            for(int j=0;j<3;j++){
+                out << pos[j] << ", ";
+            };
+            out << std::endl;
+            out << " w : " << w << std::endl;
+        }
+    }
 

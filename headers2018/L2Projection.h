@@ -23,6 +23,7 @@ class L2Projection : public MathStatement
     
     // First value of boundary condition
     Matrix BCVal1;
+    
     // Second value of boundary condition
     Matrix BCVal2;
     

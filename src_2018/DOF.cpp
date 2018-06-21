@@ -57,3 +57,15 @@
         return order;
     }
 
+
+    void DOF::Print(const CompMesh &mesh, std::ostream & out) {
+
+        int orde = GetOrder() ;
+        int nstate  = GetNState();
+        int nshape  = GetNShape();
+        out << "TPZConnect : " << "  Order = " << orde << "  NState = " << nstate << "  NShape " << nshape;
+        out << std::endl;
+
+    }
+
+

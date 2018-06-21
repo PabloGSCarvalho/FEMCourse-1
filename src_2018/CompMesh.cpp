@@ -11,6 +11,7 @@
 #include "CompElement.h"
 #include "MathStatement.h"
 #include "DOF.h"
+#include <map>
 
     CompMesh::CompMesh():geomesh(0),compelements(0),dofs(0),mathstatements(0){
         
@@ -106,21 +107,6 @@
             CompElement *cel = gel->CreateCompEl(this, iel);
             SetElement(iel, cel);
             
-            
-//            int nsides = gel->NSides();
-//            int nstate = material->NState();
-//            VecInt orders(nsides);
-//            DOF dof;
-//            int nshape = 0;
-//            for (int iord = 0; iord<nsides; iord++) {
-//                orders[iord]=DefaultOrder;
-//                this->SetNumberDOF(iord+1);
-//                cel->SetNDOF(iord+1);
-//                cel->SetDOFIndex(iord, iord);
-//                SetDOF(iord, dof);
-//                nshape = cel->ComputeNShapeFunctions(iord,orders[iord]);
-//                this->GetDOF(iord).SetNShapeStateOrder(nshape, nstate,orders[iord]);
-//            }
         }
         
         this->Resequence();
@@ -152,4 +138,43 @@
     void CompMesh::LoadSolution(std::vector<double> &Sol){
         solution=Sol;
     }
+
+    void CompMesh::Print (std::ostream & out) {
+        
+        out << "\n\t\t COMPUTABLE GRID INFORMATIONS:\n\n";
+        
+        out << "number of DOFs            = " << GetNumberDOF() << std::endl;
+        out << "number of elements            = " << GetElementVec().size() << std::endl;
+        out << "number of materials           = " << GetMathVec().size() << std::endl;
+        out << "dimension of the mesh         = " <<  GetMathVec()[0]->Dimension() << std::endl;
+        
+        out << "\n\t Connect Information:\n\n";
+        int64_t i, nelem = GetNumberDOF();
+        for(i=0; i<nelem; i++) {
+            out << " Index " << i << ' ';
+            GetDOFVec()[i].Print(*this,out);
+        }
+        out << "\n\t Computable Element Information:\n\n";
+        nelem = GetElementVec().size();
+        for(i=0; i<nelem; i++) {
+            if(!GetElement(i)) continue;
+            CompElement *el = GetElement(i);
+            out << "\n Index " << i << ' ';
+            el->Print(out);
+          }
+        out << "\n\t Material Information:\n\n";
+      //  std::map<int, MathStatement * >::const_iterator mit;
+        nelem = GetMathVec().size();
+        
+        for(int mit=0; mit< nelem; mit++) {
+            MathStatement *mat = GetMathVec()[mit];
+            if (!mat) {
+                DebugStop();
+            }
+            mat->Print(out);
+        }
+    }
+
+
+
 

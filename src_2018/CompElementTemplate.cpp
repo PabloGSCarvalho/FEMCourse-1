@@ -7,6 +7,8 @@
 
 #include "CompElementTemplate.h"
 #include "CompElement.h"
+#include "CompMesh.h"
+#include "GeoMesh.h"
 #include "GeoElementTemplate.h"
 #include "GeoElement.h"
 #include "Shape1d.h"
@@ -18,6 +20,7 @@
 #include "DataTypes.h"
 #include "MathStatement.h"
 #include "DOF.h"
+#include "GeoNode.h"
 
 
     template<class Shape>
@@ -194,6 +197,81 @@
         dofindexes[doflocindex]=doflocindex;
         return Shape::NShapeFunctions(doflocindex,order);
     }
+
+    template<class Shape>
+    void CompElementTemplate<Shape>::Print(std::ostream &out){
+        out << __PRETTY_FUNCTION__ << std::endl;
+
+        out << "\nOutput for a computable element index: " << GetIndex();
+        //  if(geoel)
+        //  {
+        //     out << "\nCenter coordinate: ";
+        //  }
+        if(this->GetStatement())
+        {
+            out << "\nMaterial id " << this->GetStatement()->GetMatID() << "\n";
+        }
+        else {
+            out << "\nNo material\n";
+        }
+
+        out << "Number of connects = " << this->NDOF();
+        out<< "\nConnect indexes : ";
+        int nod;
+        for(nod=0; nod< NDOF(); nod++)
+        {
+            out << GetDOFIndex(nod) <<  ' ' ;
+        }
+        out << std::endl;
+
+        out << "Index = " << GetIndex();
+        out << " - Center coordinate:\n";
+
+        for (int i=0;i< Shape::nCorners;i++)
+        {
+            VecDouble center(3,0.);
+            GeoElement *geo = GetGeoElement();
+
+            for (int j=0;j<3;j++) center[j] = geo->GetMesh()->Node(i).Coord(j);
+            out << "[" <<  i << "] ";
+            for (int j=0;j<3;j++){
+                out << center[j] << ", ";
+            }
+        }
+
+        out << std::endl;
+        int nconects=this->NDOF();
+        out << "Number of connects = " << this->NDOF() << " Connect indexes/NShape : ";
+        
+        for(nod=0; nod< nconects; nod++)
+        {
+            DOF &c = GetCompMesh()->GetDOF(nod);
+            out << GetDOFIndex(nod) <<  '/' << c.GetNShape() << ' ' ;
+        }
+        out << std::endl;
+
+        CompMesh *Pcmesh = GetCompMesh();
+
+
+        MathStatement * material = this->GetStatement();
+        if(!material)
+        {
+            out << " no material " << std::endl;
+        }
+
+        if (material) {
+            out << "material id " << material->GetMatID() << std::endl;
+        }
+        IntRule *intr = GetIntRule();
+        out << "Integration orders : \t";
+        int introrder = Pcmesh->GetDefaultOrder()*2;
+        out << "material id " << introrder << std::endl;
+        intr->Print(out);
+        
+        out << std::endl;
+    }
+
+
 
 
 template class CompElementTemplate<Shape1d>;

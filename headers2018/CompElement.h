@@ -138,5 +138,9 @@ public:
     
     // Return the dimension of the element
     virtual int Dimension() const = 0;
+    
+    // Method to print computational element information
+    virtual void Print(std::ostream &out) = 0;
+    
 };
 #endif /* CompElement_h */

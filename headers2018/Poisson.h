@@ -15,9 +15,7 @@
 
 class Poisson : public MathStatement
 {
-//    //Poisson dimension
-//    int MathDim;
-//
+
     // Permeability matrix
     Matrix permeability;
     

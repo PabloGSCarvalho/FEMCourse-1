@@ -53,3 +53,8 @@
         }
     }
 
+    void MathStatement::Print(std::ostream &out){
+        out << " Material id = " << GetMatID() << "\n";
+        out << " Dimension = " << Dimension() << "\n";
+        out << " Number of state variables = " << NState() << "\n";
+    }
