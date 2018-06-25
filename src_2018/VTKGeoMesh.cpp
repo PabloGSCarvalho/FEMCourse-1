@@ -270,7 +270,7 @@ void VTKGeoMesh::PrintCMeshVTK(CompMesh *cmesh, int dim, const std::string &file
             node << std::endl;
             VecDouble sol(1);
             TMatrix dsol(2,1);
-            cel->Solution(xi, 1, sol, dsol);
+            cel->Solution(xi, 1, sol);
             solution << sol[0] << " " << std::endl;
             int i;
             for (i=0; i<dsol.Rows(); i++) {
@@ -430,7 +430,7 @@ void VTKGeoMesh::PrintSolVTK(CompMesh *cmesh, PostProcess &defPostProc, const st
                     
                     VecDouble sol(1);
                     TMatrix dsol(2,1);
-                    cel->Solution(xi, var, sol, dsol);
+                    cel->Solution(xi, var, sol);
                     
                     scalsol[ivar] << sol[0] << " " << std::endl;
                     
@@ -474,12 +474,12 @@ void VTKGeoMesh::PrintSolVTK(CompMesh *cmesh, PostProcess &defPostProc, const st
                     for(int i=0; i< xi.size(); i++) xi[i] = ParamCo(t,i);
                     gel->X(xi, xco);
 
-                    VecDouble sol(3);
-                    TMatrix dsol(3,1);
-                    cel->Solution(xi, var, sol, dsol);
+                    VecDouble sol(3,0.);
+                    TMatrix dsol(3,1,0.);
+                    cel->Solution(xi, var, sol);
                     
                     int is;
-                    for (is=0; is<3; is++) {
+                    for (is=0; is<sol.size(); is++) {
                         solution[ivar] << sol[is] << " ";
                     }
                     for(; is<3; is++) solution[ivar] << 0. << " ";

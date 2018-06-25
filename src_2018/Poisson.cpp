@@ -119,10 +119,12 @@
         Matrix perm = GetPermeability();
 //        Matrix Kdphi(2,2,0.);
         
+  //      dphi.Print();
+        
         Matrix dphiU(Dimension(),dphi.Cols());
         Axes2XYZ(dphi, dphiU, data.axes);
-
-       // dphiU.Print();
+  //      data.axes.Print();
+  //      dphiU.Print();
         
         // shape index for nstate
         int dim = Dimension();
@@ -233,7 +235,7 @@
         std::fill(errors.begin(), errors.end(),0.);
         VecDouble Sol, DSol;
        
-        Sol = this->PostProcessSolution(data,ESol);
+        this->PostProcessSolution(data,ESol,Sol);
       //  DSol = this->PostProcessSolution(data,EDSol);
         
         Matrix &dsol = data.dsoldx;
@@ -266,7 +268,7 @@
         
     }
 
-    std::vector<double> Poisson::PostProcessSolution(const IntPointData &data, const int varindex) const{
+    void Poisson::PostProcessSolution(const IntPointData &data, const int varindex, VecDouble &Solout) const{
         
         PostProcVar var = PostProcVar(varindex);
         
@@ -280,8 +282,7 @@
         int permRows = perm.Rows();
         int permCols = perm.Cols();
 
-        
-        VecDouble Solout;
+
         switch(var) {
                 
             case ESol: //ux, uy, uz
@@ -383,7 +384,6 @@
             }
         }
         
-        return Solout;
         
     }
 

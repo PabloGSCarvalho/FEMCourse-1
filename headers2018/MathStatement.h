@@ -70,7 +70,7 @@ public:
     };
     
     // Prepare and print post processing data
-    virtual std::vector<double> PostProcessSolution(const IntPointData &integrationpointdata, const int var) const = 0;
+    virtual void PostProcessSolution(const IntPointData &integrationpointdata, const int var, VecDouble &sol) const = 0;
     
     
     virtual void Axes2XYZ(const Matrix &dudaxes, Matrix &dudx, const Matrix &axesv, bool colMajor = true) const;

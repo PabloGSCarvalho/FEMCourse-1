@@ -115,7 +115,9 @@ class PostProcessTemplate: public PostProcess
         
         if(!locptr) DebugStop();
         const int numScalarVariables = NumScalarVariables();
-        return locptr->PostProcessSolution(data, varIndex < numScalarVariables? scalarvariables[varIndex] : vectorvariables[varIndex-numScalarVariables]);
+        VecDouble sol;
+        locptr->PostProcessSolution(data, varIndex < numScalarVariables? scalarvariables[varIndex] : vectorvariables[varIndex-numScalarVariables],sol);
+        return sol;
     }
     
     virtual inline unsigned int NumScalarVariables() const {

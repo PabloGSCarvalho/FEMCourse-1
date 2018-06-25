@@ -189,9 +189,9 @@
     }
 
 
-    std::vector<double> L2Projection::PostProcessSolution(const IntPointData &integrationpointdata, const int var) const{
-        VecDouble axl2(2,0.);
-        return axl2;
+    void L2Projection::PostProcessSolution(const IntPointData &integrationpointdata, const int var, VecDouble &sol) const{
+
+        return;
     }
 
     // Prepare and print post processing data

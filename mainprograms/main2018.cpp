@@ -84,8 +84,8 @@ int main ()
     
 //  4 - Poisson 2D, triângulo (linear e quadrático), obtenção de erros e taxas de convergência
     
- //   TestPoisson2DTri(1);
- //   TestPoisson2DTri(2);
+//    TestPoisson2DTri(1);
+//    TestPoisson2DTri(2);
 
 //  5 - Poisson 3D, obtenção de erros e taxas de convergência
     
@@ -103,7 +103,7 @@ void TestPoisson3DTetra(int pOrder){
     for (int it=1; it<ndiv; it++) {
         
         int div = pow(2,it);
-        
+
         // Malha geométrica :
         GeoMesh *geotest = CreateGMesh3D(div+1, div+1, div+1, hx, hy, hz, ETetraedro);
    //     geotest->Print(std::cout);

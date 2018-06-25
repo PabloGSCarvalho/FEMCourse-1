@@ -104,9 +104,6 @@
     
     void CompElement::ComputeRequiredData(IntPointData &data, VecDouble &intpoint) const{
         
-//        std::cout<<intpoint[0]<<std::endl;
-//        std::cout<<intpoint[1]<<std::endl;
-        
         GeoElement *gel = this->GetGeoElement();
         Matrix gradx,Jac,JacInv;
         
@@ -118,7 +115,6 @@
         this->ShapeFunctions(intpoint, data.phi, data.dphidksi);
         
         this->Convert2Axes(data.dphidksi, JacInv, data.dphidx);
-        //data.dphidx.Print();
      
     }
 
@@ -250,8 +246,8 @@
     }
 
     
-    void CompElement::Solution(VecDouble &intpoint, int var, VecDouble &sol, TMatrix &dsol) const{
-
+    void CompElement::Solution(VecDouble &intpoint, int var, VecDouble &sol) const{
+    
         IntPointData data;
         this->InitializeIntPointData(data);
         GetMultiplyingCoeficients(data.coefs);
@@ -259,11 +255,10 @@
         
         ComputeRequiredData(data,intpoint);
         data.ComputeSolution();
-        sol.resize(2);
-        dsol.Resize(data.dsoldx.Rows(),data.dsoldx.Cols());
+        sol.resize(3);
         
-        sol=mat->PostProcessSolution(data,var);
-        dsol=data.dsoldx;
+        mat->PostProcessSolution(data,var,sol);
+
         
     }
 
