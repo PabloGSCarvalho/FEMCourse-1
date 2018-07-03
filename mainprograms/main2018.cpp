@@ -79,7 +79,7 @@ int main ()
  
 //  3 - Poisson 2D, quadrilátero (linear e quadrático), obtenção de erros e taxas de convergência
     
-//    TestPoisson2DQuad(1);
+    TestPoisson2DQuad(1);
 //    TestPoisson2DQuad(2);
     
 //  4 - Poisson 2D, triângulo (linear e quadrático), obtenção de erros e taxas de convergência
@@ -89,21 +89,20 @@ int main ()
 
 //  5 - Poisson 3D, obtenção de erros e taxas de convergência
     
-    TestPoisson3DTetra(1);
+//    TestPoisson3DTetra(1);
 //    TestPoisson3DTetra(2);
-    
     
     return 0;
 }
 
 void TestPoisson3DTetra(int pOrder){
     
-    int ndiv = 4;
+    int ndiv = 2;
     
     for (int it=1; it<ndiv; it++) {
         
-        int div = pow(2,it);
-
+        double div = pow(2,it);
+        div =16;
         // Malha geométrica :
         GeoMesh *geotest = CreateGMesh3D(div+1, div+1, div+1, hx, hy, hz, ETetraedro);
    //     geotest->Print(std::cout);
@@ -119,7 +118,7 @@ void TestPoisson3DTetra(int pOrder){
         Analysis an(cmesh);
         an.RunSimulation();
         VecDouble Sol = cmesh->Solution();
-    
+        
         // Pós-processamento :
         PostProcess *solpos = new PostProcessTemplate<Poisson>(&an);
         solpos->SetExact(Sol_exact);
@@ -148,7 +147,7 @@ void TestPoisson2DTri(int pOrder){
     
     for (int it=1; it<ndiv; it++) {
         
-        int div = pow(2,it);
+        double div = pow(2,it);
         
         // Malha geométrica :
         GeoMesh *geotest = CreateGMesh(div+1, div+1, hx, hy, ETriangle);
@@ -191,7 +190,7 @@ void TestPoisson2DQuad(int pOrder){
     
     for (int it=1; it<ndiv; it++) {
         
-        int div = pow(2,it);
+        double div = pow(2,it);
         
         // Malha geométrica :
         GeoMesh *geotest = CreateGMesh(div+1, div+1, hx, hy, EQuadrilateral);
@@ -232,7 +231,7 @@ void TestPoisson2DQuad(int pOrder){
 
 void ComputeRateOfConvergence(std::ostream &out, VecDouble &FirstError, VecDouble &erro, double div){
 
-    double h0 = 2*hx/div;
+    double h0 = 2.*hx/div;
     double h1 = hx/div;
     
     if (div==2) {

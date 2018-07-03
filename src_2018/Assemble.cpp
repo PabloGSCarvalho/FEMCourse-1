@@ -63,8 +63,8 @@
             TMatrix EK,EF;
 
             //vericar isso aqui oioioio
-            globmat.Resize(neq, neq);
-            rhs.Resize(neq, 1);
+//            globmat.Resize(neq, neq);
+//            rhs.Resize(neq, 1);
             
             EF.Zero();
             EK.Zero();

@@ -24,7 +24,7 @@
 
 
     template<class Shape>
-    CompElementTemplate<Shape>::CompElementTemplate() : CompElement(), dofindexes(0){
+    CompElementTemplate<Shape>::CompElementTemplate() : CompElement(), dofindexes(0),intrule(0){
         
     }
 
