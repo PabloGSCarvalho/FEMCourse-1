@@ -30,6 +30,15 @@ link_libraries(pz)
 
 endif(USING_PZ)
 
+#define se biblioteca Armadillo deve ser usada
+option(USING_ARMADILLO "Biblioteca Armadillo deve ser usada neste projeto" OFF)
+
+if(USING_ARMADILLO)
+find_package( Armadillo REQUIRED NO_MODULE)
+include_directories(${ARMADILLO_INCLUDE_DIRS})
+endif(USING_ARMADILLO)
+
+
 project (FemCourse)
 
 add_subdirectory(headers)

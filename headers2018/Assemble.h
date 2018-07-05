@@ -10,6 +10,10 @@
 
 #include "DataTypes.h"
 #include "PostProcess.h"
+#include <iostream>
+#include <armadillo>
+
+using namespace arma;
 
 class CompMesh;
 
@@ -37,7 +41,7 @@ public:
     void OptimizeBandwidth();
     
     /// Compute the global stiffness matrix and right hand side
-    void Compute(Matrix &globmat, Matrix &rhs);
+    void Compute(SpMat<double> &globmat, Mat<double> &rhs);
     
 };
 #endif /* Assemble_h */

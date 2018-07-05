@@ -13,9 +13,15 @@
 #include "MathStatement.h"
 #include "PostProcess.h"
 #include "VTKGeoMesh.h"
+#include <iostream>
+#include <armadillo>
 
-    Analysis::Analysis(): cmesh(0), Solution(), GlobalSystem(), RightHandSide(){
-        
+using namespace std;
+
+    Analysis::Analysis(): cmesh(0){
+        Solution.resize(0, 0);
+        GlobalSystem.resize(0, 0);
+        RightHandSide.resize(0, 0);
     }
     
     Analysis::Analysis(const Analysis &cp){
@@ -54,24 +60,22 @@
         Assemble as(cmesh);
         
         int neq = as.NEquations();
-        Matrix K(neq,neq);
-        K.Zero();
-        Matrix F(neq,1);
-        F.Zero();
-        
+        arma::SpMat<double> K(neq,neq);
+        arma::Mat<double> F(neq,1);
+        K.zeros();
+        F.zeros();
         as.Compute(K, F);
         
-  //      K.Print();
-  //      F.Print();
+//        K.print();
+//        F.print();
         
         GlobalSystem = K;
         RightHandSide = F;
         
-        K.Solve_LU(F);
-        Solution=F;
+        Solution = spsolve(K, F);
         
-        std::vector<double> lsol(Solution.Rows(),0.);
-        for (int is=0; is<Solution.Rows(); is++) {
+        std::vector<double> lsol(Solution.n_rows,0.);
+        for (int is=0; is<Solution.n_rows; is++) {
             lsol[is]=Solution(is,0);
         }
         cmesh->LoadSolution(lsol);

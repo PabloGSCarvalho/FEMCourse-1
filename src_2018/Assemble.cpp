@@ -10,6 +10,10 @@
 #include "CompElement.h"
 #include "GeoElement.h"
 #include "GeoElementTemplate.h"
+#include <iostream>
+#include <armadillo>
+
+using namespace arma;
 
     Assemble::Assemble(): cmesh(){
         
@@ -51,7 +55,7 @@
     }
     
     /// Compute the global stiffness matrix and right hand side
-    void Assemble::Compute(Matrix &globmat, Matrix &rhs){
+    void Assemble::Compute(SpMat<double> &globmat, Mat<double> &rhs){
         
         int neq = NEquations();
         int nel= cmesh->GetElementVec().size();
@@ -60,20 +64,20 @@
             
             CompElement *cel=cmesh->GetElement(el);
 
-            TMatrix EK,EF;
+            Matrix EK,EF;
 
             //vericar isso aqui oioioio
 //            globmat.Resize(neq, neq);
 //            rhs.Resize(neq, 1);
             
-            EF.Zero();
-            EK.Zero();
+//            EF.Zero();
+//            EK.Zero();
             
             cel->CalcStiff(EK, EF);
             
             //EK.Print();
             
-            VecInt iGlob(neq,0);
+            VecInt iGlob(neq,0.);
             
             
             int ndofel = cel->NDOF();

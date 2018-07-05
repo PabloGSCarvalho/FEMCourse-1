@@ -10,6 +10,10 @@
 
 #include "DataTypes.h"
 #include <string>
+#include <iostream>
+#include <armadillo>
+
+using namespace arma;
 
 class CompMesh;
 
@@ -20,11 +24,11 @@ class Analysis
 protected:
     CompMesh *cmesh;
     
-    Matrix Solution;
+    Mat<double> Solution;
     
-    Matrix GlobalSystem;
+    SpMat<double> GlobalSystem;
     
-    Matrix RightHandSide;
+    Mat<double> RightHandSide;
     
 public:
     
